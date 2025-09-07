@@ -16,8 +16,10 @@ public class Hurter : MonoBehaviour
 
     public void Hurt(Player_Movement player)
     {
+            Debug.Log("IN HURT");
         if (Time.time >= last_hurt_tick + hurt_tick_speed)
         {
+
             last_hurt_tick = Time.time;
             player.Loose_Health_Points(damage_points);
             Debug.Log("HURT HURT");

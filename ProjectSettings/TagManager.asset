@@ -6,6 +6,8 @@ TagManager:
   tags:
   - gun
   - hurter
+  - stationary_obstacle
+  - wake_on_player
   layers:
   - Default
   - TransparentFX

@@ -31,6 +31,10 @@ public class Player_Movement : MonoBehaviour
 
     public CharacterController controller;
 
+    public GameObject death_screen;
+
+    public GameObject hurt_overlay;
+
     // public float jumpHeight = 20.0f;
     // public float gravityValue = -10.0f;
     // public float jumpHeight = 30f;
@@ -76,6 +80,8 @@ public class Player_Movement : MonoBehaviour
 
     void Start()
     {
+
+        death_screen.SetActive(false);
         //if the cameraTransform doesnt exist
         // if (cameraTransform == null)
         //     cameraTransform = Camera.main.transform;
@@ -103,6 +109,7 @@ public class Player_Movement : MonoBehaviour
 
     public void Die()
     {
+        death_screen.SetActive(true);
         Debug.Log("DIE");
     }
 
@@ -118,19 +125,17 @@ public class Player_Movement : MonoBehaviour
 
             currently_held_gun.transform.position = return_to_floor_position;
             currently_held_gun.transform.rotation = return_to_floor_rotation;
+            currently_held_gun.GetComponent<Collider>().enabled = true;
             currently_held_gun = null;
         }
         guns_in_interactable_radius.RemoveAt(0);
 
         currently_held_gun = new_gun;
+        currently_held_gun.GetComponent<Collider>().enabled = false;
 
-        currently_held_gun.transform.SetParent(grab_point);
-        // Vector3 grab_offset = grab_point.position - currently_held_gun.transform.Find("Gun-Handle").position;
-        // currently_held_gun.transform.position += grab_offset;
+        currently_held_gun.transform.SetParent(grab_point, true);
         currently_held_gun.transform.position = grab_point.position;
-        // currently_held_gun.transform.rotation = grab_point.rotation;
         currently_held_gun.transform.rotation = grab_point.rotation;
-
         guns_in_interactable_radius.Add(new_gun);
     }
 
@@ -169,7 +174,12 @@ public class Player_Movement : MonoBehaviour
             if (environment_object_in_radius.CompareTag("hurter"))
             {
                 Hurter hurterScript = environment_object_in_radius.GetComponent<Hurter>();
+                Debug.Log("PLAYER BEFORE HURT CALL");
                 hurterScript.Hurt(this);
+            }
+            else if (environment_object_in_radius.CompareTag("wake_on_player"))
+            {
+                
             }
         }
         guns_in_interactable_radius.RemoveAll(gun => !current_guns.Contains(gun));
@@ -227,14 +237,29 @@ public class Player_Movement : MonoBehaviour
 
 
         groundedPlayer = false;
+
+        if (currently_held_gun != null)
+        {
+            currently_held_gun.transform.localRotation = first_person_cameraTransform.localRotation;
+            currently_held_gun.transform.localRotation = Quaternion.Slerp(
+            currently_held_gun.transform.localRotation,
+            targetPitchRotation,
+            1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
+
+        );
+        }
+
         // gun rotation matches pitch of camera
 
         Vector3 move = Vector3.zero;
-
+        // Vector3 first_gun_cycle_enter = Vector3.zero;
         if (Input.GetKeyDown(KeyCode.G))
         {
+
+            // first_gun_cycle_enter = this.transform.position;
+
             Pick_Up_Gun(guns_in_interactable_radius[0]);
-            //cycle through guns in radius 
+            // this.transform.position = first_gun_cycle_enter;
         }
 
         if (controller.isGrounded || Mathf.Abs(playerVelocity.y) <= 0.01f)
@@ -295,6 +320,13 @@ public class Player_Movement : MonoBehaviour
                 first_person_cam.SetActive(true);
                 third_person_cam.SetActive(false);
             }
+        }
+
+        if (Input.GetKey(KeyCode.M))
+        {
+            ICommon_Gun_Actions gun_interface = currently_held_gun.GetComponent<ICommon_Gun_Actions>();
+            gun_interface.Fire();
+            // Debug.Log("FIRE");
         }
 
         Vector3 finalMove = (move.normalized * move_speed) + new Vector3(0, playerVelocity.y, 0);
