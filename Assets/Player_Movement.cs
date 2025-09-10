@@ -73,6 +73,8 @@ public class Player_Movement : MonoBehaviour
     private float verticalRot;
     private float horizontalRot;
 
+    private bool player_input_enabled = true;
+
 
     private Quaternion targetYawRotation;
     private Quaternion targetPitchRotation;
@@ -82,6 +84,8 @@ public class Player_Movement : MonoBehaviour
     {
 
         death_screen.SetActive(false);
+        Rigidbody rb = this.GetComponent<Rigidbody>();
+        rb.isKinematic = true;
         //if the cameraTransform doesnt exist
         // if (cameraTransform == null)
         //     cameraTransform = Camera.main.transform;
@@ -111,6 +115,9 @@ public class Player_Movement : MonoBehaviour
     {
         death_screen.SetActive(true);
         Debug.Log("DIE");
+        Rigidbody rb = this.GetComponent<Rigidbody>();
+        player_input_enabled = false;
+        rb.isKinematic = false;
     }
 
     private Quaternion return_to_floor_rotation;
@@ -179,7 +186,26 @@ public class Player_Movement : MonoBehaviour
             }
             else if (environment_object_in_radius.CompareTag("wake_on_player"))
             {
-                
+                Rigidbody rb = this.GetComponent<Rigidbody>();
+                CharacterController cc = GetComponent<CharacterController>();
+                cc.enabled = false;
+                rb.isKinematic = false;
+                // rb.constraints = RigidbodyConstraints.None;
+                player_input_enabled = false;
+                // rb.AddExplosionForce(200 * 50.0f, environment_object_in_radius.transform.position, 20.0f);
+                Collider[] colliders = Physics.OverlapSphere(environment_object_in_radius.transform.position, 10.0f);
+
+                foreach (Collider nearby in colliders)
+                {
+                    Rigidbody new_rb = nearby.attachedRigidbody;
+                    if (rb != null)
+                    {
+                        rb.AddExplosionForce(200 * 5.0f, environment_object_in_radius.transform.position, 25.0f);
+                    }
+                }
+                // Vector3 hitDirection = (transform.position - environment_object_in_radius.transform.position).normalized;
+                // rb.AddForce(hitDirection * 20f, ForceMode.Impulse);
+                Debug.Log("yeet player");
             }
         }
         guns_in_interactable_radius.RemoveAll(gun => !current_guns.Contains(gun));
@@ -253,7 +279,7 @@ public class Player_Movement : MonoBehaviour
 
         Vector3 move = Vector3.zero;
         // Vector3 first_gun_cycle_enter = Vector3.zero;
-        if (Input.GetKeyDown(KeyCode.G))
+        if (Input.GetKeyDown(KeyCode.G) && player_input_enabled)
         {
 
             // first_gun_cycle_enter = this.transform.position;
@@ -272,7 +298,7 @@ public class Player_Movement : MonoBehaviour
             playerVelocity.y = -0.1f;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && player_input_enabled)
         {
             if (current_jumps < consecutive_jumps_allowed)
             {
@@ -281,30 +307,33 @@ public class Player_Movement : MonoBehaviour
             }
         }
 
-        if (!groundedPlayer)
+        if (player_input_enabled)
         {
-            playerVelocity.y += gravityValue * Time.deltaTime;
-        }
+            if (!groundedPlayer)
+            {
+                playerVelocity.y += gravityValue * Time.deltaTime;
+            }
 
-        if (Input.GetKey(KeyCode.W))
-        {
-            move += player.transform.forward;
-            Debug.Log("FORWARD");
-        }
-        else if (Input.GetKey(KeyCode.A))
-        {
-            move += -player.transform.right;
-            Debug.Log("LEFT");
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            move += -player.transform.forward;
-            Debug.Log("BACK");
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-            move += player.transform.right;
-            Debug.Log("RIGHT");
+            if (Input.GetKey(KeyCode.W))
+            {
+                move += player.transform.forward;
+                Debug.Log("FORWARD");
+            }
+            else if (Input.GetKey(KeyCode.A))
+            {
+                move += -player.transform.right;
+                Debug.Log("LEFT");
+            }
+            else if (Input.GetKey(KeyCode.S))
+            {
+                move += -player.transform.forward;
+                Debug.Log("BACK");
+            }
+            else if (Input.GetKey(KeyCode.D))
+            {
+                move += player.transform.right;
+                Debug.Log("RIGHT");
+            }
         }
 
         if (Input.GetKeyUp(KeyCode.P))
@@ -322,15 +351,18 @@ public class Player_Movement : MonoBehaviour
             }
         }
 
-        if (Input.GetKey(KeyCode.M))
+        if (Input.GetKey(KeyCode.M) && player_input_enabled)
         {
             ICommon_Gun_Actions gun_interface = currently_held_gun.GetComponent<ICommon_Gun_Actions>();
             gun_interface.Fire();
             // Debug.Log("FIRE");
         }
 
-        Vector3 finalMove = (move.normalized * move_speed) + new Vector3(0, playerVelocity.y, 0);
-        controller.Move(finalMove * Time.deltaTime);
+        if (player_input_enabled)
+        {
+            Vector3 finalMove = (move.normalized * move_speed) + new Vector3(0, playerVelocity.y, 0);
+            controller.Move(finalMove * Time.deltaTime);
+        }
         if (move != Vector3.zero)
         {
 
