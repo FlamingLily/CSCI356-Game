@@ -86,15 +86,22 @@ public class Player_Movement : MonoBehaviour
         death_screen.SetActive(false);
         Rigidbody rb = this.GetComponent<Rigidbody>();
         rb.isKinematic = true;
-        //if the cameraTransform doesnt exist
-        // if (cameraTransform == null)
-        //     cameraTransform = Camera.main.transform;
 
-        //yaw rotation for rotating the player capsule
-        targetYawRotation = transform.localRotation;
+        float normalizedX = (Input.mousePosition.x / Screen.width) - 0.5f ;  
+        float normalizedY = (Input.mousePosition.y / Screen.height) - 0.5f; 
 
-        //pitch for rotating only the camera
-        targetPitchRotation = first_person_cameraTransform.localRotation;
+        horizontalRot = normalizedX * 359f;      
+        verticalRot = -normalizedY * 90f;      
+        verticalRot = Mathf.Clamp(verticalRot, minimumVert, maximumVert);
+
+        targetYawRotation = Quaternion.Euler(0f, horizontalRot, 0f);
+        targetPitchRotation = Quaternion.Euler(verticalRot, 0f, 0f);
+
+        player.transform.localRotation = targetYawRotation;
+        first_person_cameraTransform.localRotation = targetPitchRotation;
+        third_person_cameraTransform.localRotation = targetPitchRotation;
+
+        // Cursor.lockState = CursorLockMode.Locked;
     }
 
 
@@ -225,16 +232,25 @@ public class Player_Movement : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * sensitivityHor;
         float mouseY = Input.GetAxis("Mouse Y") * sensitivityVert;
 
-        horizontalRot += mouseX; //horizontal rotation is taken from mouses X
-        verticalRot -= mouseY; // vertical rotation is taken from mouses Y
+          if (((Input.mousePosition.x / Screen.width) -0.5f) > 0.45f)
+        {
+            Debug.Log("Full RIGHT");
+            // horizontalRot += Mathf.Sign(normalizedX) * sensitivityHor * Time.deltaTime * 100f;
+        }
 
-        // cannot rotate vertically more than limits
+        if (((Input.mousePosition.x / Screen.width) -0.5f) < -0.45f)
+        {
+            Debug.Log("Full left");
+
+            // verticalRot -= Mathf.Sign(normalizedY) * sensitivityVert * Time.deltaTime * 100f;
+        }
+
+        horizontalRot += mouseX;    
+        verticalRot -= mouseY;    
         verticalRot = Mathf.Clamp(verticalRot, minimumVert, maximumVert);
 
-        //yaw rotation for rotating the player capsule
+        // Update target rotations
         targetYawRotation = Quaternion.Euler(0f, horizontalRot, 0f);
-
-        //pitch for rotating only the camera
         targetPitchRotation = Quaternion.Euler(verticalRot, 0f, 0f);
 
         // smooth Yaw rotate player based on mouse input
@@ -261,6 +277,9 @@ public class Player_Movement : MonoBehaviour
           1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
       );
 
+        Cursor.lockState = CursorLockMode.Locked;
+        // Cursor.visible = false;
+
 
         groundedPlayer = false;
 
@@ -283,8 +302,10 @@ public class Player_Movement : MonoBehaviour
         {
 
             // first_gun_cycle_enter = this.transform.position;
-
-            Pick_Up_Gun(guns_in_interactable_radius[0]);
+            if (guns_in_interactable_radius.Count > 0)
+            {
+                Pick_Up_Gun(guns_in_interactable_radius[0]);
+            }
             // this.transform.position = first_gun_cycle_enter;
         }
 
