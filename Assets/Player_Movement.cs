@@ -134,6 +134,29 @@ public class Player_Movement : MonoBehaviour
 
     private Quaternion return_to_floor_rotation;
     private Vector3 return_to_floor_position;
+    // void Pick_Up_Gun(GameObject new_gun)
+    // {
+    //     if (currently_held_gun != null)
+    //     {
+    //         currently_held_gun.transform.SetParent(null);
+    //         return_to_floor_position = new_gun.transform.position;
+    //         return_to_floor_rotation = new_gun.transform.rotation;
+
+    //         currently_held_gun.transform.position = return_to_floor_position;
+    //         currently_held_gun.transform.rotation = return_to_floor_rotation;
+    //         currently_held_gun.GetComponent<Collider>().enabled = true;
+    //         currently_held_gun = null;
+    //     }
+    //     guns_in_interactable_radius.RemoveAt(0);
+
+    //     currently_held_gun = new_gun;
+    //     currently_held_gun.GetComponent<Collider>().enabled = false;
+
+    //     currently_held_gun.transform.SetParent(grab_point, true);
+    //     currently_held_gun.transform.position = grab_point.position;
+    //     currently_held_gun.transform.rotation = grab_point.rotation;
+    //     guns_in_interactable_radius.Add(new_gun);
+    // }
     void Pick_Up_Gun(GameObject new_gun)
     {
         if (currently_held_gun != null)
@@ -152,9 +175,22 @@ public class Player_Movement : MonoBehaviour
         currently_held_gun = new_gun;
         currently_held_gun.GetComponent<Collider>().enabled = false;
 
-        currently_held_gun.transform.SetParent(grab_point, true);
-        currently_held_gun.transform.position = grab_point.position;
-        currently_held_gun.transform.rotation = grab_point.rotation;
+        // Transform gun_grab_point = currently_held_gun.Get_Grab_Point();
+        Transform gun_grab_point = currently_held_gun.transform.Find("Grab_Point");
+
+        currently_held_gun.transform.SetParent(grab_point, false);
+
+
+        Vector3 grab_offset = gun_grab_point.localPosition;
+        Quaternion rotation_offset = gun_grab_point.localRotation;
+
+
+        currently_held_gun.transform.localPosition = -grab_offset;
+        currently_held_gun.transform.localRotation = Quaternion.Inverse(rotation_offset);
+
+        Debug.Log($"Gun: {new_gun.name} | Scale: {currently_held_gun.transform.localScale} | GrabPt Pos: {gun_grab_point.localPosition} | GrabPt Rot: {gun_grab_point.localRotation.eulerAngles} | Root Rot: {currently_held_gun.transform.localRotation.eulerAngles}");
+
+
         guns_in_interactable_radius.Add(new_gun);
     }
 
@@ -435,9 +471,13 @@ public class Player_Movement : MonoBehaviour
                 );
             }
 
-            if (Input.GetKey(KeyCode.X))
+            if (Input.GetKey(KeyCode.V))
             {
                 gun_interface.Fire();
+            }
+            if (Input.GetKeyUp(KeyCode.V))
+            {
+                gun_interface.Reload();
             }
         }
 

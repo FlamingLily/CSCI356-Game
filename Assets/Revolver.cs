@@ -10,6 +10,13 @@ public class Revolver : MonoBehaviour, ICommon_Gun_Actions
     public Transform barrelDirection;
 
 
+    public GameObject projectilePrefab = null;
+    public float launchForce = 0.0f;
+    float lastFired = 0;
+
+    bool is_left_click_held = false;
+
+
 
      public Transform Get_Grab_Point()
     {
@@ -26,6 +33,24 @@ public class Revolver : MonoBehaviour, ICommon_Gun_Actions
     public void Fire()
     {
         Debug.Log("REVOLVER FIRE");
+        
+            if (Input.GetKey(KeyCode.X))
+        {
+            if (!is_left_click_held)
+            {
+                //launch bullet prefab from gun tip
+                //fire once then flip boolean to true, preventing it from firing more than once per left click
+                GameObject projectile = Instantiate(projectilePrefab, barrelDirection.position, projectilePrefab.transform.rotation);
+                projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
+                Destroy(projectile, 2f);
+                Debug.Log("HANDGUN FIRE");
+                is_left_click_held = true;
+            }
+        }
+        else
+        {
+            is_left_click_held = false;
+        }
     }
 
     public void Scope_in()
@@ -39,7 +64,10 @@ public class Revolver : MonoBehaviour, ICommon_Gun_Actions
 
     }
 
-    public void Reload() { }
+    public void Reload()
+    { 
+         is_left_click_held = false;
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
