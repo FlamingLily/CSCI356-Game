@@ -16,7 +16,6 @@ public class Player_Movement : MonoBehaviour
     //lerp speed 2
 
 
-
     public float move_speed;
     public GameObject player;
 
@@ -79,6 +78,10 @@ public class Player_Movement : MonoBehaviour
     private Quaternion targetYawRotation;
     private Quaternion targetPitchRotation;
 
+    private bool isScoped = false;
+    private Vector3 originalCameraPosition;
+    public float scopeTransitionSpeed = 10f; // How fast camera moves to scope
+
 
     void Start()
     {
@@ -87,11 +90,11 @@ public class Player_Movement : MonoBehaviour
         Rigidbody rb = this.GetComponent<Rigidbody>();
         rb.isKinematic = true;
 
-        float normalizedX = (Input.mousePosition.x / Screen.width) - 0.5f ;  
-        float normalizedY = (Input.mousePosition.y / Screen.height) - 0.5f; 
+        float normalizedX = (Input.mousePosition.x / Screen.width) - 0.5f;
+        float normalizedY = (Input.mousePosition.y / Screen.height) - 0.5f;
 
-        horizontalRot = normalizedX * 359f;      
-        verticalRot = -normalizedY * 90f;      
+        horizontalRot = normalizedX * 359f;
+        verticalRot = -normalizedY * 90f;
         verticalRot = Mathf.Clamp(verticalRot, minimumVert, maximumVert);
 
         targetYawRotation = Quaternion.Euler(0f, horizontalRot, 0f);
@@ -100,6 +103,8 @@ public class Player_Movement : MonoBehaviour
         player.transform.localRotation = targetYawRotation;
         first_person_cameraTransform.localRotation = targetPitchRotation;
         third_person_cameraTransform.localRotation = targetPitchRotation;
+
+        originalCameraPosition = first_person_cameraTransform.localPosition;
 
         // Cursor.lockState = CursorLockMode.Locked;
     }
@@ -153,9 +158,14 @@ public class Player_Movement : MonoBehaviour
         guns_in_interactable_radius.Add(new_gun);
     }
 
+
+
     void Drop_Gun() { }
 
     void Fire_Gun() { }
+
+
+    void Heal() { }
 
     // private void OnTriggerEnter(Collider other)
     // {
@@ -232,21 +242,21 @@ public class Player_Movement : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * sensitivityHor;
         float mouseY = Input.GetAxis("Mouse Y") * sensitivityVert;
 
-          if (((Input.mousePosition.x / Screen.width) -0.5f) > 0.45f)
+        if (((Input.mousePosition.x / Screen.width) - 0.5f) > 0.45f)
         {
             Debug.Log("Full RIGHT");
             // horizontalRot += Mathf.Sign(normalizedX) * sensitivityHor * Time.deltaTime * 100f;
         }
 
-        if (((Input.mousePosition.x / Screen.width) -0.5f) < -0.45f)
+        if (((Input.mousePosition.x / Screen.width) - 0.5f) < -0.45f)
         {
             Debug.Log("Full left");
 
             // verticalRot -= Mathf.Sign(normalizedY) * sensitivityVert * Time.deltaTime * 100f;
         }
 
-        horizontalRot += mouseX;    
-        verticalRot -= mouseY;    
+        horizontalRot += mouseX;
+        verticalRot -= mouseY;
         verticalRot = Mathf.Clamp(verticalRot, minimumVert, maximumVert);
 
         // Update target rotations
@@ -372,12 +382,66 @@ public class Player_Movement : MonoBehaviour
             }
         }
 
-        if (Input.GetKey(KeyCode.M) && player_input_enabled)
+        // if (currently_held_gun != null)
+        // {
+        //     if (player_input_enabled && first_person_cam.activeSelf == true)
+        //     {
+        //         if (Input.GetKey(KeyCode.LeftShift))
+        //         {
+        //             ICommon_Gun_Actions gun_interface = currently_held_gun.GetComponent<ICommon_Gun_Actions>();
+        //             gun_interface.Scope_in();
+        //         }
+        //     }
+        //     if (Input.GetKey(KeyCode.X) && player_input_enabled)
+        //     {
+        //         ICommon_Gun_Actions gun_interface = currently_held_gun.GetComponent<ICommon_Gun_Actions>();
+        //         gun_interface.Fire();
+        //         // Debug.Log("FIRE");
+        //     }
+        // }
+
+        if (currently_held_gun != null && player_input_enabled)
         {
             ICommon_Gun_Actions gun_interface = currently_held_gun.GetComponent<ICommon_Gun_Actions>();
-            gun_interface.Fire();
-            // Debug.Log("FIRE");
+
+            if (Input.GetKey(KeyCode.LeftShift) && first_person_cam.activeSelf == true)
+            {
+                if (!isScoped)
+                {
+                    isScoped = true;
+                }
+
+                Transform scopeTransform = gun_interface.Get_Scope();
+                if (scopeTransform != null)
+                {
+                    first_person_cameraTransform.position = Vector3.Lerp(
+                        first_person_cameraTransform.position,
+                        scopeTransform.position,
+                        scopeTransitionSpeed * Time.deltaTime
+                    );
+                }
+            }
+            else
+            {
+                if (isScoped)
+                {
+                    isScoped = false;
+                }
+
+                first_person_cameraTransform.localPosition = Vector3.Lerp(
+                    first_person_cameraTransform.localPosition,
+                    originalCameraPosition,
+                    scopeTransitionSpeed * Time.deltaTime
+                );
+            }
+
+            if (Input.GetKey(KeyCode.X))
+            {
+                gun_interface.Fire();
+            }
         }
+
+
 
         if (player_input_enabled)
         {
