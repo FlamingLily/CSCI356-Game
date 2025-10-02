@@ -9,6 +9,7 @@ TagManager:
   - stationary_obstacle
   - wake_on_player
   - Projectile
+  - Enemy
   layers:
   - Default
   - TransparentFX

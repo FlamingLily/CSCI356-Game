@@ -1,8 +1,7 @@
 using UnityEngine;
 
-public class Revolver : MonoBehaviour, ICommon_Gun_Actions
+public class Magic : MonoBehaviour, ICommon_Gun_Actions
 {
-
     public Transform gun_grab_point;
 
     public Transform scopePosition;
@@ -10,9 +9,15 @@ public class Revolver : MonoBehaviour, ICommon_Gun_Actions
     public Transform barrelDirection;
 
 
+
+    private CharacterController playerController;
+
+
     public GameObject projectilePrefab = null;
     public float launchForce = 0.0f;
     float lastFired = 0;
+
+    public float fire_rate;
 
     bool is_left_click_held = false;
 
@@ -36,13 +41,14 @@ public class Revolver : MonoBehaviour, ICommon_Gun_Actions
 
         if (Input.GetKey(KeyCode.V))
         {
-            if (!is_left_click_held)
+            if (!is_left_click_held && Time.time >= lastFired + fire_rate)
             {
-                //launch bullet prefab from gun tip
-                //fire once then flip boolean to true, preventing it from firing more than once per left click
                 GameObject projectile = Instantiate(projectilePrefab, barrelDirection.position, projectilePrefab.transform.rotation);
                 projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
                 Destroy(projectile, 2f);
+
+
+                lastFired = Time.time;
                 Debug.Log("HANDGUN FIRE");
                 is_left_click_held = true;
             }
@@ -64,6 +70,7 @@ public class Revolver : MonoBehaviour, ICommon_Gun_Actions
 
     }
 
+
     public void Reload()
     {
         is_left_click_held = false;
@@ -72,11 +79,11 @@ public class Revolver : MonoBehaviour, ICommon_Gun_Actions
     void Start()
     {
 
+        playerController = GetComponentInParent<CharacterController>();
     }
 
     // Update is called once per frame
     void Update()
     {
-
     }
 }
