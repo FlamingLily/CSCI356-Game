@@ -14,6 +14,13 @@ public class Player_Movement : MonoBehaviour
 
 
     public GameObject corpse;
+    public GameObject alive;
+    public GameObject ghost;
+
+    public GameObject first_person_cam_ghost;
+    public Transform first_person_cameraTransform_ghost;
+    public GameObject third_person_cam_ghost;
+    public Transform third_person_cameraTransform_ghost;
     public float move_speed;
     public GameObject player;
 
@@ -34,10 +41,10 @@ public class Player_Movement : MonoBehaviour
 
     public float jumpHeight;
     public float gravityValue;
-    private Vector3 playerVelocity;
+    public Vector3 playerVelocity;
     private bool groundedPlayer;
 
-    private int current_jumps = 0;
+    public int current_jumps = 0;
 
     private GameObject currently_held_gun;
 
@@ -62,10 +69,10 @@ public class Player_Movement : MonoBehaviour
     private float next_scan = 0f;
 
 
-    private float verticalRot;
-    private float horizontalRot;
+    public float verticalRot;
+    public float horizontalRot;
 
-    private bool player_input_enabled = true;
+    public bool player_input_enabled = true;
 
 
     private Quaternion targetYawRotation;
@@ -100,6 +107,7 @@ public class Player_Movement : MonoBehaviour
         originalCameraPosition = first_person_cameraTransform.localPosition;
 
         corpse.SetActive(false);
+        ghost.SetActive(false);
 
         // Cursor.lockState = CursorLockMode.Locked;
     }
@@ -120,14 +128,48 @@ public class Player_Movement : MonoBehaviour
 
     public void Die()
     {
-        corpse.SetActive(true);
+        // corpse.SetActive(true);
         death_screen.SetActive(true);
         Debug.Log("DIE");
-        Rigidbody rb = this.GetComponent<Rigidbody>();
-        // this.gameObject.SetActive(false);
-        player_input_enabled = false;
-        rb.isKinematic = false;
+        Ragdoll();
+        // Rigidbody rb = this.GetComponent<Rigidbody>();
+        // // this.gameObject.SetActive(false);
+        // this.GetComponent<Renderer>().enabled = false;
+        // player_input_enabled = false;
+        // rb.isKinematic = false;
     }
+
+    public void Ragdoll()
+{
+    Debug.Log("Ragdoll started");
+
+    ghost.transform.position = player.transform.position;
+    ghost.transform.rotation = player.transform.rotation;
+
+    Ragdoll ragdollBehaviour = ghost.GetComponent<Ragdoll>();
+    ragdollBehaviour.horizontalRot = this.horizontalRot; 
+    ragdollBehaviour.verticalRot = this.verticalRot;
+    
+    first_person_cam_ghost.SetActive(first_person_cam.activeSelf);
+    third_person_cam_ghost.SetActive(third_person_cam.activeSelf);
+
+    first_person_cam_ghost.transform.position = first_person_cam.transform.position;
+    first_person_cam_ghost.transform.rotation = first_person_cam.transform.rotation;
+    third_person_cam_ghost.transform.position = third_person_cam.transform.position;
+    third_person_cam_ghost.transform.rotation = third_person_cam.transform.rotation;
+
+    first_person_cam.SetActive(false);
+    third_person_cam.SetActive(false);
+    player_input_enabled = false;
+
+    this.gameObject.SetActive(false);
+
+    ghost.SetActive(true);
+}
+
+    // public void Ragdoll_Recover()
+    // {
+    // }
 
     private Quaternion return_to_floor_rotation;
     private Vector3 return_to_floor_position;
@@ -208,12 +250,16 @@ public class Player_Movement : MonoBehaviour
             else if (environment_object_in_radius.CompareTag("wake_on_player"))
             {
                 Rigidbody rb = this.GetComponent<Rigidbody>();
-                CharacterController cc = GetComponent<CharacterController>();
-                cc.enabled = false;
-                rb.isKinematic = false;
+                // CharacterController cc = GetComponent<CharacterController>();
+                // cc.enabled = false;
+                // rb.isKinematic = false;
                 // rb.constraints = RigidbodyConstraints.None;
                 player_input_enabled = false;
                 // rb.AddExplosionForce(200 * 50.0f, environment_object_in_radius.transform.position, 20.0f);
+                Ragdoll();
+                Rigidbody ghostRigid = ghost.GetComponent<Rigidbody>();
+                ghostRigid.AddExplosionForce(350 * 35.0f, environment_object_in_radius.transform.position, 45.0f);
+
                 Collider[] colliders = Physics.OverlapSphere(environment_object_in_radius.transform.position, 10.0f);
 
                 foreach (Collider nearby in colliders)
@@ -221,7 +267,7 @@ public class Player_Movement : MonoBehaviour
                     Rigidbody new_rb = nearby.attachedRigidbody;
                     if (rb != null)
                     {
-                        rb.AddExplosionForce(200 * 5.0f, environment_object_in_radius.transform.position, 25.0f);
+                        rb.AddExplosionForce(200 * 20.0f, environment_object_in_radius.transform.position, 25.0f);
                     }
                 }
                 // Vector3 hitDirection = (transform.position - environment_object_in_radius.transform.position).normalized;
@@ -232,10 +278,17 @@ public class Player_Movement : MonoBehaviour
         guns_in_interactable_radius.RemoveAll(gun => !current_guns.Contains(gun));
     }
 
-
     // Update is called once per frame
     void Update()
     {
+
+        if (ghost.activeSelf)
+        {
+
+            // Ragdoll_State();
+            return;
+
+        }
 
         if (Time.time >= next_scan)
         {
@@ -444,5 +497,6 @@ public class Player_Movement : MonoBehaviour
 
         }
     }
+
 
 }
