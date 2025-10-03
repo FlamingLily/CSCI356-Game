@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class Magic : MonoBehaviour, ICommon_Gun_Actions
 {
@@ -8,9 +9,16 @@ public class Magic : MonoBehaviour, ICommon_Gun_Actions
 
     public Transform barrelDirection;
 
+    public float kick_back_force;
+    public float kick_back_time;
+
+    private Vector3 originalLocalPos;
+    private Coroutine kickbackRoutine;
+
+    Vector3 move = Vector3.zero;
 
 
-    private CharacterController playerController;
+    public CharacterController playerController;
 
 
     public GameObject projectilePrefab = null;
@@ -20,6 +28,8 @@ public class Magic : MonoBehaviour, ICommon_Gun_Actions
     public float fire_rate;
 
     bool is_left_click_held = false;
+
+    public float bullet_damage;
 
 
 
@@ -44,10 +54,18 @@ public class Magic : MonoBehaviour, ICommon_Gun_Actions
             if (!is_left_click_held && Time.time >= lastFired + fire_rate)
             {
                 GameObject projectile = Instantiate(projectilePrefab, barrelDirection.position, projectilePrefab.transform.rotation);
-                projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
-                Destroy(projectile, 2f);
+                Magic_Bullet bullet_brains = projectile.GetComponent<Magic_Bullet>();
+                if (bullet_brains != null)
+                {
+                    bullet_brains.damage = bullet_damage;
+                    bullet_brains.Enemy_Tag = "Enemy";
+                    bullet_brains.Effect_Tag = "Freezable";
+                }
 
+            projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
 
+                if (kickbackRoutine != null) StopCoroutine(kickbackRoutine);
+                kickbackRoutine = StartCoroutine(Gun_Kick());
                 lastFired = Time.time;
                 Debug.Log("HANDGUN FIRE");
                 is_left_click_held = true;
@@ -57,6 +75,40 @@ public class Magic : MonoBehaviour, ICommon_Gun_Actions
         {
             is_left_click_held = false;
         }
+
+
+    }
+
+    IEnumerator Gun_Kick()
+    {
+        float halfTime = kick_back_time / 2f;
+
+
+        Vector3 startPos = transform.localPosition;
+        Vector3 kickbackPos = startPos + Vector3.back * kick_back_force;
+
+
+        float t = 0f;
+        while (t < 1f)
+        {
+            t += Time.deltaTime / halfTime;
+            transform.localPosition = Vector3.Lerp(startPos, kickbackPos, t);
+            Vector3 player_kickback = -playerController.transform.forward * (kick_back_force / 100);
+            playerController.Move(player_kickback);
+            yield return null;
+        }
+
+
+        t = 0f;
+        while (t < 1f)
+        {
+            t += Time.deltaTime / halfTime;
+            transform.localPosition = Vector3.Lerp(kickbackPos, startPos, t);
+            yield return null;
+        }
+
+        transform.localPosition = startPos;
+        kickbackRoutine = null;
     }
 
     public void Scope_in()
@@ -75,14 +127,13 @@ public class Magic : MonoBehaviour, ICommon_Gun_Actions
     {
         is_left_click_held = false;
     }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
 
-        playerController = GetComponentInParent<CharacterController>();
+
     }
 
-    // Update is called once per frame
     void Update()
     {
     }

@@ -10,6 +10,7 @@ TagManager:
   - wake_on_player
   - Projectile
   - Enemy
+  - Freezable
   layers:
   - Default
   - TransparentFX

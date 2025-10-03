@@ -11,11 +11,9 @@ public class Player_Movement : MonoBehaviour
         MouseY = 2      // pitch only
     }
 
-    //sensitivity 4
-    //vert min -25, max 25 
-    //lerp speed 2
 
 
+    public GameObject corpse;
     public float move_speed;
     public GameObject player;
 
@@ -34,11 +32,6 @@ public class Player_Movement : MonoBehaviour
 
     public GameObject hurt_overlay;
 
-    // public float jumpHeight = 20.0f;
-    // public float gravityValue = -10.0f;
-    // public float jumpHeight = 30f;
-    // public float gravityValue = 20f;
-
     public float jumpHeight;
     public float gravityValue;
     private Vector3 playerVelocity;
@@ -48,7 +41,7 @@ public class Player_Movement : MonoBehaviour
 
     private GameObject currently_held_gun;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     public float sensitivityHor;
     public float sensitivityVert;
 
@@ -106,6 +99,8 @@ public class Player_Movement : MonoBehaviour
 
         originalCameraPosition = first_person_cameraTransform.localPosition;
 
+        corpse.SetActive(false);
+
         // Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -125,75 +120,52 @@ public class Player_Movement : MonoBehaviour
 
     public void Die()
     {
+        corpse.SetActive(true);
         death_screen.SetActive(true);
         Debug.Log("DIE");
         Rigidbody rb = this.GetComponent<Rigidbody>();
+        // this.gameObject.SetActive(false);
         player_input_enabled = false;
         rb.isKinematic = false;
     }
 
     private Quaternion return_to_floor_rotation;
     private Vector3 return_to_floor_position;
-    // void Pick_Up_Gun(GameObject new_gun)
-    // {
-    //     if (currently_held_gun != null)
-    //     {
-    //         currently_held_gun.transform.SetParent(null);
-    //         return_to_floor_position = new_gun.transform.position;
-    //         return_to_floor_rotation = new_gun.transform.rotation;
-
-    //         currently_held_gun.transform.position = return_to_floor_position;
-    //         currently_held_gun.transform.rotation = return_to_floor_rotation;
-    //         currently_held_gun.GetComponent<Collider>().enabled = true;
-    //         currently_held_gun = null;
-    //     }
-    //     guns_in_interactable_radius.RemoveAt(0);
-
-    //     currently_held_gun = new_gun;
-    //     currently_held_gun.GetComponent<Collider>().enabled = false;
-
-    //     currently_held_gun.transform.SetParent(grab_point, true);
-    //     currently_held_gun.transform.position = grab_point.position;
-    //     currently_held_gun.transform.rotation = grab_point.rotation;
-    //     guns_in_interactable_radius.Add(new_gun);
-    // }
     void Pick_Up_Gun(GameObject new_gun)
     {
         if (currently_held_gun != null)
         {
             currently_held_gun.transform.SetParent(null);
-            return_to_floor_position = new_gun.transform.position;
-            return_to_floor_rotation = new_gun.transform.rotation;
-
             currently_held_gun.transform.position = return_to_floor_position;
             currently_held_gun.transform.rotation = return_to_floor_rotation;
             currently_held_gun.GetComponent<Collider>().enabled = true;
             currently_held_gun = null;
         }
+
+
+        return_to_floor_position = new_gun.transform.position;
+        return_to_floor_rotation = new_gun.transform.rotation;
+
         guns_in_interactable_radius.RemoveAt(0);
 
         currently_held_gun = new_gun;
         currently_held_gun.GetComponent<Collider>().enabled = false;
 
-        // Transform gun_grab_point = currently_held_gun.Get_Grab_Point();
         Transform gun_grab_point = currently_held_gun.transform.Find("Grab_Point");
 
-        currently_held_gun.transform.SetParent(grab_point, false);
+
+        Vector3 offset_world = currently_held_gun.transform.position - gun_grab_point.position;
+        Quaternion rotation_offset = Quaternion.Inverse(gun_grab_point.rotation) * currently_held_gun.transform.rotation;
 
 
-        Vector3 grab_offset = gun_grab_point.localPosition;
-        Quaternion rotation_offset = gun_grab_point.localRotation;
+        currently_held_gun.transform.SetParent(grab_point, true);
 
 
-        currently_held_gun.transform.localPosition = -grab_offset;
-        currently_held_gun.transform.localRotation = Quaternion.Inverse(rotation_offset);
-
-        Debug.Log($"Gun: {new_gun.name} | Scale: {currently_held_gun.transform.localScale} | GrabPt Pos: {gun_grab_point.localPosition} | GrabPt Rot: {gun_grab_point.localRotation.eulerAngles} | Root Rot: {currently_held_gun.transform.localRotation.eulerAngles}");
-
+        currently_held_gun.transform.position = grab_point.position + grab_point.TransformDirection(gun_grab_point.localPosition * -1);
+        currently_held_gun.transform.rotation = grab_point.rotation * Quaternion.Inverse(gun_grab_point.localRotation);
 
         guns_in_interactable_radius.Add(new_gun);
     }
-
 
 
     void Drop_Gun() { }
@@ -203,10 +175,6 @@ public class Player_Movement : MonoBehaviour
 
     void Heal() { }
 
-    // private void OnTriggerEnter(Collider other)
-    // {
-    //     // Detect_in_Radius();
-    // }
 
     void Detect_in_Radius()
     {
@@ -418,23 +386,6 @@ public class Player_Movement : MonoBehaviour
             }
         }
 
-        // if (currently_held_gun != null)
-        // {
-        //     if (player_input_enabled && first_person_cam.activeSelf == true)
-        //     {
-        //         if (Input.GetKey(KeyCode.LeftShift))
-        //         {
-        //             ICommon_Gun_Actions gun_interface = currently_held_gun.GetComponent<ICommon_Gun_Actions>();
-        //             gun_interface.Scope_in();
-        //         }
-        //     }
-        //     if (Input.GetKey(KeyCode.X) && player_input_enabled)
-        //     {
-        //         ICommon_Gun_Actions gun_interface = currently_held_gun.GetComponent<ICommon_Gun_Actions>();
-        //         gun_interface.Fire();
-        //         // Debug.Log("FIRE");
-        //     }
-        // }
 
         if (currently_held_gun != null && player_input_enabled)
         {

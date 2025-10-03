@@ -1,96 +1,100 @@
 using UnityEngine;
+using System.Collections;
 
 public class Machine_Gunner : MonoBehaviour, ICommon_Gun_Actions
 {
-
     public Transform gun_grab_point;
 
     public Transform scopePosition;
-
     public Transform barrelDirection;
 
-       float bullet_spray = 0.1f;
+    public float bullet_damage;
+
+    public float bullet_spray = 0.1f;
 
     public GameObject projectilePrefab = null;
     public float launchForce = 0.0f;
-    float lastFired = 0;
 
-    //how fast the gun can fire
+    private float lastFired = 0;
+    private float fireRate = 0.05f;
 
-    float fireRate = 0.05f;
+    public float kick_back_force = 0.05f;
+    public float kick_back_time = 0.1f;
+    public CharacterController playerController;
 
-    float kick_back = 0.0f;
-
-
+    private Coroutine kickbackRoutine;
 
     public Transform Get_Grab_Point()
     {
         return gun_grab_point;
     }
+
     public Transform Get_Barrel_Direction()
     {
         return barrelDirection;
     }
+
     public Transform Get_Scope()
     {
         return scopePosition;
     }
+
     public void Fire()
     {
-               float timeNow = Time.time;
+        float timeNow = Time.time;
 
-        //prevents the machine gun from firing more than every 0.05f
+        // Prevents the machine gun from firing more than every fireRate seconds
         if (timeNow - lastFired >= fireRate)
         {
-            //if last bullet left more that 0.05f ago, fire machine gun
             Shoot();
             lastFired = timeNow;
         }
-        Debug.Log("REVOLVER FIRE");
+        Debug.Log("MACHINE GUN FIRE");
     }
 
     public void Shoot()
     {
+        // Random bullet spread
         Vector3 randomDirection = barrelDirection.forward +
                       new Vector3(
                           Random.Range(-bullet_spray, bullet_spray),
                           Random.Range(-bullet_spray, bullet_spray),
                           0f
                       );
-        //make prefab of bullet                     
-        GameObject projectile = Instantiate(projectilePrefab, barrelDirection.position, projectilePrefab.transform.rotation);
-        //fire bullet using random jitter
-        projectile.GetComponent<Rigidbody>().AddForce(randomDirection * launchForce);
-        //after 2 seconds destroy bullet
-        Destroy(projectile, 2f);
-        Debug.Log("MACHINEGUN FIRE");
 
-        //kickback
-        //reload speed
+        GameObject projectile = Instantiate(projectilePrefab, barrelDirection.position, projectilePrefab.transform.rotation);
+        Generic_Bullet bullet_brains = projectile.GetComponent<Generic_Bullet>();
+        if (bullet_brains != null)
+        {
+            bullet_brains.damage = bullet_damage;
+            bullet_brains.Enemy_Tag = "Enemy";
+            // bullet_brains.Effect_Tag = "";
+        }
+
+        projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
+
+        Debug.Log("MACHINEGUN FIRE");
     }
 
     public void Scope_in()
     {
-        Debug.Log("REVOLVER SCOPE IN");
+        Debug.Log("MACHINE GUN SCOPE IN");
     }
 
     public void Scope_out()
     {
-        Debug.Log("revolver SCOPE out");
-
+        Debug.Log("MACHINE GUN SCOPE OUT");
     }
 
     public void Reload() { }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
 
     }
 
-    // Update is called once per frame
     void Update()
     {
 
     }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
 }
