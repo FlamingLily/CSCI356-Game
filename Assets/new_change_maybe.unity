@@ -1158,6 +1158,7 @@ MonoBehaviour:
   horizontalRot: 0
   player_input_enabled: 1
   scopeTransitionSpeed: 10
+  is_first_person: 0
 --- !u!54 &225771836
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2200,7 +2201,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 713060220}
   serializedVersion: 5
-  m_Mass: 20
+  m_Mass: 10
   m_LinearDamping: 1.5
   m_AngularDamping: 1
   m_CenterOfMass: {x: -2, y: -0.3, z: -0.2}
@@ -2266,6 +2267,7 @@ MonoBehaviour:
   horizontalRot: 0
   player_input_enabled: 1
   scopeTransitionSpeed: 10
+  is_first_person: 0
 --- !u!136 &713060225
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2312,7 +2314,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4fd2b34eff8294cb3ab12118bb846d37, type: 2}
+  - {fileID: 2100000, guid: d584cff1432864c7fa505461a32f688d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2380,6 +2382,7 @@ MonoBehaviour:
   velocityThreshold: 0.1
   angularVelocityThreshold: 0.1
   recoveryHeight: 1
+  recoveryDuration: 1
   playerGameObject: {fileID: 225771829}
   default_player_stance: {fileID: 225771833}
   default_first_person_stance: {fileID: 856457960}
@@ -2611,6 +2614,7 @@ MonoBehaviour:
   horizontalRot: 0
   player_input_enabled: 1
   scopeTransitionSpeed: 10
+  is_first_person: 0
 --- !u!143 &771756642
 CharacterController:
   m_ObjectHideFlags: 0
@@ -3166,7 +3170,7 @@ Transform:
   m_GameObject: {fileID: 979683269}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.009999998, y: 0.01, z: -0.31999996}
+  m_LocalPosition: {x: 0.010000044, y: 0.009999836, z: -0.31999993}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4949,6 +4953,7 @@ MonoBehaviour:
   horizontalRot: 0
   player_input_enabled: 1
   scopeTransitionSpeed: 10
+  is_first_person: 0
 --- !u!136 &1384713620
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -7454,6 +7459,7 @@ MonoBehaviour:
   horizontalRot: 0
   player_input_enabled: 1
   scopeTransitionSpeed: 10
+  is_first_person: 0
 --- !u!143 &1885316615
 CharacterController:
   m_ObjectHideFlags: 0

@@ -22,6 +22,10 @@ public class Ragdoll : MonoBehaviour
     public float angularVelocityThreshold = 0.1f;
     public float recoveryHeight = 1.0f;
 
+    private bool isRecovering = false;
+    private float recoveryStartTime;
+    public float recoveryDuration = 1.0f;
+
     public GameObject playerGameObject;
     private GameObject first_person_cam_player;
     private GameObject third_person_cam_player;
@@ -56,32 +60,55 @@ public class Ragdoll : MonoBehaviour
         ragdoll_rigid = this.GetComponent<Rigidbody>();
 
 
-        first_person_cam_player = playerMovement.first_person_cam;
-        first_person_cam_transform_player = playerMovement.first_person_cameraTransform;
-        third_person_cam_player = playerMovement.third_person_cam;
-        third_person_cam_transform_player = playerMovement.third_person_cameraTransform;
+        // first_person_cam_player = playerMovement.first_person_cam;
+        // first_person_cam_transform_player = playerMovement.first_person_cameraTransform;
+        // third_person_cam_player = playerMovement.third_person_cam;
+        // third_person_cam_transform_player = playerMovement.third_person_cameraTransform;
 
 
-        horizontalRot = playerMovement.horizontalRot;
-        verticalRot = playerMovement.verticalRot;
+        // horizontalRot = playerMovement.horizontalRot;
+        // verticalRot = playerMovement.verticalRot;
+
+        // default_player_stance = playerMovement.transform;
+        // default_first_person_stance = playerMovement.first_person_cameraTransform;
+        // default_third_person_stance = playerMovement.third_person_cameraTransform;
     }
 
     void Update()
     {
-        Ghost_Camera_Operator();
+        // Ghost_Camera_Operator();
 
-        if (Time.time - ragdollStartTime > max_sleep_time)
+        // if (Time.time - ragdollStartTime > max_sleep_time)
+        // {
+        //     Debug.Log("Ragdoll time limit exceeded - forcing recovery");
+        //     Ragdoll_Recover();
+        // }
+        if (isRecovering)
         {
-            Debug.Log("Ragdoll time limit exceeded - forcing recovery");
             Ragdoll_Recover();
+
+            if (Time.time - recoveryStartTime >= recoveryDuration)
+            {
+                Return_to_alive();
+            }
+        }
+        else
+        {
+            Ghost_Camera_Operator();
+
+            if (Time.time - ragdollStartTime > max_sleep_time)
+            {
+                Debug.Log("Ragdoll time limit exceeded - forcing recovery");
+                StartRecovery();
+            }
         }
 
     }
 
-    void Onable()
+    void OnEnable()
     {
         ragdollStartTime = Time.time;
-        default_first_person_stance = playerGameObject.transform;
+        default_player_stance = playerGameObject.transform;
         default_first_person_stance = playerMovement.first_person_cameraTransform;
         default_third_person_stance = playerMovement.third_person_cameraTransform;
     }
@@ -94,7 +121,8 @@ public class Ragdoll : MonoBehaviour
             if (ragdoll_rigid.IsSleeping())
             {
                 Debug.Log("Rigidbody is not moving.");
-                Ragdoll_Recover();
+                StartRecovery();
+                // Ragdoll_Recover();
             }
             else
             {
@@ -105,9 +133,21 @@ public class Ragdoll : MonoBehaviour
     }
 
 
+    void StartRecovery()
+    {
+        if (playerMovement.Health > 0)
+        {
+            isRecovering = true;
+            recoveryStartTime = Time.time;
+        }
+    }
 
     void Ragdoll_Recover()
     {
+
+
+        playerGameObject.transform.position = this.gameObject.transform.position;
+
 
         // transform.position = Vector3.Lerp(
         //     transform.position,
@@ -120,62 +160,76 @@ public class Ragdoll : MonoBehaviour
             default_player_stance.rotation,
             1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
         );
+        // if (playerMovement.is_first_person == true)
+        // {
+                        first_person_cam_ghost.transform.rotation = Quaternion.Slerp(
+                        playerMovement.third_person_cameraTransform.transform.rotation,
+                        playerMovement.third_person_cameraTransform.rotation,
+                        1f - Mathf.Exp(-lerp_speed * Time.deltaTime));
 
-        first_person_cam_ghost.transform.position = Vector3.Lerp(
-            first_person_cam_ghost.transform.position,
-            default_first_person_stance.position,
-            1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
-        );
 
-        first_person_cam_ghost.transform.rotation = Quaternion.Slerp(
-            first_person_cam_ghost.transform.rotation,
-            default_first_person_stance.rotation,
-            1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
-        );
-
-        third_person_cam_ghost.transform.position = Vector3.Lerp(
+            first_person_cam_ghost.transform.position = Vector3.Lerp(
             third_person_cam_ghost.transform.position,
             default_third_person_stance.position,
             1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
-        );
+);
+    
 
-        third_person_cam_ghost.transform.rotation = Quaternion.Slerp(
-            third_person_cam_ghost.transform.rotation,
-            default_third_person_stance.rotation,
+            third_person_cam_ghost.transform.rotation = Quaternion.Slerp(
+                        playerMovement.third_person_cameraTransform.transform.rotation,
+                        playerMovement.third_person_cameraTransform.rotation,
+                        1f - Mathf.Exp(-lerp_speed * Time.deltaTime));
+
+
+            third_person_cam_ghost.transform.position = Vector3.Lerp(
+            third_person_cam_ghost.transform.position,
+            default_third_person_stance.position,
             1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
-        );
+);
+        // }
+
+        // first_person_cam_ghost.transform.position = Vector3.Lerp(
+        //     first_person_cam_ghost.transform.position,
+        //     default_first_person_stance.position,
+        //     1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
+        // );
+
+
+
+        // third_person_cam_ghost.transform.position = Vector3.Lerp(
+        //     third_person_cam_ghost.transform.position,
+        //     default_third_person_stance.position,
+        //     1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
+        // );
+
+
+
+
         Debug.Log("Ragdoll Ended");
-        // this.gameObject.SetActive(false);
-        // playerGameObject.SetActive(true);
+        // Return_to_alive();
+    }
 
-        // playerMovement.transform.position = this.transform.position;
-        // playerMovement.transform.rotation = this.transform.rotation;
-
-
-        // playerMovement.horizontalRot = this.horizontalRot;
-        // playerMovement.verticalRot = this.verticalRot;
-
-        // first_person_cam_ghost.SetActive(false);
-        // third_person_cam_ghost.SetActive(false);
-
-
-        // playerMovement.first_person_cameraTransform.position = first_person_cam_ghost.transform.position;
-        // playerMovement.first_person_cameraTransform.rotation = first_person_cam_ghost.transform.rotation;
-        // playerMovement.third_person_cameraTransform.position = third_person_cam_ghost.transform.position;
-        // playerMovement.third_person_cameraTransform.rotation = third_person_cam_ghost.transform.rotation;
-
-        // playerMovement.first_person_cam.SetActive(false);
-        // playerMovement.third_person_cam.SetActive(true);
-        // playerMovement.player_input_enabled = true;
-
-        // CharacterController cc = playerGameObject.GetComponent<CharacterController>();
-        // if (cc != null)
+    void Return_to_alive()
+    {
+        Debug.Log(playerMovement.is_first_person);
+        // playerGameObject.transform.position = this.gameObject.transform.position;
+        playerGameObject.SetActive(true);
+        // if (playerMovement.is_first_person == true)
         // {
-        //     cc.enabled = true;
+        //     playerMovement.first_person_cam.SetActive(true);
+        //     playerMovement.third_person_cam.SetActive(false);
+        // }
+        // else
+        // {
+            playerMovement.first_person_cam.SetActive(false);
+            playerMovement.third_person_cam.SetActive(true);
         // }
 
 
-
+        playerMovement.player_input_enabled = true;
+        this.gameObject.SetActive(false);
+        Debug.Log(playerMovement.is_first_person);
+        isRecovering = false;
     }
 
 

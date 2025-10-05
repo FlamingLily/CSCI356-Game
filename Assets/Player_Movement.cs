@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using NUnit.Framework;
 
 public class Player_Movement : MonoBehaviour
 {
@@ -82,6 +83,8 @@ public class Player_Movement : MonoBehaviour
     private Vector3 originalCameraPosition;
     public float scopeTransitionSpeed = 10f; // How fast camera moves to scope
 
+    public bool is_first_person;
+
 
     void Start()
     {
@@ -142,6 +145,7 @@ public class Player_Movement : MonoBehaviour
     public void Ragdoll()
 {
     Debug.Log("Ragdoll started");
+    Debug.Log(is_first_person);
 
     ghost.transform.position = player.transform.position;
     ghost.transform.rotation = player.transform.rotation;
@@ -429,11 +433,13 @@ public class Player_Movement : MonoBehaviour
             if (first_person_cam.activeSelf == true)
             {
 
+                is_first_person = true;
                 first_person_cam.SetActive(false);
                 third_person_cam.SetActive(true);
             }
             else
             {
+                is_first_person = false;
                 first_person_cam.SetActive(true);
                 third_person_cam.SetActive(false);
             }
