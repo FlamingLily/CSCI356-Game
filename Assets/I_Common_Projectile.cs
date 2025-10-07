@@ -6,5 +6,5 @@ public interface I_Common_Projectile
 
     void On_Enemy_Hit() { }
 
-    void On_Effected_Hit(){}
+    void On_Effected_Hit(GameObject hit){}
 }

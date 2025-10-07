@@ -62,7 +62,7 @@ public class Shotgun : MonoBehaviour, ICommon_Gun_Actions
                     // bullet_brains.Effect_Tag = "";
                 }
 
-            projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
+                projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
 
                 if (kickbackRoutine != null) StopCoroutine(kickbackRoutine);
                 kickbackRoutine = StartCoroutine(Gun_Kick());
@@ -137,4 +137,8 @@ public class Shotgun : MonoBehaviour, ICommon_Gun_Actions
     {
     }
 
+   public void Do_Magic(GameObject target)
+    {
+        
+    }
 }

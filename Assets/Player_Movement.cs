@@ -245,7 +245,9 @@ public class Player_Movement : MonoBehaviour
         foreach (var environment_collider in environment_colliders_in_radius)
         {
             GameObject environment_object_in_radius = environment_collider.gameObject;
-            if (environment_object_in_radius.CompareTag("hurter"))
+            // if (environment_object_in_radius.CompareTag("hurter"))
+            Hurter hurter = environment_object_in_radius.GetComponent<Hurter>();
+            if (hurter != null && hurter.isActiveAndEnabled)
             {
                 Hurter hurterScript = environment_object_in_radius.GetComponent<Hurter>();
                 Debug.Log("PLAYER BEFORE HURT CALL");
@@ -271,7 +273,7 @@ public class Player_Movement : MonoBehaviour
                     Rigidbody new_rb = nearby.attachedRigidbody;
                     if (rb != null)
                     {
-                        rb.AddExplosionForce(200 * 20.0f, environment_object_in_radius.transform.position, 25.0f);
+                        // rb.AddExplosionForce(200 * 20.0f, environment_object_in_radius.transform.position, 25.0f);
                     }
                 }
                 // Vector3 hitDirection = (transform.position - environment_object_in_radius.transform.position).normalized;

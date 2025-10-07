@@ -6,6 +6,8 @@ public interface ICommon_Gun_Actions
     void Fire();
     void Reload();
 
+     void Do_Magic(GameObject target);
+
     void Scope_in(); //shift?
     void Scope_out(); //shift?
 

@@ -5,8 +5,15 @@ public class Magic_Bullet : MonoBehaviour, I_Common_Projectile
 {
     public float damage;
 
+
+
     public String Enemy_Tag;
     public String Effect_Tag; //i.e Freezable etc (?)
+
+        public GameObject shooter;
+    // public MonoBehaviour shooterScript;
+
+    // public ICommon_Gun_Actions common_gun;
 
 
     void OnCollisionEnter(Collision collision)
@@ -21,7 +28,7 @@ public class Magic_Bullet : MonoBehaviour, I_Common_Projectile
         else if (collision.gameObject.CompareTag(Effect_Tag))
         {
 
-            On_Effected_Hit();
+            On_Effected_Hit(collision.gameObject);
         }
 
         Destroy_Bullet();
@@ -38,9 +45,21 @@ public class Magic_Bullet : MonoBehaviour, I_Common_Projectile
         //get enemy monobehav and reduce health
     }
 
-    void On_Effected_Hit()
+    void On_Effected_Hit(GameObject hit)
     {
-        Debug.Log("hit effect");
+        Debug.Log("hit effect, calling parent");
+        // if (common_gun != null)
+        // {
+            
+            ICommon_Gun_Actions gun_interface = shooter.GetComponent<ICommon_Gun_Actions>();
+            gun_interface.Do_Magic(hit);
+        // }
+        // effector_collider.GetComponent<Renderer>().material = Resources.Load<Material>("Materials/Frozen");
+        // MonoBehaviour script = effector_collider.GetComponent<MonoBehaviour>();
+        // if (script != null)
+        // {
+        //     script.enabled = false;
+        // }
     }
 }
 

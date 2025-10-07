@@ -18,6 +18,8 @@ public class Magic : MonoBehaviour, ICommon_Gun_Actions
     Vector3 move = Vector3.zero;
 
 
+    public Material Frozen;
+
     public CharacterController playerController;
 
 
@@ -55,6 +57,10 @@ public class Magic : MonoBehaviour, ICommon_Gun_Actions
             {
                 GameObject projectile = Instantiate(projectilePrefab, barrelDirection.position, projectilePrefab.transform.rotation);
                 Magic_Bullet bullet_brains = projectile.GetComponent<Magic_Bullet>();
+                bullet_brains.shooter = this.gameObject;
+                // bullet_brains.shooterScript = this;
+
+
                 if (bullet_brains != null)
                 {
                     bullet_brains.damage = bullet_damage;
@@ -62,7 +68,7 @@ public class Magic : MonoBehaviour, ICommon_Gun_Actions
                     bullet_brains.Effect_Tag = "Freezable";
                 }
 
-            projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
+                projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
 
                 if (kickbackRoutine != null) StopCoroutine(kickbackRoutine);
                 kickbackRoutine = StartCoroutine(Gun_Kick());
@@ -77,6 +83,16 @@ public class Magic : MonoBehaviour, ICommon_Gun_Actions
         }
 
 
+    }
+
+    public void Do_Magic(GameObject target)
+    {
+        target.GetComponent<Renderer>().material = Frozen;
+        MonoBehaviour script = target.GetComponent<MonoBehaviour>();
+        if (script != null)
+        {
+            script.enabled = false;
+        }
     }
 
     IEnumerator Gun_Kick()

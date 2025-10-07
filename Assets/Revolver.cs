@@ -63,7 +63,7 @@ public class Revolver : MonoBehaviour, ICommon_Gun_Actions
                     // bullet_brains.Effect_Tag = "";
                 }
 
-            projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
+                projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
 
                 if (kickbackRoutine != null) StopCoroutine(kickbackRoutine);
                 kickbackRoutine = StartCoroutine(Gun_Kick());
@@ -138,6 +138,11 @@ public class Revolver : MonoBehaviour, ICommon_Gun_Actions
 
     void Update()
     {
+    }
+    
+       public void Do_Magic(GameObject target)
+    {
+        
     }
 
 }

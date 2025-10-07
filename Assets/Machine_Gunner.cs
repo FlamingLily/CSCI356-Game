@@ -97,4 +97,9 @@ public class Machine_Gunner : MonoBehaviour, ICommon_Gun_Actions
     {
 
     }
+
+       public void Do_Magic(GameObject target)
+    {
+        
+    }
 }
