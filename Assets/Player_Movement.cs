@@ -143,33 +143,33 @@ public class Player_Movement : MonoBehaviour
     }
 
     public void Ragdoll()
-{
-    Debug.Log("Ragdoll started");
-    Debug.Log(is_first_person);
+    {
+        Debug.Log("Ragdoll started");
+        Debug.Log(is_first_person);
 
-    ghost.transform.position = player.transform.position;
-    ghost.transform.rotation = player.transform.rotation;
+        ghost.transform.position = player.transform.position;
+        ghost.transform.rotation = player.transform.rotation;
 
-    Ragdoll ragdollBehaviour = ghost.GetComponent<Ragdoll>();
-    ragdollBehaviour.horizontalRot = this.horizontalRot; 
-    ragdollBehaviour.verticalRot = this.verticalRot;
-    
-    first_person_cam_ghost.SetActive(first_person_cam.activeSelf);
-    third_person_cam_ghost.SetActive(third_person_cam.activeSelf);
+        Ragdoll ragdollBehaviour = ghost.GetComponent<Ragdoll>();
+        ragdollBehaviour.horizontalRot = this.horizontalRot;
+        ragdollBehaviour.verticalRot = this.verticalRot;
 
-    first_person_cam_ghost.transform.position = first_person_cam.transform.position;
-    first_person_cam_ghost.transform.rotation = first_person_cam.transform.rotation;
-    third_person_cam_ghost.transform.position = third_person_cam.transform.position;
-    third_person_cam_ghost.transform.rotation = third_person_cam.transform.rotation;
+        first_person_cam_ghost.SetActive(first_person_cam.activeSelf);
+        third_person_cam_ghost.SetActive(third_person_cam.activeSelf);
 
-    first_person_cam.SetActive(false);
-    third_person_cam.SetActive(false);
-    player_input_enabled = false;
+        first_person_cam_ghost.transform.position = first_person_cam.transform.position;
+        first_person_cam_ghost.transform.rotation = first_person_cam.transform.rotation;
+        third_person_cam_ghost.transform.position = third_person_cam.transform.position;
+        third_person_cam_ghost.transform.rotation = third_person_cam.transform.rotation;
 
-    this.gameObject.SetActive(false);
+        first_person_cam.SetActive(false);
+        third_person_cam.SetActive(false);
+        player_input_enabled = false;
 
-    ghost.SetActive(true);
-}
+        this.gameObject.SetActive(false);
+
+        ghost.SetActive(true);
+    }
 
     // public void Ragdoll_Recover()
     // {
@@ -280,6 +280,16 @@ public class Player_Movement : MonoBehaviour
                 // rb.AddForce(hitDirection * 20f, ForceMode.Impulse);
                 Debug.Log("yeet player");
             }
+            else if (environment_object_in_radius.name == "Spring_Up")
+            {
+                Debug.Log("SPRING UP");
+                float spring_force = 70.0f;
+                float spring_mag = Mathf.Sqrt(spring_force * -2.0f * gravityValue);
+
+                Vector3 spring_direction = environment_object_in_radius.transform.forward.normalized;
+                playerVelocity = spring_direction * spring_mag;
+
+            }
         }
         guns_in_interactable_radius.RemoveAll(gun => !current_guns.Contains(gun));
     }
@@ -382,7 +392,8 @@ public class Player_Movement : MonoBehaviour
             // this.transform.position = first_gun_cycle_enter;
         }
 
-        if (controller.isGrounded || Mathf.Abs(playerVelocity.y) <= 0.01f)
+        // if (controller.isGrounded || Mathf.Abs(playerVelocity.y) <= 0.01f)
+        if (controller.isGrounded || Mathf.Abs(playerVelocity.y) <= 0.0001f)
         {
             groundedPlayer = true;
         }
