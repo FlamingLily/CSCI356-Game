@@ -15,7 +15,7 @@ public class Generic_Bullet : MonoBehaviour, I_Common_Projectile
 
         if (collision.gameObject.CompareTag(Enemy_Tag))
         {
-            On_Enemy_Hit();
+            On_Enemy_Hit(collision.gameObject);
         }
         else if (collision.gameObject.CompareTag("Exploder"))
         {
@@ -69,10 +69,10 @@ public class Generic_Bullet : MonoBehaviour, I_Common_Projectile
             Explode(explodePos);
     }
 
-    void On_Enemy_Hit()
+    void On_Enemy_Hit(GameObject hitEnemy)
     {
         Debug.Log("hit enemy");
-        //get enemy monobehav and reduce health
+        hitEnemy.GetComponent<AIBehaviour>().TakeDamage(damage);
     }
 
     void On_Effected_Hit()

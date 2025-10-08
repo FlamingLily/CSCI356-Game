@@ -422,22 +422,22 @@ public class Player_Movement : MonoBehaviour
             if (Input.GetKey(KeyCode.W))
             {
                 move += player.transform.forward;
-                Debug.Log("FORWARD");
+               // Debug.Log("FORWARD");
             }
             else if (Input.GetKey(KeyCode.A))
             {
                 move += -player.transform.right;
-                Debug.Log("LEFT");
+                //Debug.Log("LEFT");
             }
             else if (Input.GetKey(KeyCode.S))
             {
                 move += -player.transform.forward;
-                Debug.Log("BACK");
+                //Debug.Log("BACK");
             }
             else if (Input.GetKey(KeyCode.D))
             {
                 move += player.transform.right;
-                Debug.Log("RIGHT");
+               // Debug.Log("RIGHT");
             }
         }
 
