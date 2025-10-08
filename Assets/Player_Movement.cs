@@ -179,18 +179,27 @@ public class Player_Movement : MonoBehaviour
     private Vector3 return_to_floor_position;
     void Pick_Up_Gun(GameObject new_gun)
     {
+        Quaternion new_gun_to_floor_rotation = new_gun.transform.rotation;
+        Vector3 new_gun_to_floor_position = new_gun.transform.position;
+
         if (currently_held_gun != null)
         {
             currently_held_gun.transform.SetParent(null);
-            currently_held_gun.transform.position = return_to_floor_position;
-            currently_held_gun.transform.rotation = return_to_floor_rotation;
+            // currently_held_gun.transform.position = return_to_floor_position;
+            // currently_held_gun.transform.rotation = return_to_floor_rotation;
+            currently_held_gun.transform.position = new_gun_to_floor_position;
+            currently_held_gun.transform.rotation = new_gun_to_floor_rotation;
             currently_held_gun.GetComponent<Collider>().enabled = true;
             currently_held_gun = null;
         }
 
 
-        return_to_floor_position = new_gun.transform.position;
-        return_to_floor_rotation = new_gun.transform.rotation;
+        // return_to_floor_position = new_gun.transform.position;
+        // return_to_floor_rotation = new_gun.transform.rotation;
+
+        return_to_floor_position = new_gun_to_floor_position;
+        return_to_floor_rotation = new_gun_to_floor_rotation;
+
 
         guns_in_interactable_radius.RemoveAt(0);
 
@@ -200,8 +209,8 @@ public class Player_Movement : MonoBehaviour
         Transform gun_grab_point = currently_held_gun.transform.Find("Grab_Point");
 
 
-        Vector3 offset_world = currently_held_gun.transform.position - gun_grab_point.position;
-        Quaternion rotation_offset = Quaternion.Inverse(gun_grab_point.rotation) * currently_held_gun.transform.rotation;
+        // Vector3 offset_world = currently_held_gun.transform.position - gun_grab_point.position;
+        // Quaternion rotation_offset = Quaternion.Inverse(gun_grab_point.rotation) * currently_held_gun.transform.rotation;
 
 
         currently_held_gun.transform.SetParent(grab_point, true);
