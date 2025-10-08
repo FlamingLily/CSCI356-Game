@@ -21,7 +21,7 @@ public class Hurter : MonoBehaviour
         {
 
             last_hurt_tick = Time.time;
-            player.Loose_Health_Points(damage_points);
+            player.Loose_Health_Points(damage_points, hurt_tick_speed);
             Debug.Log("HURT HURT");
         }
         if (insta_kill)

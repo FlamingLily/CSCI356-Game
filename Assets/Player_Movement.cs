@@ -116,17 +116,25 @@ public class Player_Movement : MonoBehaviour
     }
 
 
-    public void Loose_Health_Points(int damage_taken)
+    public void Loose_Health_Points(int damage_taken, float hurt_tick)
     {
         if (Health <= 0)
         {
+            hurt_overlay.SetActive(false);
             Die();
         }
         else
         {
             Health = Health - damage_taken;
+            hurt_overlay.SetActive(true);
+            Invoke("Hide_Hurt_Overlay",hurt_tick/2);
         }
         Debug.Log("TAKE DAMAGE" + damage_taken + " from " + Health);
+    }
+
+    public void Hide_Hurt_Overlay()
+    {
+        hurt_overlay.SetActive(false);
     }
 
     public void Die()
