@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -42,6 +43,16 @@ public class Ragdoll : MonoBehaviour
     private Rigidbody ragdoll_rigid;
     private Player_Movement playerMovement;
 
+    public AudioSource ragdoll_audio_source;
+
+    public AudioClip ragdoll_audio;
+    public AudioClip ragdoll_recover_audio;
+    public AudioClip dead_audio;
+
+    private bool isPlayerAlive = true;
+    private bool hasDeathGongPlayed = false;
+
+
     private float ragdollStartTime;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -49,6 +60,7 @@ public class Ragdoll : MonoBehaviour
 
 
 
+        Play_Ragdoll_Sound();
         playerMovement = playerGameObject.GetComponent<Player_Movement>();
 
         sensitivityHor = playerMovement.sensitivityHor;
@@ -83,6 +95,11 @@ public class Ragdoll : MonoBehaviour
         //     Debug.Log("Ragdoll time limit exceeded - forcing recovery");
         //     Ragdoll_Recover();
         // }
+        if (!isPlayerAlive && !hasDeathGongPlayed)
+        {
+            ragdoll_audio_source.PlayOneShot(dead_audio, 1);
+            hasDeathGongPlayed = true;
+        }
         if (isRecovering)
         {
             Ragdoll_Recover();
@@ -111,10 +128,20 @@ public class Ragdoll : MonoBehaviour
         default_player_stance = playerGameObject.transform;
         default_first_person_stance = playerMovement.first_person_cameraTransform;
         default_third_person_stance = playerMovement.third_person_cameraTransform;
+        isPlayerAlive = playerMovement.isDead;
+        Play_Ragdoll_Sound();
+
+
+    }
+
+    void Play_Ragdoll_Sound()
+    {
+        ragdoll_audio_source.PlayOneShot(ragdoll_audio, 0.8f);
     }
 
     void FixedUpdate()
     {
+
         if (ragdoll_rigid != null)
         {
 
@@ -139,12 +166,19 @@ public class Ragdoll : MonoBehaviour
         {
             isRecovering = true;
             recoveryStartTime = Time.time;
+            ragdoll_audio_source.PlayOneShot(ragdoll_recover_audio, 0.7f);
+
+
+        }
+        else
+        {
+            // ragdoll_audio_source.PlayOneShot(dead_audio, 1);
         }
     }
 
     void Ragdoll_Recover()
     {
-
+        // ragdoll_audio_source.PlayOneShot(ragdoll_recover_audio, 0.3f);
 
         playerGameObject.transform.position = this.gameObject.transform.position;
 
@@ -162,29 +196,29 @@ public class Ragdoll : MonoBehaviour
         );
         // if (playerMovement.is_first_person == true)
         // {
-                        first_person_cam_ghost.transform.rotation = Quaternion.Slerp(
-                        playerMovement.third_person_cameraTransform.transform.rotation,
-                        playerMovement.third_person_cameraTransform.rotation,
-                        1f - Mathf.Exp(-lerp_speed * Time.deltaTime));
+        first_person_cam_ghost.transform.rotation = Quaternion.Slerp(
+        playerMovement.third_person_cameraTransform.transform.rotation,
+        playerMovement.third_person_cameraTransform.rotation,
+        1f - Mathf.Exp(-lerp_speed * Time.deltaTime));
 
 
-            first_person_cam_ghost.transform.position = Vector3.Lerp(
-            third_person_cam_ghost.transform.position,
-            default_third_person_stance.position,
-            1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
+        first_person_cam_ghost.transform.position = Vector3.Lerp(
+        third_person_cam_ghost.transform.position,
+        default_third_person_stance.position,
+        1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
 );
-    
-
-            third_person_cam_ghost.transform.rotation = Quaternion.Slerp(
-                        playerMovement.third_person_cameraTransform.transform.rotation,
-                        playerMovement.third_person_cameraTransform.rotation,
-                        1f - Mathf.Exp(-lerp_speed * Time.deltaTime));
 
 
-            third_person_cam_ghost.transform.position = Vector3.Lerp(
-            third_person_cam_ghost.transform.position,
-            default_third_person_stance.position,
-            1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
+        third_person_cam_ghost.transform.rotation = Quaternion.Slerp(
+                    playerMovement.third_person_cameraTransform.transform.rotation,
+                    playerMovement.third_person_cameraTransform.rotation,
+                    1f - Mathf.Exp(-lerp_speed * Time.deltaTime));
+
+
+        third_person_cam_ghost.transform.position = Vector3.Lerp(
+        third_person_cam_ghost.transform.position,
+        default_third_person_stance.position,
+        1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
 );
         // }
 
@@ -212,6 +246,7 @@ public class Ragdoll : MonoBehaviour
     void Return_to_alive()
     {
         Debug.Log(playerMovement.is_first_person);
+
         // playerGameObject.transform.position = this.gameObject.transform.position;
         playerGameObject.SetActive(true);
         // if (playerMovement.is_first_person == true)
@@ -221,8 +256,8 @@ public class Ragdoll : MonoBehaviour
         // }
         // else
         // {
-            playerMovement.first_person_cam.SetActive(false);
-            playerMovement.third_person_cam.SetActive(true);
+        playerMovement.first_person_cam.SetActive(false);
+        playerMovement.third_person_cam.SetActive(true);
         // }
 
 

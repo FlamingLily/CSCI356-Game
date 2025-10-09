@@ -32,6 +32,11 @@ public class Sniper : MonoBehaviour, ICommon_Gun_Actions
 
     public float bullet_damage;
 
+        public AudioSource player_audio_source;
+
+public AudioClip fire_audio;
+    public AudioClip scope_in_audio;
+    public AudioClip scope_out_audio;
 
 
     public Transform Get_Grab_Point()
@@ -66,6 +71,7 @@ public class Sniper : MonoBehaviour, ICommon_Gun_Actions
                 }
 
             projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
+                   player_audio_source.PlayOneShot(fire_audio, 1);
 
                 if (kickbackRoutine != null) StopCoroutine(kickbackRoutine);
                 kickbackRoutine = StartCoroutine(Gun_Kick());
@@ -114,16 +120,18 @@ public class Sniper : MonoBehaviour, ICommon_Gun_Actions
         kickbackRoutine = null;
     }
 
-    public void Scope_in()
+      public void Scope_in()
     {
-        Debug.Log("REVOLVER SCOPE IN");
+        Debug.Log("MACHINE GUN SCOPE IN");
+        player_audio_source.PlayOneShot(scope_in_audio, 1);
     }
 
     public void Scope_out()
     {
-        Debug.Log("revolver SCOPE out");
-
+        Debug.Log("MACHINE GUN SCOPE OUT");
+        player_audio_source.PlayOneShot(scope_out_audio, 1);
     }
+
 
 
     public void Reload()

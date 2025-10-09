@@ -14,6 +14,20 @@ public class Player_Movement : MonoBehaviour
 
 
 
+
+    public AudioSource player_audio_source;
+
+public AudioClip jump_audio;
+    public AudioClip heal_audio;
+    public AudioClip hurter_audio;
+public AudioClip pick_up_gun;
+    public AudioClip hit_audio;
+
+    public AudioClip ragdoll_audio;
+    public AudioClip ragdoll_recover_audio;
+    public AudioClip dead_audio;
+
+
     public GameObject corpse;
     public GameObject alive;
     public GameObject ghost;
@@ -75,6 +89,8 @@ public class Player_Movement : MonoBehaviour
 
     public bool player_input_enabled = true;
 
+    public bool isDead = false;
+
 
     private Quaternion targetYawRotation;
     private Quaternion targetPitchRotation;
@@ -88,7 +104,7 @@ public class Player_Movement : MonoBehaviour
 
     void Start()
     {
-
+        ghost.SetActive(true);
         death_screen.SetActive(false);
         Rigidbody rb = this.GetComponent<Rigidbody>();
         rb.isKinematic = true;
@@ -127,7 +143,7 @@ public class Player_Movement : MonoBehaviour
         {
             Health = Health - damage_taken;
             hurt_overlay.SetActive(true);
-            Invoke("Hide_Hurt_Overlay",hurt_tick/2);
+            Invoke("Hide_Hurt_Overlay", hurt_tick / 2);
         }
         Debug.Log("TAKE DAMAGE" + damage_taken + " from " + Health);
     }
@@ -140,7 +156,9 @@ public class Player_Movement : MonoBehaviour
     public void Die()
     {
         // corpse.SetActive(true);
+        // player_audio_source.PlayOneShot(dead_audio, 1);
         death_screen.SetActive(true);
+        isDead = true;
         Debug.Log("DIE");
         Ragdoll();
         // Rigidbody rb = this.GetComponent<Rigidbody>();
@@ -150,8 +168,11 @@ public class Player_Movement : MonoBehaviour
         // rb.isKinematic = false;
     }
 
+  
+
     public void Ragdoll()
     {
+        // player_audio_source.PlayOneShot(ragdoll_audio, 1);
         Debug.Log("Ragdoll started");
         Debug.Log(is_first_person);
 
@@ -202,6 +223,7 @@ public class Player_Movement : MonoBehaviour
         }
 
 
+        player_audio_source.PlayOneShot(pick_up_gun, 1);
         // return_to_floor_position = new_gun.transform.position;
         // return_to_floor_rotation = new_gun.transform.rotation;
 
@@ -404,6 +426,7 @@ public class Player_Movement : MonoBehaviour
             // first_gun_cycle_enter = this.transform.position;
             if (guns_in_interactable_radius.Count > 0)
             {
+
                 Pick_Up_Gun(guns_in_interactable_radius[0]);
             }
             // this.transform.position = first_gun_cycle_enter;
@@ -424,6 +447,7 @@ public class Player_Movement : MonoBehaviour
         {
             if (current_jumps < consecutive_jumps_allowed)
             {
+                player_audio_source.PlayOneShot(jump_audio, 1);
                 current_jumps++;
                 playerVelocity.y = Mathf.Sqrt(jumpHeight * -2.0f * gravityValue);
             }
@@ -485,6 +509,7 @@ public class Player_Movement : MonoBehaviour
                 if (!isScoped)
                 {
                     isScoped = true;
+                    gun_interface.Scope_in();
                 }
 
                 Transform scopeTransform = gun_interface.Get_Scope();
@@ -495,6 +520,7 @@ public class Player_Movement : MonoBehaviour
                         scopeTransform.position,
                         scopeTransitionSpeed * Time.deltaTime
                     );
+        
                 }
             }
             else
@@ -502,6 +528,7 @@ public class Player_Movement : MonoBehaviour
                 if (isScoped)
                 {
                     isScoped = false;
+                    gun_interface.Scope_out();
                 }
 
                 first_person_cameraTransform.localPosition = Vector3.Lerp(

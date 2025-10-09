@@ -20,6 +20,12 @@ public class Shotgun : MonoBehaviour, ICommon_Gun_Actions
     public CharacterController playerController;
 
 
+        public AudioSource player_audio_source;
+
+public AudioClip fire_audio;
+    public AudioClip scope_in_audio;
+    public AudioClip scope_out_audio;
+
     public GameObject projectilePrefab = null;
     public float launchForce = 0.0f;
     float lastFired = 0;
@@ -63,6 +69,7 @@ public class Shotgun : MonoBehaviour, ICommon_Gun_Actions
                 }
 
                 projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
+                       player_audio_source.PlayOneShot(fire_audio, 1);
 
                 if (kickbackRoutine != null) StopCoroutine(kickbackRoutine);
                 kickbackRoutine = StartCoroutine(Gun_Kick());
@@ -111,16 +118,18 @@ public class Shotgun : MonoBehaviour, ICommon_Gun_Actions
         kickbackRoutine = null;
     }
 
-    public void Scope_in()
+      public void Scope_in()
     {
-        Debug.Log("REVOLVER SCOPE IN");
+        Debug.Log("MACHINE GUN SCOPE IN");
+        player_audio_source.PlayOneShot(scope_in_audio, 1);
     }
 
     public void Scope_out()
     {
-        Debug.Log("revolver SCOPE out");
-
+        Debug.Log("MACHINE GUN SCOPE OUT");
+        player_audio_source.PlayOneShot(scope_out_audio, 1);
     }
+
 
 
     public void Reload()
