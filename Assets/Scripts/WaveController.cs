@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using static UnityEngine.GameObject;
 
 public class WaveController : MonoBehaviour
 {
@@ -180,8 +181,27 @@ public class WaveController : MonoBehaviour
     void ActivateSpawner(string EnemyToSpawn)
     {
         Debug.Log("Spawning " + EnemyToSpawn);
-        int spawnerInt = Random.Range(0, totalSpawners);
-        Transform thisSpawner = transform.GetChild(spawnerInt);
+        int spawnerInt;
+        int checkCycles = 0; //sanity
+        bool spawnerFound = false;
+        Transform thisSpawner = null;
+        while (!spawnerFound)
+        {
+            spawnerInt = Random.Range(0, totalSpawners);
+            thisSpawner = transform.GetChild(spawnerInt);
+            if (Vector3.Distance(thisSpawner.position, FindGameObjectWithTag("Player").transform.position) > 50f)
+            {
+                spawnerFound = true;
+                break;
+            }
+            checkCycles++;
+            if (checkCycles > 100)
+            {
+                Debug.LogWarning("Too many attempts to find a valid spawner.");
+                spawnerFound = true;
+                break;
+            }
+        }
         thisSpawner.GetComponent<EnemySpawner>().AddToSpawnQueue(EnemyToSpawn);
     }
     public void EnemyKilled()
