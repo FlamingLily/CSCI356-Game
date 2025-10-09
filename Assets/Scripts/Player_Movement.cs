@@ -494,7 +494,7 @@ public class Player_Movement : MonoBehaviour
                 );
             }
 
-            if (Input.GetKey(KeyCode.V))
+            if (Input.GetKey(KeyCode.V) || Input.GetMouseButton(0))
             {
                 gun_interface.Fire();
             }
