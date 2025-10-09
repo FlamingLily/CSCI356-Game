@@ -23,7 +23,7 @@ public class Magic_Bullet : MonoBehaviour, I_Common_Projectile
         if (collision.gameObject.CompareTag(Enemy_Tag))
         {
 
-            On_Enemy_Hit();
+            On_Enemy_Hit(collision.gameObject);
         }
         else if (collision.gameObject.CompareTag(Effect_Tag))
         {
@@ -39,10 +39,10 @@ public class Magic_Bullet : MonoBehaviour, I_Common_Projectile
         Destroy(this.gameObject);
     }
 
-    void On_Enemy_Hit()
+    void On_Enemy_Hit(GameObject hitEnemy)
     {
         Debug.Log("hit enemy");
-        //get enemy monobehav and reduce health
+        hitEnemy.GetComponent<AIBehaviour>().TakeDamage(damage);
     }
 
     void On_Effected_Hit(GameObject hit)
