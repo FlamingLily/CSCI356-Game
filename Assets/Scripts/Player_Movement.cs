@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using NUnit.Framework;
 
-public class Player_Movement : MonoBehaviour
+public class Player_Movement : MonoBehaviour, I_TakeDamage
 {
     public enum RotationAxes
     {
@@ -25,7 +25,7 @@ public class Player_Movement : MonoBehaviour
     public float move_speed;
     public GameObject player;
 
-    public int Health;
+    public float Health;
 
     private List<GameObject> guns_in_interactable_radius = new List<GameObject>();
 
@@ -116,7 +116,7 @@ public class Player_Movement : MonoBehaviour
     }
 
 
-    public void Loose_Health_Points(int damage_taken)
+    public void Loose_Health_Points(float damage_taken)
     {
         if (Health <= 0)
         {
@@ -132,6 +132,12 @@ public class Player_Movement : MonoBehaviour
     public void Die()
     {
         // corpse.SetActive(true);
+        if(is_first_person)
+        {
+            is_first_person = false;
+            first_person_cam.SetActive(true);
+            third_person_cam.SetActive(false);
+        }
         death_screen.SetActive(true);
         Debug.Log("DIE");
         Ragdoll();
@@ -422,7 +428,7 @@ public class Player_Movement : MonoBehaviour
             if (Input.GetKey(KeyCode.W))
             {
                 move += player.transform.forward;
-               // Debug.Log("FORWARD");
+                // Debug.Log("FORWARD");
             }
             else if (Input.GetKey(KeyCode.A))
             {
@@ -437,7 +443,7 @@ public class Player_Movement : MonoBehaviour
             else if (Input.GetKey(KeyCode.D))
             {
                 move += player.transform.right;
-               // Debug.Log("RIGHT");
+                // Debug.Log("RIGHT");
             }
         }
 
@@ -517,5 +523,10 @@ public class Player_Movement : MonoBehaviour
         }
     }
 
+    public void TakeDamage(float damage)
+    {
+        Loose_Health_Points(damage);
+        // StartCoroutine(HurtOverlay());
+    }
 
 }
