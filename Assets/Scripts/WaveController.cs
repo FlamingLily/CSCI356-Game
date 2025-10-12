@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using static UnityEngine.GameObject;
+using TMPro;
 
 public class WaveController : MonoBehaviour
 {
@@ -18,7 +19,7 @@ public class WaveController : MonoBehaviour
     };
     int enemiesRemaining = 0;
     int totalSpawners;
-
+    [SerializeField] GameObject enemiesLabel;
 
 
 
@@ -46,6 +47,7 @@ public class WaveController : MonoBehaviour
     void GetEnemiesRemaining()
     {
         enemiesRemaining = enemiesThisWave["Soldier"] + enemiesThisWave["Melee"] + enemiesThisWave["Swarmer"] + enemiesThisWave["Cloaker"] + enemiesThisWave["Warper"] + enemiesThisWave["Tank"];
+        enemiesLabel.GetComponent<TMP_Text>().text = enemiesRemaining.ToString();
     }
     void SetupWave()
     {
@@ -211,6 +213,6 @@ public class WaveController : MonoBehaviour
     public void EnemyKilled()
     {
         enemiesRemaining--;
-        Debug.Log("Enemy killed, " + enemiesRemaining + " remaining.");
+        enemiesLabel.GetComponent<TMP_Text>().text = enemiesRemaining.ToString();
     }
 }

@@ -135,7 +135,7 @@ public class Ragdoll : MonoBehaviour
 
     void StartRecovery()
     {
-        if (playerMovement.Health > 0)
+        if (playerMovement.health > 0)
         {
             isRecovering = true;
             recoveryStartTime = Time.time;

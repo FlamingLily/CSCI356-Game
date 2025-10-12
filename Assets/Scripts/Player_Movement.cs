@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using NUnit.Framework;
+using TMPro;
 
 public class Player_Movement : MonoBehaviour, I_TakeDamage
 {
@@ -14,6 +15,8 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
 
 
+    public GameObject healthLabel;
+
     public GameObject corpse;
     public GameObject alive;
     public GameObject ghost;
@@ -25,7 +28,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
     public float move_speed;
     public GameObject player;
 
-    public float Health;
+    public float health;
 
     private List<GameObject> guns_in_interactable_radius = new List<GameObject>();
 
@@ -118,15 +121,15 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
     public void Loose_Health_Points(float damage_taken)
     {
-        if (Health <= 0)
+        if (health <= 0)
         {
             Die();
         }
         else
         {
-            Health = Health - damage_taken;
+            health = health - damage_taken;
         }
-        Debug.Log("TAKE DAMAGE" + damage_taken + " from " + Health);
+        Debug.Log("TAKE DAMAGE" + damage_taken + " from " + health);
     }
 
     public void Die()
@@ -526,6 +529,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
     public void TakeDamage(float damage)
     {
         Loose_Health_Points(damage);
+        healthLabel.GetComponent<TMP_Text>().text = health.ToString();
         // StartCoroutine(HurtOverlay());
     }
 
