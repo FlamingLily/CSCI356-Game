@@ -7747,7 +7747,7 @@ MonoBehaviour:
   gun_grab_point: {fileID: 357164584}
   scopePosition: {fileID: 1396478844}
   barrelDirection: {fileID: 678991402}
-  bullet_damage: 1
+  bullet_damage: 2
   bullet_spray: 0.1
   projectilePrefab: {fileID: 1303046155726201041, guid: 6869b95a25a7f41b8ae68fb717677138, type: 3}
   launchForce: 60000

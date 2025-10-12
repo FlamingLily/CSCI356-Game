@@ -504,7 +504,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
             {
                 gun_interface.Fire();
             }
-            if (Input.GetKeyUp(KeyCode.V))
+            if (Input.GetKeyUp(KeyCode.V) || Input.GetMouseButtonUp(0))
             {
                 gun_interface.Reload();
             }
