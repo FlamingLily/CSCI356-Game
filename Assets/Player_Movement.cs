@@ -70,6 +70,8 @@ public class Player_Movement : MonoBehaviour
 
     public int current_jumps = 0;
 
+    private GameObject respawners_parent_holder;
+
     private GameObject currently_held_gun;
 
 
@@ -113,6 +115,7 @@ public class Player_Movement : MonoBehaviour
 
     void Start()
     {
+
         ghost.SetActive(true);
         death_screen.SetActive(false);
         Rigidbody rb = this.GetComponent<Rigidbody>();
@@ -136,6 +139,8 @@ public class Player_Movement : MonoBehaviour
 
         corpse.SetActive(false);
         ghost.SetActive(false);
+
+        respawners_parent_holder = GameObject.Find("Respawners");
 
         // Cursor.lockState = CursorLockMode.Locked;
     }
@@ -168,6 +173,9 @@ public class Player_Movement : MonoBehaviour
         // corpse.SetActive(true);
         // player_audio_source.PlayOneShot(dead_audio, 1);
         death_screen.SetActive(true);
+        Health = 0;
+        health_slider.value = Health;
+
         isDead = true;
         Debug.Log("DIE");
         Ragdoll();
@@ -270,6 +278,39 @@ public class Player_Movement : MonoBehaviour
 
     void Heal() { }
 
+    public void Respawn_Player()
+    {
+        int respawners_in_scene = respawners_parent_holder.transform.childCount;
+        Debug.Log($"WOKE {respawners_in_scene}");
+        int random_respawn_index = Random.Range(0, respawners_in_scene);
+        Transform chosen_respawn_anchor = respawners_parent_holder.transform.GetChild(random_respawn_index);
+        // playerGameObject.transform.position = this.gameObject.transform.position;
+
+        this.gameObject.transform.position = chosen_respawn_anchor.transform.position;
+        this.gameObject.SetActive(true);
+        // if (playerMovement.is_first_person == true)
+        // {
+        //     playerMovement.first_person_cam.SetActive(true);
+        //     playerMovement.third_person_cam.SetActive(false);
+        // }
+        // else
+        // {
+        this.first_person_cam.SetActive(false);
+        this.third_person_cam.SetActive(true);
+        // }
+
+
+        this.player_input_enabled = true;
+        ghost.SetActive(false);
+
+        death_screen.SetActive(false);
+        Health = Full_Health;
+        health_slider.value = Health;
+
+        isDead = false;
+        player_audio_source.PlayOneShot(full_heal, 0.8f);
+    }
+
 
     void Detect_in_Radius()
     {
@@ -337,7 +378,7 @@ public class Player_Movement : MonoBehaviour
 
                 Vector3 spring_direction = environment_object_in_radius.transform.forward.normalized;
                 playerVelocity = spring_direction * spring_mag;
-                player_audio_source.PlayOneShot(sping_up_audio,0.8f);
+                player_audio_source.PlayOneShot(sping_up_audio, 0.8f);
 
             }
             else if (environment_object_in_radius.CompareTag("Heal"))
