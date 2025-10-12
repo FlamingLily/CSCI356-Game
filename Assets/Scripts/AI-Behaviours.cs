@@ -41,6 +41,7 @@ public class AIBehaviour : MonoBehaviour, I_TakeDamage
         targetPlayer = FindGameObjectWithTag("Player");
         navAgent = GetComponent<NavMeshAgent>();
         rdr = GetComponent<Renderer>();
+        rdr.material.color = new Color(0.55f, 0f, 0f, 1f);
         nextAttack = Time.time;
         specialTimer = Time.time + 10f; // Matters for warpers, not really for cloakers unless you're camping hard
 
@@ -218,23 +219,33 @@ public class AIBehaviour : MonoBehaviour, I_TakeDamage
             Approach(approachRange);
             HandleAttack();
         }
-        if (cloaked == "true")
+        if (health < 50f && cloaked == "false")
         {
-            Approach(approachRange);
-        }
-        if (health < 50f)
-        {
-            rdr.material.color = new Color(1f, 1f, 1f, 0.05f);
+            rdr.material.color = new Color(0.55f, 0f, 0f, 0.05f);
+            spawnedGun.GetComponent<Enemy_revolver>().Cloak();
             cloaked = "true";
             navAgent.speed = 30f;
             specialTimer = Time.time + 10f;
         }
-        if (cloaked == "true" && Time.time > specialTimer)
+        if (cloaked == "true" && Time.time >= specialTimer)
         {
-            rdr.material.color = new Color(1f, 1f, 1f, 1f);
+            rdr.material.color = new Color(0.55f, 0f, 0f, 1f);
+            spawnedGun.GetComponent<Enemy_revolver>().UnCloak();
             cloaked = "used";
             health = 100f;
         }
+        if (cloaked == "true")
+        {
+            if(Vector3.Distance(transform.position, targetPlayer.transform.position) > approachRange * 2)
+            {
+                Approach(approachRange);
+            }
+            else
+            {
+                Wander();
+            }
+        }
+       
     }
 
     void WarperUpdate()
@@ -258,6 +269,7 @@ public class AIBehaviour : MonoBehaviour, I_TakeDamage
 
     void Wander()
     {
+        navAgent.stoppingDistance = 0f;
 
         if (!navAgent.pathPending && navAgent.remainingDistance < 0.5f)
         {

@@ -35,6 +35,8 @@ public class Enemy_revolver : MonoBehaviour
         launchForce = 32000f;
         kick_back_force = 0.1f;
         kick_back_time = 0.1f;
+        Renderer rdr = GetComponent<Renderer>();
+        rdr.material.color = new Color(0.55f, 0f, 0f, 1f);
     }
     public Transform Get_Grab_Point()
     {
@@ -93,5 +95,17 @@ public class Enemy_revolver : MonoBehaviour
 
         transform.localPosition = startPos;
         kickbackRoutine = null;
+    }
+
+    public void Cloak()
+    {
+        Renderer rdr = GetComponent<Renderer>();
+        rdr.material.color = new Color(0.55f, 0f, 0f, 0.05f);
+    }
+
+    public void UnCloak()
+    {
+        Renderer rdr = GetComponent<Renderer>();
+        rdr.material.color = new Color(0.55f, 0f, 0f, 1f);
     }
 }

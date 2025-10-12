@@ -43,31 +43,35 @@ public class WaveController : MonoBehaviour
         }
     }
 
+    void GetEnemiesRemaining()
+    {
+        enemiesRemaining = enemiesThisWave["Soldier"] + enemiesThisWave["Melee"] + enemiesThisWave["Swarmer"] + enemiesThisWave["Cloaker"] + enemiesThisWave["Warper"] + enemiesThisWave["Tank"];
+    }
     void SetupWave()
     {
         switch (currentWave)
         {
             case 1:
                 enemiesThisWave["Soldier"] = 10;
-                enemiesRemaining = 10;
+                GetEnemiesRemaining();
                 break;
             case 2:
                 enemiesThisWave["Soldier"] = 15;
                 enemiesThisWave["Melee"] = 5;
-                enemiesRemaining = 20;
+                GetEnemiesRemaining();
                 break;
             case 3:
                 enemiesThisWave["Soldier"] = 10;
                 enemiesThisWave["Melee"] = 10;
                 enemiesThisWave["Swarmer"] = 10;
-                enemiesRemaining = 30;
+                GetEnemiesRemaining();
                 break;
             case 4:
                 enemiesThisWave["Soldier"] = 10;
                 enemiesThisWave["Melee"] = 10;
                 enemiesThisWave["Swarmer"] = 10;
                 enemiesThisWave["Cloaker"] = 5;
-                enemiesRemaining = 35;
+                GetEnemiesRemaining();
                 break;
             case 5:
                 enemiesThisWave["Soldier"] = 10;
@@ -75,7 +79,7 @@ public class WaveController : MonoBehaviour
                 enemiesThisWave["Swarmer"] = 10;
                 enemiesThisWave["Cloaker"] = 5;
                 enemiesThisWave["Warper"] = 5;
-                enemiesRemaining = 40;
+                GetEnemiesRemaining();
                 break;
             case 6:
                 enemiesThisWave["Soldier"] = 10;
@@ -84,7 +88,7 @@ public class WaveController : MonoBehaviour
                 enemiesThisWave["Cloaker"] = 5;
                 enemiesThisWave["Warper"] = 5;
                 enemiesThisWave["Tank"] = 1;
-                enemiesRemaining = 41;
+                GetEnemiesRemaining();
                 break;
             default: //Random
                 enemiesThisWave["Soldier"] = Random.Range(5, 10 + currentWave);
@@ -93,7 +97,7 @@ public class WaveController : MonoBehaviour
                 enemiesThisWave["Cloaker"] = Random.Range(0, 5 + currentWave / 2);
                 enemiesThisWave["Warper"] = Random.Range(0, 5 + currentWave / 2);
                 enemiesThisWave["Tank"] = Random.Range(0, 1 + currentWave / 5);
-                enemiesRemaining = enemiesThisWave["Soldier"] + enemiesThisWave["Melee"] + enemiesThisWave["Swarmer"] + enemiesThisWave["Cloaker"] + enemiesThisWave["Warper"] + enemiesThisWave["Tank"];
+                GetEnemiesRemaining();
                 break;
 
         }
