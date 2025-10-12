@@ -1216,12 +1216,15 @@ MonoBehaviour:
   player_audio_source: {fileID: 225771838}
   jump_audio: {fileID: 8300000, guid: fd71c136ff00c4367920cb35048a67d2, type: 3}
   heal_audio: {fileID: 8300000, guid: 468b4083ffab3409bad624d5b2c2a9c6, type: 3}
+  full_heal: {fileID: 8300000, guid: 0f75cf866e4994c29a839673e869e241, type: 3}
   hurter_audio: {fileID: 8300000, guid: 628bba1b9e5f94036819f5b44b6a8f77, type: 3}
   pick_up_gun: {fileID: 8300000, guid: 4694151d4f34b42a4a6af80537a42e67, type: 3}
   hit_audio: {fileID: 8300000, guid: 5a74bd41991744064bbbeb8d2fb9cb94, type: 3}
+  bullet_hit_auido: {fileID: 8300000, guid: 5a74bd41991744064bbbeb8d2fb9cb94, type: 3}
   ragdoll_audio: {fileID: 8300000, guid: 2ece4e59f66e14ec0b345b504024522e, type: 3}
   ragdoll_recover_audio: {fileID: 8300000, guid: 7f332b0c77069452797e83a9a1c263a3, type: 3}
   dead_audio: {fileID: 8300000, guid: 23e9a06a4af6f4963bc5b8860c86fb55, type: 3}
+  sping_up_audio: {fileID: 8300000, guid: 81ee4b2acab4443ea93125be7dd15be2, type: 3}
   corpse: {fileID: 2135350934}
   alive: {fileID: 448789477}
   ghost: {fileID: 713060220}
@@ -2936,12 +2939,15 @@ MonoBehaviour:
   player_audio_source: {fileID: 0}
   jump_audio: {fileID: 0}
   heal_audio: {fileID: 0}
+  full_heal: {fileID: 0}
   hurter_audio: {fileID: 0}
   pick_up_gun: {fileID: 0}
   hit_audio: {fileID: 0}
+  bullet_hit_auido: {fileID: 0}
   ragdoll_audio: {fileID: 0}
   ragdoll_recover_audio: {fileID: 0}
   dead_audio: {fileID: 0}
+  sping_up_audio: {fileID: 0}
   corpse: {fileID: 0}
   alive: {fileID: 0}
   ghost: {fileID: 0}
@@ -3485,12 +3491,15 @@ MonoBehaviour:
   player_audio_source: {fileID: 0}
   jump_audio: {fileID: 0}
   heal_audio: {fileID: 0}
+  full_heal: {fileID: 0}
   hurter_audio: {fileID: 0}
   pick_up_gun: {fileID: 0}
   hit_audio: {fileID: 0}
+  bullet_hit_auido: {fileID: 0}
   ragdoll_audio: {fileID: 0}
   ragdoll_recover_audio: {fileID: 0}
   dead_audio: {fileID: 0}
+  sping_up_audio: {fileID: 0}
   corpse: {fileID: 1304528760}
   alive: {fileID: 1832859779}
   ghost: {fileID: 0}
@@ -6557,12 +6566,15 @@ MonoBehaviour:
   player_audio_source: {fileID: 0}
   jump_audio: {fileID: 0}
   heal_audio: {fileID: 0}
+  full_heal: {fileID: 0}
   hurter_audio: {fileID: 0}
   pick_up_gun: {fileID: 0}
   hit_audio: {fileID: 0}
+  bullet_hit_auido: {fileID: 0}
   ragdoll_audio: {fileID: 0}
   ragdoll_recover_audio: {fileID: 0}
   dead_audio: {fileID: 0}
+  sping_up_audio: {fileID: 0}
   corpse: {fileID: 0}
   alive: {fileID: 0}
   ghost: {fileID: 0}
@@ -9517,12 +9529,15 @@ MonoBehaviour:
   player_audio_source: {fileID: 0}
   jump_audio: {fileID: 0}
   heal_audio: {fileID: 0}
+  full_heal: {fileID: 0}
   hurter_audio: {fileID: 0}
   pick_up_gun: {fileID: 0}
   hit_audio: {fileID: 0}
+  bullet_hit_auido: {fileID: 0}
   ragdoll_audio: {fileID: 0}
   ragdoll_recover_audio: {fileID: 0}
   dead_audio: {fileID: 0}
+  sping_up_audio: {fileID: 0}
   corpse: {fileID: 0}
   alive: {fileID: 0}
   ghost: {fileID: 0}

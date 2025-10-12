@@ -20,6 +20,7 @@ public class Player_Movement : MonoBehaviour
 
     public AudioClip jump_audio;
     public AudioClip heal_audio;
+    public AudioClip full_heal;
     public AudioClip hurter_audio;
     public AudioClip pick_up_gun;
     public AudioClip hit_audio;
@@ -29,6 +30,7 @@ public class Player_Movement : MonoBehaviour
     public AudioClip ragdoll_audio;
     public AudioClip ragdoll_recover_audio;
     public AudioClip dead_audio;
+    public AudioClip sping_up_audio;
 
 
     public GameObject corpse;
@@ -335,6 +337,7 @@ public class Player_Movement : MonoBehaviour
 
                 Vector3 spring_direction = environment_object_in_radius.transform.forward.normalized;
                 playerVelocity = spring_direction * spring_mag;
+                player_audio_source.PlayOneShot(sping_up_audio,0.8f);
 
             }
             else if (environment_object_in_radius.CompareTag("Heal"))
@@ -344,14 +347,16 @@ public class Player_Movement : MonoBehaviour
                     if (Health + (Full_Health / 10) > Full_Health)
                     {
                         Health = Full_Health;
+                        player_audio_source.PlayOneShot(full_heal, 0.5f);
                     }
                     else
                     {
                         Health = Health + (Full_Health / 10);
+                        player_audio_source.PlayOneShot(heal_audio, 0.5f);
                     }
 
                     Debug.Log("10% point heal");
-                    player_audio_source.PlayOneShot(heal_audio, 0.5f);
+
                     health_slider.value = Health;
                 }
 
@@ -364,7 +369,7 @@ public class Player_Movement : MonoBehaviour
                 {
                     Health = Full_Health;
                     Debug.Log("Full heal");
-                    player_audio_source.PlayOneShot(heal_audio, 0.75f);
+                    player_audio_source.PlayOneShot(full_heal, 0.75f);
                     health_slider.value = Health;
                 }
             }
