@@ -12,6 +12,8 @@ TagManager:
   - Enemy
   - Freezable
   - Exploder
+  - Heal
+  - Full_Heal
   layers:
   - Default
   - TransparentFX

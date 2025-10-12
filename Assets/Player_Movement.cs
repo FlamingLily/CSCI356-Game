@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using NUnit.Framework;
 
+using UnityEngine.UI;
 public class Player_Movement : MonoBehaviour
 {
     public enum RotationAxes
@@ -17,11 +18,13 @@ public class Player_Movement : MonoBehaviour
 
     public AudioSource player_audio_source;
 
-public AudioClip jump_audio;
+    public AudioClip jump_audio;
     public AudioClip heal_audio;
     public AudioClip hurter_audio;
-public AudioClip pick_up_gun;
+    public AudioClip pick_up_gun;
     public AudioClip hit_audio;
+
+    public AudioClip bullet_hit_auido;
 
     public AudioClip ragdoll_audio;
     public AudioClip ragdoll_recover_audio;
@@ -40,6 +43,8 @@ public AudioClip pick_up_gun;
     public GameObject player;
 
     public int Health;
+    public int Full_Health;
+
 
     private List<GameObject> guns_in_interactable_radius = new List<GameObject>();
 
@@ -57,6 +62,8 @@ public AudioClip pick_up_gun;
     public float jumpHeight;
     public float gravityValue;
     public Vector3 playerVelocity;
+
+    public Slider health_slider;
     private bool groundedPlayer;
 
     public int current_jumps = 0;
@@ -146,6 +153,7 @@ public AudioClip pick_up_gun;
             Invoke("Hide_Hurt_Overlay", hurt_tick / 2);
         }
         Debug.Log("TAKE DAMAGE" + damage_taken + " from " + Health);
+        health_slider.value = Health;
     }
 
     public void Hide_Hurt_Overlay()
@@ -168,7 +176,7 @@ public AudioClip pick_up_gun;
         // rb.isKinematic = false;
     }
 
-  
+
 
     public void Ragdoll()
     {
@@ -328,6 +336,37 @@ public AudioClip pick_up_gun;
                 Vector3 spring_direction = environment_object_in_radius.transform.forward.normalized;
                 playerVelocity = spring_direction * spring_mag;
 
+            }
+            else if (environment_object_in_radius.CompareTag("Heal"))
+            {
+                if (Health != Full_Health)
+                {
+                    if (Health + (Full_Health / 10) > Full_Health)
+                    {
+                        Health = Full_Health;
+                    }
+                    else
+                    {
+                        Health = Health + (Full_Health / 10);
+                    }
+
+                    Debug.Log("10% point heal");
+                    player_audio_source.PlayOneShot(heal_audio, 0.5f);
+                    health_slider.value = Health;
+                }
+
+
+
+            }
+            else if (environment_object_in_radius.CompareTag("Full_Heal"))
+            {
+                if (Health < Full_Health)
+                {
+                    Health = Full_Health;
+                    Debug.Log("Full heal");
+                    player_audio_source.PlayOneShot(heal_audio, 0.75f);
+                    health_slider.value = Health;
+                }
             }
         }
         guns_in_interactable_radius.RemoveAll(gun => !current_guns.Contains(gun));
@@ -520,7 +559,7 @@ public AudioClip pick_up_gun;
                         scopeTransform.position,
                         scopeTransitionSpeed * Time.deltaTime
                     );
-        
+
                 }
             }
             else
