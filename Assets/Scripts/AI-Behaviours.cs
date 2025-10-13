@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
+using static UnityEngine.GameObject;
 
-public class AIBehaviour : MonoBehaviour
+public class AIBehaviour : MonoBehaviour, I_TakeDamage
 {
 
 
@@ -17,9 +18,14 @@ public class AIBehaviour : MonoBehaviour
     [SerializeField] private float attackCooldown = 0f;
 
     [Header("References")]
-    [SerializeField] private NavMeshSurface navMeshSurface;
     [SerializeField] private GameObject targetPlayer;
     [SerializeField] private GameObject waveController;
+    [SerializeField] private GameObject gunPrefab;
+    [SerializeField] private GameObject stickPrefab;
+    GameObject spawnedGun;
+    GameObject spawnedStick;
+    Transform grab_point;
+    Transform hold_point;
 
     NavMeshAgent navAgent;
     Renderer rdr;
@@ -32,20 +38,42 @@ public class AIBehaviour : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        targetPlayer = FindGameObjectWithTag("Player");
         navAgent = GetComponent<NavMeshAgent>();
         rdr = GetComponent<Renderer>();
+        rdr.material.color = new Color(0.55f, 0f, 0f, 1f);
         nextAttack = Time.time;
         specialTimer = Time.time + 10f; // Matters for warpers, not really for cloakers unless you're camping hard
+
     }
 
-    public void SetNavMesh(NavMeshSurface navMesh)
+    void SpawnGun()
     {
-        navMeshSurface = navMesh;
+        spawnedGun = Instantiate(gunPrefab, transform.position + new Vector3(0f, 1f, 0f), gunPrefab.transform.rotation);
+        grab_point = spawnedGun.transform.Find("Grab_Point");
+        hold_point = transform.Find("Hold_Point");
+        spawnedGun.GetComponent<Collider>().enabled = false;
+        spawnedGun.transform.SetParent(hold_point, true);
+        spawnedGun.transform.position = hold_point.position + hold_point.TransformDirection(grab_point.localPosition * -1);
+        spawnedGun.transform.rotation = hold_point.rotation * Quaternion.Inverse(grab_point.localRotation);
+
+        spawnedGun.GetComponent<Enemy_revolver>().playerController = GetComponent<CharacterController>();
+        spawnedGun.GetComponent<Enemy_revolver>().bullet_damage = damage;
+        spawnedGun.GetComponent<Enemy_revolver>().gun_grab_point = grab_point;
+
     }
-    public void SetTarget(GameObject target)
+
+    void SpawnStick()
     {
-        targetPlayer = target;
+        spawnedStick = Instantiate(stickPrefab, transform.position + new Vector3(0f, 1f, 0f), stickPrefab.transform.rotation);
+        grab_point = spawnedStick.transform.Find("Grab_Point");
+        hold_point = transform.Find("Hold_Point");
+        spawnedStick.GetComponent<Collider>().enabled = false;
+        spawnedStick.transform.SetParent(hold_point, true);
+        spawnedStick.transform.position = hold_point.position + hold_point.TransformDirection(grab_point.localPosition * -1);
+        spawnedStick.transform.rotation = hold_point.rotation * Quaternion.Inverse(grab_point.localRotation);
     }
+
     public void SetType(string type)
     {
         aiType = type;
@@ -89,19 +117,21 @@ public class AIBehaviour : MonoBehaviour
         {
             case "Swarmer":
                 moveSpeed = 5f;
-                damage = 5f;
+                damage = 1f;
                 attackCooldown = 1f;
                 health = 25f;
                 approachRange = 3f;
                 attackRange = 3f;
+                SpawnStick();
                 break;
             case "Melee":
                 moveSpeed = 3.5f;
-                damage = 10f;
+                damage = 5f;
                 attackCooldown = 3f;
                 health = 50f;
                 approachRange = 3f;
                 attackRange = 3f;
+                SpawnStick();
                 break;
             case "Soldier":
                 moveSpeed = 3.5f;
@@ -110,6 +140,7 @@ public class AIBehaviour : MonoBehaviour
                 health = 50f;
                 attackRange = 20f;
                 approachRange = 10f;
+                SpawnGun();
                 break;
             case "Cloaker":
                 moveSpeed = 3.5f;
@@ -118,6 +149,7 @@ public class AIBehaviour : MonoBehaviour
                 health = 100f;
                 attackRange = 20f;
                 approachRange = 10f;
+                SpawnGun();
                 break;
             case "Warper":
                 moveSpeed = 2f;
@@ -126,6 +158,7 @@ public class AIBehaviour : MonoBehaviour
                 health = 50f;
                 attackRange = 10f;
                 approachRange = 10f;
+                SpawnGun();
                 break;
             case "Tank":
                 moveSpeed = 0.5f;
@@ -134,6 +167,7 @@ public class AIBehaviour : MonoBehaviour
                 health = 2000f;
                 approachRange = 10f;
                 attackRange = 30f;
+                SpawnGun();
                 break;
             default:
                 break;
@@ -185,23 +219,33 @@ public class AIBehaviour : MonoBehaviour
             Approach(approachRange);
             HandleAttack();
         }
-        if (cloaked == "true")
+        if (health < 50f && cloaked == "false")
         {
-            Approach(approachRange);
-        }
-        if (health < 50f)
-        {
-            rdr.material.color = new Color(1f, 1f, 1f, 0.05f);
+            rdr.material.color = new Color(0.55f, 0f, 0f, 0.05f);
+            spawnedGun.GetComponent<Enemy_revolver>().Cloak();
             cloaked = "true";
             navAgent.speed = 30f;
             specialTimer = Time.time + 10f;
         }
-        if (cloaked == "true" && Time.time > specialTimer)
+        if (cloaked == "true" && Time.time >= specialTimer)
         {
-            rdr.material.color = new Color(1f, 1f, 1f, 1f);
+            rdr.material.color = new Color(0.55f, 0f, 0f, 1f);
+            spawnedGun.GetComponent<Enemy_revolver>().UnCloak();
             cloaked = "used";
             health = 100f;
         }
+        if (cloaked == "true")
+        {
+            if(Vector3.Distance(transform.position, targetPlayer.transform.position) > approachRange * 2)
+            {
+                Approach(approachRange);
+            }
+            else
+            {
+                Wander();
+            }
+        }
+       
     }
 
     void WarperUpdate()
@@ -218,12 +262,14 @@ public class AIBehaviour : MonoBehaviour
             {
                 navAgent.Warp(hit.position);
                 specialTimer = Time.time + 15f;
+                nextAttack = Time.time + 5f;
             }
         }
     }
 
     void Wander()
     {
+        navAgent.stoppingDistance = 0f;
 
         if (!navAgent.pathPending && navAgent.remainingDistance < 0.5f)
         {
@@ -242,21 +288,36 @@ public class AIBehaviour : MonoBehaviour
         if (targetPlayer == null)
         {
             Debug.Log("no approach target! returning to wander");
-            moveState = "Wander";
+            Wander();
             return;
         }
         navAgent.stoppingDistance = range;
         navAgent.SetDestination(targetPlayer.transform.position);
+        if (Vector3.Distance(transform.position, targetPlayer.transform.position) <= range)
+        {
+            Vector3 directionToPlayer = (targetPlayer.transform.position - transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(directionToPlayer.x, 0, directionToPlayer.z));
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);           
+        }
     }
 
     void HandleAttack()
     {
         if (targetPlayer == null) return;
+        if (cloaked == "True") return;
+
+        
+        if(spawnedGun == null && Vector3.Distance(transform.position, targetPlayer.transform.position) <= attackRange) // Melee
+        {
+            targetPlayer.GetComponent<I_TakeDamage>().TakeDamage(damage);
+            Debug.Log($"{aiType} attacks for {damage} damage!");
+            nextAttack = Time.time + attackCooldown;
+        }
 
         float distanceToTarget = Vector3.Distance(transform.position, targetPlayer.transform.position);
         if (distanceToTarget <= attackRange && Time.time >= nextAttack)
         {
-            // Attack logic here
+            spawnedGun.GetComponent<Enemy_revolver>().Fire();
             Debug.Log($"{aiType} attacks for {damage} damage!");
             nextAttack = Time.time + attackCooldown;
         }

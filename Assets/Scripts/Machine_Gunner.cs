@@ -49,7 +49,7 @@ public class Machine_Gunner : MonoBehaviour, ICommon_Gun_Actions
             Shoot();
             lastFired = timeNow;
         }
-        Debug.Log("MACHINE GUN FIRE");
+        //Debug.Log("MACHINE GUN FIRE");
     }
 
     public void Shoot()
@@ -73,7 +73,7 @@ public class Machine_Gunner : MonoBehaviour, ICommon_Gun_Actions
 
         projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
 
-        Debug.Log("MACHINEGUN FIRE");
+        //Debug.Log("MACHINEGUN FIRE");
     }
 
     public void Scope_in()

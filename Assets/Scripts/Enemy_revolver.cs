@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Revolver : MonoBehaviour, ICommon_Gun_Actions
+public class Enemy_revolver : MonoBehaviour
 {
     public Transform gun_grab_point;
 
@@ -9,10 +9,8 @@ public class Revolver : MonoBehaviour, ICommon_Gun_Actions
 
     public Transform barrelDirection;
 
-    public float kick_back_force;
-    public float kick_back_time;
-
-    private Vector3 originalLocalPos;
+    public float kick_back_force = 0.1f;
+    public float kick_back_time = 0.1f;
     private Coroutine kickbackRoutine;
 
     Vector3 move = Vector3.zero;
@@ -22,17 +20,24 @@ public class Revolver : MonoBehaviour, ICommon_Gun_Actions
 
 
     public GameObject projectilePrefab = null;
-    public float launchForce = 0.0f;
-    float lastFired = 0;
-
-    public float fire_rate;
-
-    bool is_left_click_held = false;
+    public float launchForce = 32000.0f;
 
     public float bullet_damage;
 
 
 
+    
+    void Start()
+    {
+        barrelDirection = transform.Find("Shoot_Outwards");
+        scopePosition = transform.Find("Scope_In");
+        gun_grab_point = transform.Find("Grab_Point");
+        launchForce = 32000f;
+        kick_back_force = 0.1f;
+        kick_back_time = 0.1f;
+        Renderer rdr = GetComponent<Renderer>();
+        rdr.material.color = new Color(0.55f, 0f, 0f, 1f);
+    }
     public Transform Get_Grab_Point()
     {
         return gun_grab_point;
@@ -41,21 +46,15 @@ public class Revolver : MonoBehaviour, ICommon_Gun_Actions
     {
         return barrelDirection;
     }
-    public Transform Get_Scope()
-    {
-        return scopePosition;
-    }
     public void Fire()
     {
-        if (!is_left_click_held && Time.time >= lastFired + fire_rate)
-        {
             GameObject projectile = Instantiate(projectilePrefab, barrelDirection.position, projectilePrefab.transform.rotation);
 
             Generic_Bullet bullet_brains = projectile.GetComponent<Generic_Bullet>();
             if (bullet_brains != null)
             {
                 bullet_brains.damage = bullet_damage;
-                bullet_brains.Enemy_Tag = "Enemy";
+                bullet_brains.Enemy_Tag = "Player";
                 // bullet_brains.Effect_Tag = "";
             }
 
@@ -63,16 +62,7 @@ public class Revolver : MonoBehaviour, ICommon_Gun_Actions
 
             if (kickbackRoutine != null) StopCoroutine(kickbackRoutine);
             kickbackRoutine = StartCoroutine(Gun_Kick());
-            lastFired = Time.time;
-            //Debug.Log("HANDGUN FIRE");
-            is_left_click_held = true;
-        }
-        else
-        {
-            is_left_click_held = false;
-        }
-
-
+            // Debug.Log("HANDGUN FIRE");
     }
 
     IEnumerator Gun_Kick()
@@ -107,37 +97,15 @@ public class Revolver : MonoBehaviour, ICommon_Gun_Actions
         kickbackRoutine = null;
     }
 
-    public void Scope_in()
+    public void Cloak()
     {
-        Debug.Log("REVOLVER SCOPE IN");
+        Renderer rdr = GetComponent<Renderer>();
+        rdr.material.color = new Color(0.55f, 0f, 0f, 0.05f);
     }
 
-    public void Scope_out()
+    public void UnCloak()
     {
-        Debug.Log("revolver SCOPE out");
-
+        Renderer rdr = GetComponent<Renderer>();
+        rdr.material.color = new Color(0.55f, 0f, 0f, 1f);
     }
-
-
-    public void Reload()
-    {
-        is_left_click_held = false;
-    }
-
-    void Start()
-    {
-
-
-    }
-
-
-    void Update()
-    {
-    }
-    
-       public void Do_Magic(GameObject target)
-    {
-        
-    }
-
 }

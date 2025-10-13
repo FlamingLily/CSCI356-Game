@@ -49,33 +49,28 @@ public class Magic : MonoBehaviour, ICommon_Gun_Actions
     }
     public void Fire()
     {
-        Debug.Log("REVOLVER FIRE");
-
-        if (Input.GetKey(KeyCode.V))
+        if (!is_left_click_held && Time.time >= lastFired + fire_rate)
         {
-            if (!is_left_click_held && Time.time >= lastFired + fire_rate)
+            GameObject projectile = Instantiate(projectilePrefab, barrelDirection.position, projectilePrefab.transform.rotation);
+            Magic_Bullet bullet_brains = projectile.GetComponent<Magic_Bullet>();
+            bullet_brains.shooter = this.gameObject;
+            // bullet_brains.shooterScript = this;
+
+
+            if (bullet_brains != null)
             {
-                GameObject projectile = Instantiate(projectilePrefab, barrelDirection.position, projectilePrefab.transform.rotation);
-                Magic_Bullet bullet_brains = projectile.GetComponent<Magic_Bullet>();
-                bullet_brains.shooter = this.gameObject;
-                // bullet_brains.shooterScript = this;
-
-
-                if (bullet_brains != null)
-                {
-                    bullet_brains.damage = bullet_damage;
-                    bullet_brains.Enemy_Tag = "Enemy";
-                    bullet_brains.Effect_Tag = "Freezable";
-                }
-
-                projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
-
-                if (kickbackRoutine != null) StopCoroutine(kickbackRoutine);
-                kickbackRoutine = StartCoroutine(Gun_Kick());
-                lastFired = Time.time;
-                Debug.Log("HANDGUN FIRE");
-                is_left_click_held = true;
+                bullet_brains.damage = bullet_damage;
+                bullet_brains.Enemy_Tag = "Enemy";
+                bullet_brains.Effect_Tag = "Freezable";
             }
+
+            projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
+
+            if (kickbackRoutine != null) StopCoroutine(kickbackRoutine);
+            kickbackRoutine = StartCoroutine(Gun_Kick());
+            lastFired = Time.time;
+            //Debug.Log("HANDGUN FIRE");
+            is_left_click_held = true;
         }
         else
         {
