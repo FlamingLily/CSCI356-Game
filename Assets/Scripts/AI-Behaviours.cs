@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
 using static UnityEngine.GameObject;
+using System;
+using Random=UnityEngine.Random;
 
 public class AIBehaviour : MonoBehaviour, I_TakeDamage
 {
@@ -33,6 +35,11 @@ public class AIBehaviour : MonoBehaviour, I_TakeDamage
     float specialTimer = 0f;
     string cloaked = "false";
     bool aiSetup = false;
+
+    public AudioSource enemy_noiser;
+
+    public AudioClip death_noise;
+    public AudioClip hurt_noise;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -236,7 +243,7 @@ public class AIBehaviour : MonoBehaviour, I_TakeDamage
         }
         if (cloaked == "true")
         {
-            if(Vector3.Distance(transform.position, targetPlayer.transform.position) > approachRange * 2)
+            if (Vector3.Distance(transform.position, targetPlayer.transform.position) > approachRange * 2)
             {
                 Approach(approachRange);
             }
@@ -245,7 +252,7 @@ public class AIBehaviour : MonoBehaviour, I_TakeDamage
                 Wander();
             }
         }
-       
+
     }
 
     void WarperUpdate()
@@ -297,7 +304,7 @@ public class AIBehaviour : MonoBehaviour, I_TakeDamage
         {
             Vector3 directionToPlayer = (targetPlayer.transform.position - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(new Vector3(directionToPlayer.x, 0, directionToPlayer.z));
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);           
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
         }
     }
 
@@ -306,8 +313,8 @@ public class AIBehaviour : MonoBehaviour, I_TakeDamage
         if (targetPlayer == null) return;
         if (cloaked == "True") return;
 
-        
-        if(spawnedGun == null && Vector3.Distance(transform.position, targetPlayer.transform.position) <= attackRange) // Melee
+
+        if (spawnedGun == null && Vector3.Distance(transform.position, targetPlayer.transform.position) <= attackRange) // Melee
         {
             targetPlayer.GetComponent<I_TakeDamage>().TakeDamage(damage);
             Debug.Log($"{aiType} attacks for {damage} damage!");
@@ -328,10 +335,18 @@ public class AIBehaviour : MonoBehaviour, I_TakeDamage
         Debug.Log($"{aiType} takes {amount} damage!");
         health -= amount;
         Debug.Log("Health now: " + health);
+        enemy_noiser.PlayOneShot(hurt_noise, 0.01f);
         if (health <= 0f)
         {
+            enemy_noiser.PlayOneShot(death_noise, 1.0f);
+
+            // Invoke("enemy_downed", 2.1f);
+            AudioSource.PlayClipAtPoint(death_noise, this.gameObject.transform.position, 1.5f);
+            // Invoke("Destroy(gameObject)", 0.21f);
             Destroy(gameObject);
+            // Invoke("waveController.GetComponent<WaveController>().EnemyKilled()",2.1f);
             waveController.GetComponent<WaveController>().EnemyKilled();
+// 
         }
     }
 }

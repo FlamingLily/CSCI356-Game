@@ -603,6 +603,7 @@ GameObject:
   - component: {fileID: 4360679142410486317}
   - component: {fileID: 2649854545997484300}
   - component: {fileID: 1571639916131855059}
+  - component: {fileID: 730376155392885120}
   m_Layer: 0
   m_Name: playa
   m_TagString: Player
@@ -721,6 +722,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f9fcd1072f9c4e0e8553cbd5ebe0cf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  healthLabel: {fileID: 0}
   corpse: {fileID: 6227340804656718983}
   alive: {fileID: 5006542012279438372}
   ghost: {fileID: 0}
@@ -730,7 +732,7 @@ MonoBehaviour:
   third_person_cameraTransform_ghost: {fileID: 0}
   move_speed: 20
   player: {fileID: 8559110093201948188}
-  Health: 10
+  health: 0
   first_person_cam: {fileID: 2869694145476447098}
   first_person_cameraTransform: {fileID: 8261243295722940192}
   third_person_cam: {fileID: 4026545298690323539}
@@ -831,3 +833,11 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!81 &730376155392885120
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8559110093201948188}
+  m_Enabled: 1
