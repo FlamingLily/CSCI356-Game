@@ -175,7 +175,14 @@ public class Player_Movement : MonoBehaviour
         death_screen.SetActive(true);
         Health = 0;
         health_slider.value = Health;
-
+           currently_held_gun.transform.SetParent(null);
+           
+            // currently_held_gun.transform.position = return_to_floor_position;
+        // currently_held_gun.transform.rotation = return_to_floor_rotation;
+        currently_held_gun.transform.position = this.transform.position;
+            currently_held_gun.transform.rotation = this.transform.rotation;
+            currently_held_gun.GetComponent<Collider>().enabled = true;
+            currently_held_gun = null;
         isDead = true;
         Debug.Log("DIE");
         Ragdoll();
@@ -201,8 +208,9 @@ public class Player_Movement : MonoBehaviour
         ragdollBehaviour.horizontalRot = this.horizontalRot;
         ragdollBehaviour.verticalRot = this.verticalRot;
 
-        first_person_cam_ghost.SetActive(first_person_cam.activeSelf);
-        third_person_cam_ghost.SetActive(third_person_cam.activeSelf);
+        // first_person_cam_ghost.SetActive(first_person_cam.activeSelf);
+        third_person_cam_ghost.SetActive(true);
+        // third_person_cam_ghost.SetActive(third_person_cam.activeSelf);
 
         first_person_cam_ghost.transform.position = first_person_cam.transform.position;
         first_person_cam_ghost.transform.rotation = first_person_cam.transform.rotation;
@@ -211,6 +219,7 @@ public class Player_Movement : MonoBehaviour
 
         first_person_cam.SetActive(false);
         third_person_cam.SetActive(false);
+
         player_input_enabled = false;
 
         this.gameObject.SetActive(false);
@@ -346,6 +355,8 @@ public class Player_Movement : MonoBehaviour
             else if (environment_object_in_radius.CompareTag("wake_on_player"))
             {
                 Rigidbody rb = this.GetComponent<Rigidbody>();
+                //TODO: on awake start animation (?)
+                
                 // CharacterController cc = GetComponent<CharacterController>();
                 // cc.enabled = false;
                 // rb.isKinematic = false;
@@ -439,18 +450,18 @@ public class Player_Movement : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * sensitivityHor;
         float mouseY = Input.GetAxis("Mouse Y") * sensitivityVert;
 
-        if (((Input.mousePosition.x / Screen.width) - 0.5f) > 0.45f)
-        {
-            Debug.Log("Full RIGHT");
-            // horizontalRot += Mathf.Sign(normalizedX) * sensitivityHor * Time.deltaTime * 100f;
-        }
+        // if (((Input.mousePosition.x / Screen.width) - 0.5f) > 0.45f)
+        // {
+        //     Debug.Log("Full RIGHT");
+        //     // horizontalRot += Mathf.Sign(normalizedX) * sensitivityHor * Time.deltaTime * 100f;
+        // }
 
-        if (((Input.mousePosition.x / Screen.width) - 0.5f) < -0.45f)
-        {
-            Debug.Log("Full left");
+        // if (((Input.mousePosition.x / Screen.width) - 0.5f) < -0.45f)
+        // {
+        //     Debug.Log("Full left");
 
-            // verticalRot -= Mathf.Sign(normalizedY) * sensitivityVert * Time.deltaTime * 100f;
-        }
+        //     // verticalRot -= Mathf.Sign(normalizedY) * sensitivityVert * Time.deltaTime * 100f;
+        // }
 
         horizontalRot += mouseX;
         verticalRot -= mouseY;
