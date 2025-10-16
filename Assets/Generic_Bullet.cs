@@ -40,9 +40,6 @@ public class Generic_Bullet : MonoBehaviour, I_Common_Projectile
                 }
                 AudioSource.PlayClipAtPoint(explosion_sound, this.gameObject.transform.position, 1.0f);
                 Destroy(collision.gameObject);
-                
-
-                
             }
         }
 

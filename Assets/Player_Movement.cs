@@ -5,6 +5,9 @@ using NUnit.Framework;
 
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
+using NUnit.Framework.Constraints;
+using System.Linq.Expressions;
 public class Player_Movement : MonoBehaviour
 {
     public enum RotationAxes
@@ -18,9 +21,14 @@ public class Player_Movement : MonoBehaviour
 
 
     public AudioSource player_audio_source;
+    private GameObject current_shop = null;
+
+
 
     public AudioClip jump_audio;
     public AudioClip heal_audio;
+
+    private bool walls_up = false;
     public AudioClip full_heal;
     public AudioClip hurter_audio;
     public AudioClip pick_up_gun;
@@ -43,15 +51,20 @@ public class Player_Movement : MonoBehaviour
     public GameObject third_person_cam_ghost;
     public Transform third_person_cameraTransform_ghost;
 
-    
+
     public float move_speed;
+
+    private float default_move_speed;
     public GameObject player;
 
     public int Health;
     public int Full_Health;
 
+    private int default_health;
+
 
     private List<GameObject> guns_in_interactable_radius = new List<GameObject>();
+    private List<GameObject> shop_items_in_interactable_radius = new List<GameObject>();
 
     public GameObject first_person_cam;
     public Transform first_person_cameraTransform;
@@ -65,12 +78,16 @@ public class Player_Movement : MonoBehaviour
     public GameObject hurt_overlay;
 
     public float jumpHeight;
+
+    private float default_jump_height;
     public float gravityValue;
     public Vector3 playerVelocity;
 
+    public int item_price;
+
     public int coins_held = 0;
 
-public TextMeshProUGUI stahs_collected;
+    public TextMeshProUGUI stahs_collected;
     public Slider health_slider;
     private bool groundedPlayer;
 
@@ -80,6 +97,8 @@ public TextMeshProUGUI stahs_collected;
 
     private GameObject currently_held_gun;
 
+    private GameObject currently_held_item;
+
 
     public float sensitivityHor;
     public float sensitivityVert;
@@ -88,6 +107,8 @@ public TextMeshProUGUI stahs_collected;
     public float maximumVert;
 
     public int consecutive_jumps_allowed;
+
+    private int consecutive_jumps_allowed_default;
 
     public float lerp_speed;
 
@@ -122,6 +143,11 @@ public TextMeshProUGUI stahs_collected;
     void Start()
     {
 
+
+        default_health = Full_Health;
+        default_jump_height = jumpHeight;
+        default_move_speed = move_speed;
+        consecutive_jumps_allowed_default = consecutive_jumps_allowed;
         ghost.SetActive(true);
         death_screen.SetActive(false);
         Rigidbody rb = this.GetComponent<Rigidbody>();
@@ -181,15 +207,20 @@ public TextMeshProUGUI stahs_collected;
         death_screen.SetActive(true);
         Health = 0;
         health_slider.value = Health;
-           currently_held_gun.transform.SetParent(null);
-           
-            // currently_held_gun.transform.position = return_to_floor_position;
+        currently_held_gun.transform.SetParent(null);
+        consecutive_jumps_allowed = consecutive_jumps_allowed_default;
+
+        // currently_held_gun.transform.position = return_to_floor_position;
         // currently_held_gun.transform.rotation = return_to_floor_rotation;
         currently_held_gun.transform.position = this.transform.position;
-            currently_held_gun.transform.rotation = this.transform.rotation;
-            currently_held_gun.GetComponent<Collider>().enabled = true;
-            currently_held_gun = null;
+        currently_held_gun.transform.rotation = this.transform.rotation;
+        currently_held_gun.GetComponent<Collider>().enabled = true;
+        currently_held_gun = null;
         isDead = true;
+        Full_Health = default_health;
+        health_slider.maxValue = Full_Health;
+        jumpHeight = default_jump_height;
+        move_speed = default_move_speed;
         Debug.Log("DIE");
         Ragdoll();
         // Rigidbody rb = this.GetComponent<Rigidbody>();
@@ -285,6 +316,56 @@ public TextMeshProUGUI stahs_collected;
         guns_in_interactable_radius.Add(new_gun);
     }
 
+    private Quaternion return_item_to_floor_rotation;
+    private Vector3 return_item_to_floor_position;
+
+    void Pick_Up_Shop_Item(GameObject item)
+    {
+        Debug.Log($"PICK UP ITEM {item.name}");
+        Quaternion new_gun_to_floor_rotation = item.transform.rotation;
+        Vector3 new_gun_to_floor_position = item.transform.position;
+
+        if (currently_held_item != null)
+        {
+            currently_held_item.transform.SetParent(null);
+            // currently_held_gun.transform.position = return_to_floor_position;
+            // currently_held_gun.transform.rotation = return_to_floor_rotation;
+            currently_held_item.transform.position = new_gun_to_floor_position;
+            currently_held_item.transform.rotation = new_gun_to_floor_rotation;
+            currently_held_item.GetComponent<Collider>().enabled = true;
+            currently_held_item = null;
+        }
+
+
+        player_audio_source.PlayOneShot(pick_up_gun, 1);
+        // return_to_floor_position = new_gun.transform.position;
+        // return_to_floor_rotation = new_gun.transform.rotation;
+
+        return_to_floor_position = new_gun_to_floor_position;
+        return_to_floor_rotation = new_gun_to_floor_rotation;
+
+
+        shop_items_in_interactable_radius.RemoveAt(0);
+
+        currently_held_item = item;
+        currently_held_item.GetComponent<Collider>().enabled = false;
+
+        Transform gun_grab_point = currently_held_item.transform.Find("Grab_Point");
+
+
+        // Vector3 offset_world = currently_held_gun.transform.position - gun_grab_point.position;
+        // Quaternion rotation_offset = Quaternion.Inverse(gun_grab_point.rotation) * currently_held_gun.transform.rotation;
+
+
+        currently_held_item.transform.SetParent(grab_point, true);
+
+
+        currently_held_item.transform.position = grab_point.position + grab_point.TransformDirection(gun_grab_point.localPosition * -1);
+        currently_held_item.transform.rotation = grab_point.rotation * Quaternion.Inverse(gun_grab_point.localRotation);
+
+        shop_items_in_interactable_radius.Add(item);
+    }
+
 
     void Drop_Gun() { }
 
@@ -326,22 +407,89 @@ public TextMeshProUGUI stahs_collected;
         player_audio_source.PlayOneShot(full_heal, 0.8f);
     }
 
+    void Checkout_Held_Item()
+    {
+        if (coins_held >= item_price)
+        {
+            player_audio_source.PlayOneShot(full_heal, 0.8f);
+            if (currently_held_item.CompareTag("gun"))
+            {
+                currently_held_gun = currently_held_item;
+            }
+            else if (currently_held_item.CompareTag("Shop_Item"))
+            {
+                Debug.Log("SHOP ITEM");
+                if (currently_held_item.name == "speed_boost")
+                {
+                    move_speed += 0.5f;
+                }
+                else if (currently_held_item.name == "jump_boost")
+                {
+                    jumpHeight += 0.5f;
+                    consecutive_jumps_allowed += 1;
+                }
+                else if (currently_held_item.name == "health_boost")
+                {
+                    Full_Health += 10;
+                    Health += 10;
+                    health_slider.maxValue = Full_Health;
+                }
+            }
+            if (!currently_held_item.CompareTag("gun"))
+            {
+                Destroy(currently_held_item);
+            }
+
+            currently_held_item = null;
+            player_audio_source.PlayOneShot(full_heal, 0.8f);
+            coins_held = coins_held -= item_price;
+            stahs_collected.text = coins_held.ToString();
+
+        }
+        else
+        {
+            Destroy(currently_held_item);
+            currently_held_item = null;
+            player_audio_source.PlayOneShot(ragdoll_audio, 0.8f);
+        }
+        
+        Debug.Log("CHECKOUT ITEM");
+    }
 
     void Detect_in_Radius()
     {
+
+        bool found_shop = false;
         List<GameObject> current_guns = new List<GameObject>();
+        List<GameObject> current_items = new List<GameObject>();
         Collider[] interactable_colliders_in_radius = Physics.OverlapSphere(transform.position, interactables_radius);
         foreach (var interactable_collider in interactable_colliders_in_radius)
         {
             GameObject interactable_object_in_radius = interactable_collider.gameObject;
-            if (interactable_object_in_radius.CompareTag("gun"))
+            if (walls_up == false)
             {
-                // guns_in_interactable_radius.Add(guns_in_interactable_radius);
-                current_guns.Add(interactable_object_in_radius);
-                Debug.Log("gun detected within radius!" + interactable_object_in_radius.name);
-                if (!guns_in_interactable_radius.Contains(interactable_object_in_radius))
+                if (interactable_object_in_radius.CompareTag("gun"))
                 {
-                    guns_in_interactable_radius.Add(interactable_object_in_radius);
+                    // guns_in_interactable_radius.Add(guns_in_interactable_radius);
+                    current_guns.Add(interactable_object_in_radius);
+                    Debug.Log("gun detected within radius!" + interactable_object_in_radius.name);
+                    if (!guns_in_interactable_radius.Contains(interactable_object_in_radius))
+                    {
+                        guns_in_interactable_radius.Add(interactable_object_in_radius);
+                    }
+                }
+            }
+            else
+            {
+                if (interactable_object_in_radius.CompareTag("gun") || interactable_object_in_radius.CompareTag("Shop_Item"))
+                {
+                    Debug.Log("BALLS");
+                    Debug.Log("item detected within radius!" + interactable_object_in_radius.name);
+                    current_items.Add(interactable_object_in_radius);
+                    if (!shop_items_in_interactable_radius.Contains(interactable_object_in_radius))
+                    {
+                        shop_items_in_interactable_radius.Add(interactable_object_in_radius);
+                    }
                 }
             }
         }
@@ -432,16 +580,72 @@ public TextMeshProUGUI stahs_collected;
             {
                 Debug.Log("GET COIN");
                 coins_held += 1;
-                Destroy(environment_object_in_radius);
+                // Destroy(environment_object_in_radius);
+                environment_object_in_radius.SetActive(false);
                 AudioSource.PlayClipAtPoint(full_heal, environment_object_in_radius.transform.position, 1.0f);
                 stahs_collected.text = coins_held.ToString();
+                Invoke("environment_object_in_radius.SetActive(true)", 1f);
             }
             else if (environment_object_in_radius.CompareTag("Shop"))
             {
-                Debug.Log("ENTER SHOP");
+                found_shop = true;
+
+
+                if (current_shop != environment_object_in_radius)
+                {
+                    current_shop = environment_object_in_radius;
+                    walls_up = true;
+                    Wall_Up(environment_object_in_radius);
+
+                }
             }
         }
         guns_in_interactable_radius.RemoveAll(gun => !current_guns.Contains(gun));
+        shop_items_in_interactable_radius.RemoveAll(item => !current_items.Contains(item));
+        if (!found_shop && current_shop != null)
+        {
+            Wall_Down(current_shop);
+            Checkout_Held_Item();
+            current_shop = null;
+        }
+    }
+    void Wall_Up(GameObject shop_parent)
+    {
+        walls_up = true;
+        Debug.Log("WALL UP");
+        int walls_count = shop_parent.transform.childCount;
+        foreach (Transform child_wall in shop_parent.transform)
+        {
+            if (child_wall.name == "Wall")
+            {
+                Debug.Log($"child wall UP{child_wall.position.y}");
+                Vector3 downpos = child_wall.transform.position;
+                // downpos.y += 0.200f;
+                downpos.y += 7.0f;
+                child_wall.transform.position = downpos;
+            }
+        }
+
+    }
+
+    void Wall_Down(GameObject shop_parent)
+    {
+        walls_up = false;
+        int walls_count = shop_parent.transform.childCount;
+        foreach (Transform child_wall in shop_parent.transform)
+        {
+            if (child_wall.name == "Wall")
+            {
+                Debug.Log($"child wall DOWN{child_wall.position.y}");
+                Vector3 downpos = child_wall.transform.position;
+
+                // downpos.y -= 0.200f;
+                downpos.y -= 7.0f;
+                // downpos.y = -0.322f;
+                child_wall.transform.position = downpos;
+            }
+        }
+        Debug.Log("WALL DOWN");
     }
 
     // Update is called once per frame
@@ -534,14 +738,32 @@ public TextMeshProUGUI stahs_collected;
         if (Input.GetKeyDown(KeyCode.G) && player_input_enabled)
         {
 
-            // first_gun_cycle_enter = this.transform.position;
-            if (guns_in_interactable_radius.Count > 0)
+            if (walls_up == false)
             {
+                // first_gun_cycle_enter = this.transform.position;
+                if (guns_in_interactable_radius.Count > 0)
+                {
 
-                Pick_Up_Gun(guns_in_interactable_radius[0]);
+                    Pick_Up_Gun(guns_in_interactable_radius[0]);
+                }
+                // this.transform.position = first_gun_cycle_enter;
             }
-            // this.transform.position = first_gun_cycle_enter;
+            else
+            {
+                if (shop_items_in_interactable_radius.Count > 0)
+                {
+                    Pick_Up_Shop_Item(shop_items_in_interactable_radius[0]);
+                }
+            }
         }
+        //     // first_gun_cycle_enter = this.transform.position;
+        //     if (guns_in_interactable_radius.Count > 0)
+        //     {
+
+        //         Pick_Up_Gun(guns_in_interactable_radius[0]);
+        //     }
+        //     // this.transform.position = first_gun_cycle_enter;
+        // }
 
         // if (controller.isGrounded || Mathf.Abs(playerVelocity.y) <= 0.01f)
         if (controller.isGrounded || Mathf.Abs(playerVelocity.y) <= 0.0001f)

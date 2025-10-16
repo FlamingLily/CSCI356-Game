@@ -16,6 +16,7 @@ TagManager:
   - Full_Heal
   - Shop
   - Coin
+  - Shop_Item
   layers:
   - Default
   - TransparentFX
