@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using static UnityEngine.GameObject;
+using TMPro;
 
 public class WaveController : MonoBehaviour
 {
@@ -17,7 +19,7 @@ public class WaveController : MonoBehaviour
     };
     int enemiesRemaining = 0;
     int totalSpawners;
-
+    [SerializeField] GameObject enemiesLabel;
 
 
 
@@ -42,31 +44,36 @@ public class WaveController : MonoBehaviour
         }
     }
 
+    void GetEnemiesRemaining()
+    {
+        enemiesRemaining = enemiesThisWave["Soldier"] + enemiesThisWave["Melee"] + enemiesThisWave["Swarmer"] + enemiesThisWave["Cloaker"] + enemiesThisWave["Warper"] + enemiesThisWave["Tank"];
+        enemiesLabel.GetComponent<TMP_Text>().text = enemiesRemaining.ToString();
+    }
     void SetupWave()
     {
         switch (currentWave)
         {
             case 1:
                 enemiesThisWave["Soldier"] = 10;
-                enemiesRemaining = 10;
+                GetEnemiesRemaining();
                 break;
             case 2:
                 enemiesThisWave["Soldier"] = 15;
                 enemiesThisWave["Melee"] = 5;
-                enemiesRemaining = 20;
+                GetEnemiesRemaining();
                 break;
             case 3:
                 enemiesThisWave["Soldier"] = 10;
                 enemiesThisWave["Melee"] = 10;
                 enemiesThisWave["Swarmer"] = 10;
-                enemiesRemaining = 30;
+                GetEnemiesRemaining();
                 break;
             case 4:
                 enemiesThisWave["Soldier"] = 10;
                 enemiesThisWave["Melee"] = 10;
                 enemiesThisWave["Swarmer"] = 10;
                 enemiesThisWave["Cloaker"] = 5;
-                enemiesRemaining = 35;
+                GetEnemiesRemaining();
                 break;
             case 5:
                 enemiesThisWave["Soldier"] = 10;
@@ -74,7 +81,7 @@ public class WaveController : MonoBehaviour
                 enemiesThisWave["Swarmer"] = 10;
                 enemiesThisWave["Cloaker"] = 5;
                 enemiesThisWave["Warper"] = 5;
-                enemiesRemaining = 40;
+                GetEnemiesRemaining();
                 break;
             case 6:
                 enemiesThisWave["Soldier"] = 10;
@@ -83,7 +90,7 @@ public class WaveController : MonoBehaviour
                 enemiesThisWave["Cloaker"] = 5;
                 enemiesThisWave["Warper"] = 5;
                 enemiesThisWave["Tank"] = 1;
-                enemiesRemaining = 41;
+                GetEnemiesRemaining();
                 break;
             default: //Random
                 enemiesThisWave["Soldier"] = Random.Range(5, 10 + currentWave);
@@ -92,7 +99,7 @@ public class WaveController : MonoBehaviour
                 enemiesThisWave["Cloaker"] = Random.Range(0, 5 + currentWave / 2);
                 enemiesThisWave["Warper"] = Random.Range(0, 5 + currentWave / 2);
                 enemiesThisWave["Tank"] = Random.Range(0, 1 + currentWave / 5);
-                enemiesRemaining = enemiesThisWave["Soldier"] + enemiesThisWave["Melee"] + enemiesThisWave["Swarmer"] + enemiesThisWave["Cloaker"] + enemiesThisWave["Warper"] + enemiesThisWave["Tank"];
+                GetEnemiesRemaining();
                 break;
 
         }
@@ -180,13 +187,32 @@ public class WaveController : MonoBehaviour
     void ActivateSpawner(string EnemyToSpawn)
     {
         Debug.Log("Spawning " + EnemyToSpawn);
-        int spawnerInt = Random.Range(0, totalSpawners);
-        Transform thisSpawner = transform.GetChild(spawnerInt);
+        int spawnerInt;
+        int checkCycles = 0; //sanity
+        bool spawnerFound = false;
+        Transform thisSpawner = null;
+        while (!spawnerFound)
+        {
+            spawnerInt = Random.Range(0, totalSpawners);
+            thisSpawner = transform.GetChild(spawnerInt);
+            if (Vector3.Distance(thisSpawner.position, FindGameObjectWithTag("Player").transform.position) > 50f)
+            {
+                spawnerFound = true;
+                break;
+            }
+            checkCycles++;
+            if (checkCycles > 100)
+            {
+                Debug.LogWarning("Too many attempts to find a valid spawner.");
+                spawnerFound = true;
+                break;
+            }
+        }
         thisSpawner.GetComponent<EnemySpawner>().AddToSpawnQueue(EnemyToSpawn);
     }
     public void EnemyKilled()
     {
         enemiesRemaining--;
-        Debug.Log("Enemy killed, " + enemiesRemaining + " remaining.");
+        enemiesLabel.GetComponent<TMP_Text>().text = enemiesRemaining.ToString();
     }
 }

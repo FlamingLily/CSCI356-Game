@@ -72,7 +72,7 @@ public class Generic_Bullet : MonoBehaviour, I_Common_Projectile
     void On_Enemy_Hit(GameObject hitEnemy)
     {
         Debug.Log("hit enemy");
-        hitEnemy.GetComponent<AIBehaviour>().TakeDamage(damage);
+        hitEnemy.GetComponent<I_TakeDamage>().TakeDamage(damage);
     }
 
     void On_Effected_Hit()

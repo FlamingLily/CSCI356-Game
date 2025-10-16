@@ -2,8 +2,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using NUnit.Framework;
+using TMPro;
 
-public class Player_Movement : MonoBehaviour
+public class Player_Movement : MonoBehaviour, I_TakeDamage
 {
     public enum RotationAxes
     {
@@ -13,6 +14,8 @@ public class Player_Movement : MonoBehaviour
     }
 
 
+
+    public GameObject healthLabel;
 
     public GameObject corpse;
     public GameObject alive;
@@ -25,7 +28,7 @@ public class Player_Movement : MonoBehaviour
     public float move_speed;
     public GameObject player;
 
-    public int Health;
+    public float health;
 
     private List<GameObject> guns_in_interactable_radius = new List<GameObject>();
 
@@ -116,22 +119,28 @@ public class Player_Movement : MonoBehaviour
     }
 
 
-    public void Loose_Health_Points(int damage_taken)
+    public void Loose_Health_Points(float damage_taken)
     {
-        if (Health <= 0)
+        if (health <= 0)
         {
             Die();
         }
         else
         {
-            Health = Health - damage_taken;
+            health = health - damage_taken;
         }
-        Debug.Log("TAKE DAMAGE" + damage_taken + " from " + Health);
+        Debug.Log("TAKE DAMAGE" + damage_taken + " from " + health);
     }
 
     public void Die()
     {
         // corpse.SetActive(true);
+        if(is_first_person)
+        {
+            is_first_person = false;
+            first_person_cam.SetActive(true);
+            third_person_cam.SetActive(false);
+        }
         death_screen.SetActive(true);
         Debug.Log("DIE");
         Ragdoll();
@@ -422,7 +431,7 @@ public class Player_Movement : MonoBehaviour
             if (Input.GetKey(KeyCode.W))
             {
                 move += player.transform.forward;
-               // Debug.Log("FORWARD");
+                // Debug.Log("FORWARD");
             }
             else if (Input.GetKey(KeyCode.A))
             {
@@ -437,7 +446,7 @@ public class Player_Movement : MonoBehaviour
             else if (Input.GetKey(KeyCode.D))
             {
                 move += player.transform.right;
-               // Debug.Log("RIGHT");
+                // Debug.Log("RIGHT");
             }
         }
 
@@ -494,11 +503,11 @@ public class Player_Movement : MonoBehaviour
                 );
             }
 
-            if (Input.GetKey(KeyCode.V))
+            if (Input.GetKey(KeyCode.V) || Input.GetMouseButton(0))
             {
                 gun_interface.Fire();
             }
-            if (Input.GetKeyUp(KeyCode.V))
+            if (Input.GetKeyUp(KeyCode.V) || Input.GetMouseButtonUp(0))
             {
                 gun_interface.Reload();
             }
@@ -517,5 +526,11 @@ public class Player_Movement : MonoBehaviour
         }
     }
 
+    public void TakeDamage(float damage)
+    {
+        Loose_Health_Points(damage);
+        healthLabel.GetComponent<TMP_Text>().text = health.ToString();
+        // StartCoroutine(HurtOverlay());
+    }
 
 }
