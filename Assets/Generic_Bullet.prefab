@@ -65,6 +65,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -86,6 +88,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -104,6 +107,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 0
   Enemy_Tag: 
+  explosion_sound: {fileID: 8300000, guid: 2ce712567344e448d877554077a13f95, type: 3}
+  hit: {fileID: 8300000, guid: 95a3a0267772f48119cde91ac6eadf66, type: 3}
 --- !u!135 &3219587038439801324
 SphereCollider:
   m_ObjectHideFlags: 0

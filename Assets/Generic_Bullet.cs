@@ -6,6 +6,9 @@ public class Generic_Bullet : MonoBehaviour, I_Common_Projectile
     public float damage;
 
     public String Enemy_Tag;
+
+    public AudioClip explosion_sound;
+    public AudioClip hit;
     // public String Effect_Tag = ""; //i.e Freezable etc (?), probably not applicable for generic bullets
 
 
@@ -32,9 +35,14 @@ public class Generic_Bullet : MonoBehaviour, I_Common_Projectile
                     Rigidbody ghostRigid = movement.ghost.GetComponent<Rigidbody>();
                     ghostRigid.AddExplosionForce(200 * 20.0f, transform.position, 35.0f);
                     Debug.Log("RAGDOLL FROM EXPLOSION");
-                    
+
+
                 }
-            Destroy(collision.gameObject);
+                AudioSource.PlayClipAtPoint(explosion_sound, this.gameObject.transform.position, 1.0f);
+                Destroy(collision.gameObject);
+                
+
+                
             }
         }
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 
 using UnityEngine.UI;
+using TMPro;
 public class Player_Movement : MonoBehaviour
 {
     public enum RotationAxes
@@ -41,6 +42,8 @@ public class Player_Movement : MonoBehaviour
     public Transform first_person_cameraTransform_ghost;
     public GameObject third_person_cam_ghost;
     public Transform third_person_cameraTransform_ghost;
+
+    
     public float move_speed;
     public GameObject player;
 
@@ -65,6 +68,9 @@ public class Player_Movement : MonoBehaviour
     public float gravityValue;
     public Vector3 playerVelocity;
 
+    public int coins_held = 0;
+
+public TextMeshProUGUI stahs_collected;
     public Slider health_slider;
     private bool groundedPlayer;
 
@@ -356,7 +362,7 @@ public class Player_Movement : MonoBehaviour
             {
                 Rigidbody rb = this.GetComponent<Rigidbody>();
                 //TODO: on awake start animation (?)
-                
+
                 // CharacterController cc = GetComponent<CharacterController>();
                 // cc.enabled = false;
                 // rb.isKinematic = false;
@@ -411,9 +417,6 @@ public class Player_Movement : MonoBehaviour
 
                     health_slider.value = Health;
                 }
-
-
-
             }
             else if (environment_object_in_radius.CompareTag("Full_Heal"))
             {
@@ -424,6 +427,18 @@ public class Player_Movement : MonoBehaviour
                     player_audio_source.PlayOneShot(full_heal, 0.75f);
                     health_slider.value = Health;
                 }
+            }
+            else if (environment_object_in_radius.CompareTag("Coin"))
+            {
+                Debug.Log("GET COIN");
+                coins_held += 1;
+                Destroy(environment_object_in_radius);
+                AudioSource.PlayClipAtPoint(full_heal, environment_object_in_radius.transform.position, 1.0f);
+                stahs_collected.text = coins_held.ToString();
+            }
+            else if (environment_object_in_radius.CompareTag("Shop"))
+            {
+                Debug.Log("ENTER SHOP");
             }
         }
         guns_in_interactable_radius.RemoveAll(gun => !current_guns.Contains(gun));
