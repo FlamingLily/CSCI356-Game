@@ -14,6 +14,8 @@ TagManager:
   - Exploder
   - Heal
   - Full_Heal
+  - Shop
+  - Coin
   layers:
   - Default
   - TransparentFX
