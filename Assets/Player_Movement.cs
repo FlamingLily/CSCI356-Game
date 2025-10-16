@@ -431,7 +431,7 @@ public class Player_Movement : MonoBehaviour
                 else if (currently_held_item.name == "health_boost")
                 {
                     Full_Health += 10;
-                    Health += 10;
+                    Health = Full_Health;
                     health_slider.maxValue = Full_Health;
                 }
             }
