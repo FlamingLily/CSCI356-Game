@@ -211,15 +211,22 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
         death_screen.SetActive(true);
         Health = 0;
         health_slider.value = Health;
-        currently_held_gun.transform.SetParent(null);
+        if (currently_held_gun != null)
+        {
+            currently_held_gun.transform.SetParent(null);
+            currently_held_gun.transform.position = this.transform.position;
+            currently_held_gun.transform.rotation = this.transform.rotation;
+            currently_held_gun.GetComponent<Collider>().enabled = true;
+            currently_held_gun = null;
+        }
         consecutive_jumps_allowed = consecutive_jumps_allowed_default;
 
         // currently_held_gun.transform.position = return_to_floor_position;
         // currently_held_gun.transform.rotation = return_to_floor_rotation;
-        currently_held_gun.transform.position = this.transform.position;
-        currently_held_gun.transform.rotation = this.transform.rotation;
-        currently_held_gun.GetComponent<Collider>().enabled = true;
-        currently_held_gun = null;
+        // currently_held_gun.transform.position = this.transform.position;
+        // currently_held_gun.transform.rotation = this.transform.rotation;
+        // currently_held_gun.GetComponent<Collider>().enabled = true;
+        // currently_held_gun = null;
         isDead = true;
         Full_Health = default_health;
         health_slider.maxValue = Full_Health;
@@ -380,6 +387,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
     public void Respawn_Player()
     {
+
         int respawners_in_scene = respawners_parent_holder.transform.childCount;
         Debug.Log($"WOKE {respawners_in_scene}");
         int random_respawn_index = Random.Range(0, respawners_in_scene);
@@ -904,8 +912,8 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
         Loose_Health_Points(inted_damage, 0.2f);
         healthLabel.GetComponent<TMP_Text>().text = Health.ToString();
 
-//        Loose_Health_Points(damage, 0.2f);
-//        healthLabel.GetComponent<TMP_Text>().text = health.ToString();
+        //        Loose_Health_Points(damage, 0.2f);
+        //        healthLabel.GetComponent<TMP_Text>().text = health.ToString();
         // StartCoroutine(HurtOverlay());
     }
 
