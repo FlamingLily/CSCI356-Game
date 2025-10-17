@@ -9,7 +9,7 @@ using TMPro;
 using Unity.VisualScripting;
 using NUnit.Framework.Constraints;
 using System.Linq.Expressions;
-public class Player_Movement : MonoBehaviour
+// public class Player_Movement : MonoBehaviour
 public class Player_Movement : MonoBehaviour, I_TakeDamage
 {
     public enum RotationAxes
@@ -900,7 +900,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
     public void TakeDamage(float damage)
     {
-        inted_damage = int(damage)
+        int inted_damage = (int)damage;
         Loose_Health_Points(inted_damage, 0.2f);
         healthLabel.GetComponent<TMP_Text>().text = Health.ToString();
 

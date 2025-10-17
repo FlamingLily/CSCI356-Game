@@ -75,20 +75,20 @@ public AudioClip fire_audio;
                 }
 
                 projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
-                       player_audio_source.PlayOneShot(fire_audio, 1);
+                player_audio_source.PlayOneShot(fire_audio, 1);
 
-            if (kickbackRoutine != null) StopCoroutine(kickbackRoutine);
-            kickbackRoutine = StartCoroutine(Gun_Kick());
-            lastFired = Time.time;
-            //Debug.Log("HANDGUN FIRE");
-            is_left_click_held = true;
+                if (kickbackRoutine != null) StopCoroutine(kickbackRoutine);
+                kickbackRoutine = StartCoroutine(Gun_Kick());
+                lastFired = Time.time;
+                //Debug.Log("HANDGUN FIRE");
+                is_left_click_held = true;
+            }
+            else
+            {
+                is_left_click_held = false;
+            }
+
         }
-        else
-        {
-            is_left_click_held = false;
-        }
-
-
     }
 
     public void Do_Magic(GameObject target)

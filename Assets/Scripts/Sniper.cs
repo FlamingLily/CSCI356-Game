@@ -62,28 +62,28 @@ public AudioClip fire_audio;
                 GameObject projectile = Instantiate(projectilePrefab, barrelDirection.position, projectilePrefab.transform.rotation);
 
 
-            Generic_Bullet bullet_brains = projectile.GetComponent<Generic_Bullet>();
-            if (bullet_brains != null)
-            {
-                bullet_brains.damage = bullet_damage;
-                bullet_brains.Enemy_Tag = "Enemy";
-                // bullet_brains.Effect_Tag = "";
+                Generic_Bullet bullet_brains = projectile.GetComponent<Generic_Bullet>();
+                if (bullet_brains != null)
+                {
+                    bullet_brains.damage = bullet_damage;
+                    bullet_brains.Enemy_Tag = "Enemy";
+                    // bullet_brains.Effect_Tag = "";
+                }
+
+                projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
+                player_audio_source.PlayOneShot(fire_audio, 1);
+
+                if (kickbackRoutine != null) StopCoroutine(kickbackRoutine);
+                kickbackRoutine = StartCoroutine(Gun_Kick());
+                lastFired = Time.time;
+                //Debug.Log("sniper FIRE");
+                is_left_click_held = true;
             }
-
-            projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
-                   player_audio_source.PlayOneShot(fire_audio, 1);
-
-            if (kickbackRoutine != null) StopCoroutine(kickbackRoutine);
-            kickbackRoutine = StartCoroutine(Gun_Kick());
-            lastFired = Time.time;
-            //Debug.Log("sniper FIRE");
-            is_left_click_held = true;
+            else
+            {
+                is_left_click_held = false;
+            }
         }
-        else
-        {
-            is_left_click_held = false;
-        }
-
 
     }
 
