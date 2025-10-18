@@ -6,6 +6,9 @@ public class Generic_Bullet : MonoBehaviour, I_Common_Projectile
     public float damage;
 
     public String Enemy_Tag;
+
+    public AudioClip explosion_sound;
+    public AudioClip hit;
     // public String Effect_Tag = ""; //i.e Freezable etc (?), probably not applicable for generic bullets
 
 
@@ -19,18 +22,33 @@ public class Generic_Bullet : MonoBehaviour, I_Common_Projectile
         }
         else if (collision.gameObject.CompareTag("Exploder"))
         {
-            Destroy(collision.gameObject);
             Explode(collision.transform.position);
+            Collider[] interactable_colliders_in_radius = Physics.OverlapSphere(transform.position, 15.0f);
+            foreach (var interactable_collider in interactable_colliders_in_radius)
+            {
+                GameObject interactable_object_in_radius = interactable_collider.gameObject;
+                if (interactable_object_in_radius.CompareTag("Player"))
+                {
+                    Player_Movement movement = interactable_object_in_radius.GetComponent<Player_Movement>();
+                    movement.Loose_Health_Points(20, 1.0f);
+                    movement.Ragdoll();
+                    Rigidbody ghostRigid = movement.ghost.GetComponent<Rigidbody>();
+                    ghostRigid.AddExplosionForce(200 * 20.0f, transform.position, 35.0f);
+                    Debug.Log("RAGDOLL FROM EXPLOSION");
 
 
+                }
+                AudioSource.PlayClipAtPoint(explosion_sound, this.gameObject.transform.position, 1.0f);
+                Destroy(collision.gameObject);
+            }
         }
 
         // else if (Effect_Tag != "" && collision.gameObject.CompareTag(Effect_Tag))
-        // {
+            // {
 
-        //     On_Effected_Hit();
-        // }
-        Destroy_Bullet();
+            //     On_Effected_Hit();
+            // }
+            Destroy_Bullet();
     }
 
     void Destroy_Bullet()
@@ -50,24 +68,24 @@ public class Generic_Bullet : MonoBehaviour, I_Common_Projectile
             {
                 new_rb.AddExplosionForce(200 * 20.0f, transform.position, 35.0f);
             }
-            if (nearby.gameObject.CompareTag("Exploder"))
-            {
-                // Vector3 explodePos = nearby.transform.position;
-                // Destroy(nearby.gameObject);
-                // Explode(explodePos);
-                StartCoroutine(DelayedExplosion(nearby.gameObject));
-            }
+        //     if (nearby.gameObject.CompareTag("Exploder"))
+        //     {
+        //         // Vector3 explodePos = nearby.transform.position;
+        //         // Destroy(nearby.gameObject);
+        //         // Explode(explodePos);
+        //         StartCoroutine(DelayedExplosion(nearby.gameObject));
+        //     }
         }
-        // Destroy_Bullet();
+        // // Destroy_Bullet();
     }
 
-    System.Collections.IEnumerator DelayedExplosion(GameObject exploder)
-    {
-        yield return new WaitForSeconds(1.0f);
-         Vector3 explodePos = exploder.transform.position;
-            Destroy(exploder);
-            Explode(explodePos);
-    }
+    // System.Collections.IEnumerator DelayedExplosion(GameObject exploder)
+    // {
+    //     yield return new WaitForSeconds(1.0f);
+    //      Vector3 explodePos = exploder.transform.position;
+    //         Destroy(exploder);
+    //         Explode(explodePos);
+    // }
 
     void On_Enemy_Hit(GameObject hitEnemy)
     {

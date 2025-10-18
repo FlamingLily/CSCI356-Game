@@ -12,6 +12,11 @@ TagManager:
   - Enemy
   - Freezable
   - Exploder
+  - Heal
+  - Full_Heal
+  - Shop
+  - Coin
+  - Shop_Item
   layers:
   - Default
   - TransparentFX

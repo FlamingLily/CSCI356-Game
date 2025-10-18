@@ -24,6 +24,14 @@ public class Machine_Gunner : MonoBehaviour, ICommon_Gun_Actions
 
     private Coroutine kickbackRoutine;
 
+    public AudioSource player_audio_source;
+
+    private bool isFiringForSound = false;
+
+    public AudioClip fire_audio;
+    public AudioClip scope_in_audio;
+    public AudioClip scope_out_audio;
+
     public Transform Get_Grab_Point()
     {
         return gun_grab_point;
@@ -42,6 +50,13 @@ public class Machine_Gunner : MonoBehaviour, ICommon_Gun_Actions
     public void Fire()
     {
         float timeNow = Time.time;
+        if (!isFiringForSound)
+        {
+            player_audio_source.clip = fire_audio;
+            player_audio_source.loop = true;
+            player_audio_source.Play();
+            isFiringForSound = true;
+        }
 
         // Prevents the machine gun from firing more than every fireRate seconds
         if (timeNow - lastFired >= fireRate)
@@ -73,20 +88,32 @@ public class Machine_Gunner : MonoBehaviour, ICommon_Gun_Actions
 
         projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
 
-        //Debug.Log("MACHINEGUN FIRE");
+        Debug.Log("MACHINEGUN FIRE");
     }
 
     public void Scope_in()
     {
         Debug.Log("MACHINE GUN SCOPE IN");
+        player_audio_source.PlayOneShot(scope_in_audio, 1);
     }
 
     public void Scope_out()
     {
         Debug.Log("MACHINE GUN SCOPE OUT");
+        player_audio_source.PlayOneShot(scope_out_audio, 1);
     }
 
-    public void Reload() { }
+    public void Reload()
+    {
+
+          if (isFiringForSound)
+        {
+            player_audio_source.clip = fire_audio;
+            player_audio_source.loop = false;
+            player_audio_source.Stop();
+            isFiringForSound = false;
+        }
+     }
 
     void Start()
     {
@@ -98,8 +125,8 @@ public class Machine_Gunner : MonoBehaviour, ICommon_Gun_Actions
 
     }
 
-       public void Do_Magic(GameObject target)
+    public void Do_Magic(GameObject target)
     {
-        
+
     }
 }
