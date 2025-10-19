@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -37,85 +38,246 @@ public class Ragdoll : MonoBehaviour
     public Transform default_first_person_stance;
     public Transform default_third_person_stance;
 
+
+    private bool has_respawned;
+    public float respawn_time;
+
+    private float time_of_death;
+
     public float verticalRot;
     public float horizontalRot;
     private Rigidbody ragdoll_rigid;
     private Player_Movement playerMovement;
 
+    public AudioSource ragdoll_audio_source;
+
+    public AudioClip ragdoll_audio;
+    public AudioClip ragdoll_recover_audio;
+    public AudioClip dead_audio;
+
+    private bool isPlayerAlive = true;
+    private bool hasDeathGongPlayed = false;
+
+
     private float ragdollStartTime;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    // void Start()
+    // {
+
+
+
+    //     // Play_Ragdoll_Sound();
+    //     playerMovement = playerGameObject.GetComponent<Player_Movement>();
+
+    //     sensitivityHor = playerMovement.sensitivityHor;
+    //     sensitivityVert = playerMovement.sensitivityVert;
+    //     minimumVert = playerMovement.minimumVert;
+    //     maximumVert = playerMovement.maximumVert;
+    //     // lerp_speed = playerMovement.lerp_speed;
+
+    //     ragdoll_rigid = this.GetComponent<Rigidbody>();
+
+
+    //     // first_person_cam_player = playerMovement.first_person_cam;
+    //     // first_person_cam_transform_player = playerMovement.first_person_cameraTransform;
+    //     // third_person_cam_player = playerMovement.third_person_cam;
+    //     // third_person_cam_transform_player = playerMovement.third_person_cameraTransform;
+
+
+    //     // horizontalRot = playerMovement.horizontalRot;
+    //     // verticalRot = playerMovement.verticalRot;
+
+    //     // default_player_stance = playerMovement.transform;
+    //     // default_first_person_stance = playerMovement.first_person_cameraTransform;
+    //     // default_third_person_stance = playerMovement.third_person_cameraTransform;
+    // }
+
+    void Awake()
     {
+       
 
 
 
-        playerMovement = playerGameObject.GetComponent<Player_Movement>();
+            // Play_Ragdoll_Sound();
+            playerMovement = playerGameObject.GetComponent<Player_Movement>();
 
-        sensitivityHor = playerMovement.sensitivityHor;
-        sensitivityVert = playerMovement.sensitivityVert;
-        minimumVert = playerMovement.minimumVert;
-        maximumVert = playerMovement.maximumVert;
-        // lerp_speed = playerMovement.lerp_speed;
+            sensitivityHor = playerMovement.sensitivityHor;
+            sensitivityVert = playerMovement.sensitivityVert;
+            minimumVert = playerMovement.minimumVert;
+            maximumVert = playerMovement.maximumVert;
+            // lerp_speed = playerMovement.lerp_speed;
 
-        ragdoll_rigid = this.GetComponent<Rigidbody>();
-
-
-        // first_person_cam_player = playerMovement.first_person_cam;
-        // first_person_cam_transform_player = playerMovement.first_person_cameraTransform;
-        // third_person_cam_player = playerMovement.third_person_cam;
-        // third_person_cam_transform_player = playerMovement.third_person_cameraTransform;
+            ragdoll_rigid = this.GetComponent<Rigidbody>();
 
 
-        // horizontalRot = playerMovement.horizontalRot;
-        // verticalRot = playerMovement.verticalRot;
+            // first_person_cam_player = playerMovement.first_person_cam;
+            // first_person_cam_transform_player = playerMovement.first_person_cameraTransform;
+            // third_person_cam_player = playerMovement.third_person_cam;
+            // third_person_cam_transform_player = playerMovement.third_person_cameraTransform;
 
-        // default_player_stance = playerMovement.transform;
-        // default_first_person_stance = playerMovement.first_person_cameraTransform;
-        // default_third_person_stance = playerMovement.third_person_cameraTransform;
+
+            // horizontalRot = playerMovement.horizontalRot;
+            // verticalRot = playerMovement.verticalRot;
+
+            // default_player_stance = playerMovement.transform;
+            // default_first_person_stance = playerMovement.first_person_cameraTransform;
+            // default_third_person_stance = playerMovement.third_person_cameraTransform;
+
     }
 
     void Update()
     {
-        // Ghost_Camera_Operator();
 
-        // if (Time.time - ragdollStartTime > max_sleep_time)
-        // {
-        //     Debug.Log("Ragdoll time limit exceeded - forcing recovery");
-        //     Ragdoll_Recover();
-        // }
-        if (isRecovering)
+        if (!isPlayerAlive)
         {
-            Ragdoll_Recover();
-
-            if (Time.time - recoveryStartTime >= recoveryDuration)
+            if (!hasDeathGongPlayed)
             {
-                Return_to_alive();
+                ragdoll_audio_source.PlayOneShot(dead_audio, 1);
+                hasDeathGongPlayed = true;
+                time_of_death = Time.time;
             }
+
+            if (Time.time - time_of_death >= respawn_time)
+            {
+                // Up_for_Respawn();
+                playerMovement.Respawn_Player();
+            }
+            Ghost_Camera_Operator();
         }
         else
         {
-            Ghost_Camera_Operator();
-
-            if (Time.time - ragdollStartTime > max_sleep_time)
+            if (isRecovering)
             {
-                Debug.Log("Ragdoll time limit exceeded - forcing recovery");
-                StartRecovery();
-            }
-        }
+                Ragdoll_Recover();
 
+                if (Time.time - recoveryStartTime >= recoveryDuration)
+                {
+                    Return_to_alive();
+                }
+            }
+            else
+            {
+                Ghost_Camera_Operator();
+
+                if (Time.time - ragdollStartTime > max_sleep_time && !has_respawned)
+                {
+                    has_respawned = true;
+                    Debug.Log("Ragdoll time limit exceeded - forcing recovery");
+                    StartRecovery();
+                }
+            }
+
+            // if (!isPlayerAlive && !hasDeathGongPlayed)
+            // {
+            //     ragdoll_audio_source.PlayOneShot(dead_audio, 1);
+            //     hasDeathGongPlayed = true;
+            // }
+            // if (isRecovering)
+            // {
+            //     Ragdoll_Recover();
+
+            //     if (Time.time - recoveryStartTime >= recoveryDuration)
+            //     {
+            //         Return_to_alive();
+            //     }
+            // }
+            // else
+            // {
+            //     Ghost_Camera_Operator();
+
+            //     if (Time.time - ragdollStartTime > max_sleep_time)
+            //     {
+            //         Debug.Log("Ragdoll time limit exceeded - forcing recovery");
+            //         StartRecovery();
+            //     }
+            // }
+
+        }
     }
+
+    // void Up_for_Respawn()
+//     {
+//         playerGameObject.transform.position = this.gameObject.transform.position;
+
+
+//         // transform.position = Vector3.Lerp(
+//         //     transform.position,
+//         //     default_player_stance.position,
+//         //     1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
+//         // );
+
+//         transform.rotation = Quaternion.Slerp(
+//             transform.rotation,
+//             default_player_stance.rotation,
+//             1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
+//         );
+//         // if (playerMovement.is_first_person == true)
+//         // {
+//         first_person_cam_ghost.transform.rotation = Quaternion.Slerp(
+//         playerMovement.third_person_cameraTransform.transform.rotation,
+//         playerMovement.third_person_cameraTransform.rotation,
+//         1f - Mathf.Exp(-lerp_speed * Time.deltaTime));
+
+
+//         first_person_cam_ghost.transform.position = Vector3.Lerp(
+//         third_person_cam_ghost.transform.position,
+//         default_third_person_stance.position,
+//         1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
+// );
+
+
+//         third_person_cam_ghost.transform.rotation = Quaternion.Slerp(
+//                     playerMovement.third_person_cameraTransform.transform.rotation,
+//                     playerMovement.third_person_cameraTransform.rotation,
+//                     1f - Mathf.Exp(-lerp_speed * Time.deltaTime));
+
+
+//         third_person_cam_ghost.transform.position = Vector3.Lerp(
+//         third_person_cam_ghost.transform.position,
+//         default_third_person_stance.position,
+//         1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
+        
+//     }
 
     void OnEnable()
     {
+        Debug.Log($"On enable {playerMovement.Health}");
+        if (playerMovement == null)
+        {
+            playerMovement = playerGameObject.GetComponent<Player_Movement>();
+        }
         ragdollStartTime = Time.time;
         default_player_stance = playerGameObject.transform;
         default_first_person_stance = playerMovement.first_person_cameraTransform;
         default_third_person_stance = playerMovement.third_person_cameraTransform;
+        // isPlayerAlive = !playerMovement.isDead;
+        isPlayerAlive = (playerMovement.Health > 0);
+        hasDeathGongPlayed = false;
+        has_respawned = false;
+
+        if (isPlayerAlive)
+        {
+            Play_Ragdoll_Sound();
+        }
+        else
+        {
+            ragdoll_rigid.AddForce(Vector3.up * 20f, ForceMode.Impulse);
+            // ragdoll_rigid.AddExplosionForce(20 * 5.0f, ragdoll_rigid.transform.position, 5.0f);
+            // ragdoll_rigid.AddExplosionForce(100f * 15.0f, ragdoll_rigid.transform.position + Vector3.down * 1.5f, 5.0f);
+        }
+
+
+    }
+
+    void Play_Ragdoll_Sound()
+    {
+        ragdoll_audio_source.PlayOneShot(ragdoll_audio, 0.8f);
     }
 
     void FixedUpdate()
     {
-        if (ragdoll_rigid != null)
+
+        if (isPlayerAlive && ragdoll_rigid != null)
         {
 
             if (ragdoll_rigid.IsSleeping())
@@ -135,16 +297,24 @@ public class Ragdoll : MonoBehaviour
 
     void StartRecovery()
     {
-        if (playerMovement.health > 0)
+        Debug.Log($"BALLS {playerMovement.Health}");
+        if (playerMovement.Health > 0)
         {
             isRecovering = true;
             recoveryStartTime = Time.time;
+            ragdoll_audio_source.PlayOneShot(ragdoll_recover_audio, 0.7f);
+
+
         }
+        // else
+        // {
+        //     // ragdoll_audio_source.PlayOneShot(dead_audio, 1);
+        // }
     }
 
     void Ragdoll_Recover()
     {
-
+        // ragdoll_audio_source.PlayOneShot(ragdoll_recover_audio, 0.3f);
 
         playerGameObject.transform.position = this.gameObject.transform.position;
 
@@ -162,29 +332,29 @@ public class Ragdoll : MonoBehaviour
         );
         // if (playerMovement.is_first_person == true)
         // {
-                        first_person_cam_ghost.transform.rotation = Quaternion.Slerp(
-                        playerMovement.third_person_cameraTransform.transform.rotation,
-                        playerMovement.third_person_cameraTransform.rotation,
-                        1f - Mathf.Exp(-lerp_speed * Time.deltaTime));
+        first_person_cam_ghost.transform.rotation = Quaternion.Slerp(
+        playerMovement.third_person_cameraTransform.transform.rotation,
+        playerMovement.third_person_cameraTransform.rotation,
+        1f - Mathf.Exp(-lerp_speed * Time.deltaTime));
 
 
-            first_person_cam_ghost.transform.position = Vector3.Lerp(
-            third_person_cam_ghost.transform.position,
-            default_third_person_stance.position,
-            1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
+        first_person_cam_ghost.transform.position = Vector3.Lerp(
+        third_person_cam_ghost.transform.position,
+        default_third_person_stance.position,
+        1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
 );
-    
-
-            third_person_cam_ghost.transform.rotation = Quaternion.Slerp(
-                        playerMovement.third_person_cameraTransform.transform.rotation,
-                        playerMovement.third_person_cameraTransform.rotation,
-                        1f - Mathf.Exp(-lerp_speed * Time.deltaTime));
 
 
-            third_person_cam_ghost.transform.position = Vector3.Lerp(
-            third_person_cam_ghost.transform.position,
-            default_third_person_stance.position,
-            1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
+        third_person_cam_ghost.transform.rotation = Quaternion.Slerp(
+                    playerMovement.third_person_cameraTransform.transform.rotation,
+                    playerMovement.third_person_cameraTransform.rotation,
+                    1f - Mathf.Exp(-lerp_speed * Time.deltaTime));
+
+
+        third_person_cam_ghost.transform.position = Vector3.Lerp(
+        third_person_cam_ghost.transform.position,
+        default_third_person_stance.position,
+        1f - Mathf.Exp(-lerp_speed * Time.deltaTime)
 );
         // }
 
@@ -212,6 +382,7 @@ public class Ragdoll : MonoBehaviour
     void Return_to_alive()
     {
         Debug.Log(playerMovement.is_first_person);
+
         // playerGameObject.transform.position = this.gameObject.transform.position;
         playerGameObject.SetActive(true);
         // if (playerMovement.is_first_person == true)
@@ -221,8 +392,8 @@ public class Ragdoll : MonoBehaviour
         // }
         // else
         // {
-            playerMovement.first_person_cam.SetActive(false);
-            playerMovement.third_person_cam.SetActive(true);
+        playerMovement.first_person_cam.SetActive(false);
+        playerMovement.third_person_cam.SetActive(true);
         // }
 
 
