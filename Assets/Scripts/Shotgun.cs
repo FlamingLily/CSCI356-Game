@@ -20,6 +20,12 @@ public class Shotgun : MonoBehaviour, ICommon_Gun_Actions
     public CharacterController playerController;
 
 
+        public AudioSource player_audio_source;
+
+public AudioClip fire_audio;
+    public AudioClip scope_in_audio;
+    public AudioClip scope_out_audio;
+
     public GameObject projectilePrefab = null;
     public float launchForce = 0.0f;
     float lastFired = 0;
@@ -46,76 +52,84 @@ public class Shotgun : MonoBehaviour, ICommon_Gun_Actions
     }
     public void Fire()
     {
-        if (!is_left_click_held && Time.time >= lastFired + fire_rate)
-        {
-            GameObject projectile = Instantiate(projectilePrefab, barrelDirection.position, projectilePrefab.transform.rotation);
+        Debug.Log("REVOLVER FIRE");
 
-            Generic_Bullet bullet_brains = projectile.GetComponent<Generic_Bullet>();
-            if (bullet_brains != null)
+        if (Input.GetKey(KeyCode.V))
+        {
+            if (!is_left_click_held && Time.time >= lastFired + fire_rate)
             {
-                bullet_brains.damage = bullet_damage;
-                bullet_brains.Enemy_Tag = "Enemy";
-                // bullet_brains.Effect_Tag = "";
+                GameObject projectile = Instantiate(projectilePrefab, barrelDirection.position, projectilePrefab.transform.rotation);
+
+                Generic_Bullet bullet_brains = projectile.GetComponent<Generic_Bullet>();
+                if (bullet_brains != null)
+                {
+                    bullet_brains.damage = bullet_damage;
+                    bullet_brains.Enemy_Tag = "Enemy";
+                    // bullet_brains.Effect_Tag = "";
+                }
+
+                projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
+                player_audio_source.PlayOneShot(fire_audio, 1);
+
+                if (kickbackRoutine != null) StopCoroutine(kickbackRoutine);
+                kickbackRoutine = StartCoroutine(Gun_Kick());
+                lastFired = Time.time;
+                //Debug.Log("shotgun FIRE");
+                is_left_click_held = true;
+            }
+            else
+            {
+                is_left_click_held = false;
             }
 
-            projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
 
-            if (kickbackRoutine != null) StopCoroutine(kickbackRoutine);
-            kickbackRoutine = StartCoroutine(Gun_Kick());
-            lastFired = Time.time;
-            //Debug.Log("shotgun FIRE");
-            is_left_click_held = true;
         }
-        else
+
+        IEnumerator Gun_Kick()
         {
-            is_left_click_held = false;
+            float halfTime = kick_back_time / 2f;
+
+
+            Vector3 startPos = transform.localPosition;
+            Vector3 kickbackPos = startPos + Vector3.back * kick_back_force;
+
+
+            float t = 0f;
+            while (t < 1f)
+            {
+                t += Time.deltaTime / halfTime;
+                transform.localPosition = Vector3.Lerp(startPos, kickbackPos, t);
+                Vector3 player_kickback = -playerController.transform.forward * (kick_back_force / 100);
+                playerController.Move(player_kickback);
+                yield return null;
+            }
+
+
+            t = 0f;
+            while (t < 1f)
+            {
+                t += Time.deltaTime / halfTime;
+                transform.localPosition = Vector3.Lerp(kickbackPos, startPos, t);
+                yield return null;
+            }
+
+            transform.localPosition = startPos;
+            kickbackRoutine = null;
         }
-
-
     }
 
-    IEnumerator Gun_Kick()
+      public void Scope_in()
     {
-        float halfTime = kick_back_time / 2f;
-
-
-        Vector3 startPos = transform.localPosition;
-        Vector3 kickbackPos = startPos + Vector3.back * kick_back_force;
-
-
-        float t = 0f;
-        while (t < 1f)
-        {
-            t += Time.deltaTime / halfTime;
-            transform.localPosition = Vector3.Lerp(startPos, kickbackPos, t);
-            Vector3 player_kickback = -playerController.transform.forward * (kick_back_force / 100);
-            playerController.Move(player_kickback);
-            yield return null;
-        }
-
-
-        t = 0f;
-        while (t < 1f)
-        {
-            t += Time.deltaTime / halfTime;
-            transform.localPosition = Vector3.Lerp(kickbackPos, startPos, t);
-            yield return null;
-        }
-
-        transform.localPosition = startPos;
-        kickbackRoutine = null;
-    }
-
-    public void Scope_in()
-    {
-        Debug.Log("REVOLVER SCOPE IN");
+        Debug.Log("MACHINE GUN SCOPE IN");
+        player_audio_source.PlayOneShot(scope_in_audio, 1);
     }
 
     public void Scope_out()
     {
-        Debug.Log("revolver SCOPE out");
-
+        Debug.Log("MACHINE GUN SCOPE OUT");
+        player_audio_source.PlayOneShot(scope_out_audio, 1);
     }
+
 
 
     public void Reload()
