@@ -147,8 +147,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
     void Start()
     {
-
-
+        stahs_collected.text = coins_held.ToString();
         default_health = Full_Health;
         default_jump_height = jumpHeight;
         default_move_speed = move_speed;
@@ -421,51 +420,54 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
     void Checkout_Held_Item()
     {
-        if (coins_held >= item_price)
+        if (currently_held_item != null)
         {
-            player_audio_source.PlayOneShot(full_heal, 0.8f);
-            if (currently_held_item.CompareTag("gun"))
+            if (coins_held >= item_price)
             {
-                currently_held_gun = currently_held_item;
+                player_audio_source.PlayOneShot(full_heal, 0.8f);
+                if (currently_held_item.CompareTag("gun"))
+                {
+                    currently_held_gun = currently_held_item;
+                }
+                else if (currently_held_item.CompareTag("Shop_Item"))
+                {
+                    Debug.Log("SHOP ITEM");
+                    if (currently_held_item.name == "speed_boost")
+                    {
+                        move_speed += 0.5f;
+                    }
+                    else if (currently_held_item.name == "jump_boost")
+                    {
+                        jumpHeight += 0.5f;
+                        consecutive_jumps_allowed += 1;
+                    }
+                    else if (currently_held_item.name == "health_boost")
+                    {
+                        Full_Health += 10;
+                        Health = Full_Health;
+                        health_slider.maxValue = Full_Health;
+                    }
+                }
+                if (!currently_held_item.CompareTag("gun"))
+                {
+                    Destroy(currently_held_item);
+                }
+
+                currently_held_item = null;
+                player_audio_source.PlayOneShot(full_heal, 0.8f);
+                coins_held = coins_held -= item_price;
+                stahs_collected.text = coins_held.ToString();
+
             }
-            else if (currently_held_item.CompareTag("Shop_Item"))
-            {
-                Debug.Log("SHOP ITEM");
-                if (currently_held_item.name == "speed_boost")
-                {
-                    move_speed += 0.5f;
-                }
-                else if (currently_held_item.name == "jump_boost")
-                {
-                    jumpHeight += 0.5f;
-                    consecutive_jumps_allowed += 1;
-                }
-                else if (currently_held_item.name == "health_boost")
-                {
-                    Full_Health += 10;
-                    Health = Full_Health;
-                    health_slider.maxValue = Full_Health;
-                }
-            }
-            if (!currently_held_item.CompareTag("gun"))
+            else
             {
                 Destroy(currently_held_item);
+                currently_held_item = null;
+                player_audio_source.PlayOneShot(ragdoll_audio, 0.8f);
             }
 
-            currently_held_item = null;
-            player_audio_source.PlayOneShot(full_heal, 0.8f);
-            coins_held = coins_held -= item_price;
-            stahs_collected.text = coins_held.ToString();
-
+            Debug.Log("CHECKOUT ITEM");
         }
-        else
-        {
-            Destroy(currently_held_item);
-            currently_held_item = null;
-            player_audio_source.PlayOneShot(ragdoll_audio, 0.8f);
-        }
-
-        Debug.Log("CHECKOUT ITEM");
     }
 
     void Detect_in_Radius()
@@ -596,7 +598,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
                 environment_object_in_radius.SetActive(false);
                 AudioSource.PlayClipAtPoint(full_heal, environment_object_in_radius.transform.position, 1.0f);
                 stahs_collected.text = coins_held.ToString();
-                Invoke("environment_object_in_radius.SetActive(true)", 1f);
+                // Invoke("environment_object_in_radius.SetActive(true)", 1f);
             }
             else if (environment_object_in_radius.CompareTag("Shop"))
             {
