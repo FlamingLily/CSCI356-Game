@@ -93,8 +93,8 @@ public class AIBehaviour : MonoBehaviour, I_TakeDamage
     {
         if (health <= 0f)
         {
-            Destroy(gameObject);
             waveController.GetComponent<WaveController>().EnemyKilled();
+            Destroy(gameObject);
             return;
         }
         if (!aiSetup)
@@ -337,8 +337,8 @@ public class AIBehaviour : MonoBehaviour, I_TakeDamage
         {
             // death_noise = Resources.Load<AudioClip>("Enemy_death");
             AudioSource.PlayClipAtPoint(death_noise, this.gameObject.transform.position, 1.5f);
-            Destroy(gameObject);
             waveController.GetComponent<WaveController>().EnemyKilled();
+            Destroy(gameObject);
         }
     }
 }
