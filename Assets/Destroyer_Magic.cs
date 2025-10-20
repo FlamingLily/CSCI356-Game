@@ -103,9 +103,11 @@ public AudioClip fire_audio;
         // {
         //     script.enabled = false;
         // }
-        Destroy(target.gameObject);
-        player_audio_source.PlayOneShot(on_effect_audio, 1);
-
+        if (target.CompareTag("Destroyable"))
+        {
+            Destroy(target.gameObject);
+            player_audio_source.PlayOneShot(on_effect_audio, 1);
+        }
     }
 
     IEnumerator Gun_Kick()
