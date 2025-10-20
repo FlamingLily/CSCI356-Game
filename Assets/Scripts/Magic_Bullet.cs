@@ -34,13 +34,13 @@ public class Magic_Bullet : MonoBehaviour, I_Common_Projectile
         }
         else if (collision.gameObject.CompareTag("wake_on_player"))
         {
-            Animator collidedAnimator = collision.gameObject.GetComponent<Animator>();
-            if (collidedAnimator != null)
-            {
-                collidedAnimator.speed = 0.25f;
+            // Animator collidedAnimator = collision.gameObject.GetComponent<Animator>();
+            // if (collidedAnimator != null)
+            // {
+            //     collidedAnimator.speed = 0.25f;
                 On_Effected_Hit(collision.gameObject);
 
-            }
+            // }
 
             // Destroy(this.gameObject);
         }
@@ -61,8 +61,8 @@ public class Magic_Bullet : MonoBehaviour, I_Common_Projectile
         hitEnemy.GetComponent<I_TakeDamage>().TakeDamage(damage);
         // Destroy(this.gameObject);
         Destroy_Bullet();
-        AIBehaviour ai_script = hitEnemy.GetComponent<AIBehaviour>();
-        ai_script.moveSpeed = 1.0f;
+        // AIBehaviour ai_script = hitEnemy.GetComponent<AIBehaviour>();
+        // ai_script.moveSpeed = 1.0f;
         // hitEnemy.mov
         ICommon_Gun_Actions gun_interface = shooter.GetComponent<ICommon_Gun_Actions>();
         gun_interface.Do_Magic(hitEnemy);

@@ -103,6 +103,7 @@ public AudioClip fire_audio;
         // {
         //     script.enabled = false;
         // }
+        Debug.Log("DESTROYER");
         if (target.CompareTag("Destroyable"))
         {
             Destroy(target.gameObject);

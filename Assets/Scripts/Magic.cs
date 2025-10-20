@@ -95,11 +95,27 @@ public AudioClip fire_audio;
 
     public void Do_Magic(GameObject target)
     {
-        target.GetComponent<Renderer>().material = Frozen;
-        MonoBehaviour script = target.GetComponent<MonoBehaviour>();
-        if (script != null && !target.CompareTag("Enemy"))
+        if (target.CompareTag("Enemy"))
         {
-            script.enabled = false;
+            AIBehaviour ai_script = target.GetComponent<AIBehaviour>();
+            target.GetComponent<Renderer>().material = Frozen;
+            ai_script.moveSpeed = 0.75f;
+            // hitEnemy.mov
+        }
+        else
+        {
+            Debug.Log("MAGIC");
+            target.GetComponent<Renderer>().material = Frozen;
+            MonoBehaviour script = target.GetComponent<MonoBehaviour>();
+            if (script != null && !target.CompareTag("Enemy"))
+            {
+                script.enabled = false;
+            }
+            Animator collidedAnimator = target.gameObject.GetComponent<Animator>();
+            if (collidedAnimator != null)
+            {
+                collidedAnimator.speed = 0.25f;
+            }
         }
         // Destroy(target.gameObject);
         player_audio_source.PlayOneShot(on_effect_audio, 1);
