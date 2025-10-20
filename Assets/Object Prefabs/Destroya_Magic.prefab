@@ -97,7 +97,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3c983087a79404030a0f572c17c16a97, type: 2}
+  - {fileID: 2100000, guid: 0541b778fa8249e4aa7a752c51e81ea1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -164,9 +164,10 @@ GameObject:
   - component: {fileID: 954799468835259004}
   - component: {fileID: 5363437600583128468}
   - component: {fileID: 3602628446593029277}
+  - component: {fileID: 3267471606391965706}
   - component: {fileID: 2694283146732147531}
   m_Layer: 0
-  m_Name: magic_gun
+  m_Name: Destroya_Magic
   m_TagString: gun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -224,7 +225,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4fd2b34eff8294cb3ab12118bb846d37, type: 2}
+  - {fileID: 2100000, guid: eed2a841b30d046b696497cfb121dde8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -254,7 +255,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6216565220047276081}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 913078e17bcaa4f909d86acc0da57078, type: 3}
   m_Name: 
@@ -296,6 +297,34 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.0016188059, y: 0.0030337397, z: 0.010050394}
   m_Center: {x: 0, y: -0.0005291029, z: 0.0000266931}
+--- !u!114 &3267471606391965706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6216565220047276081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3c8b32666d6e47bfbac0a29ba81e542, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Destroyer_Magic
+  gun_grab_point: {fileID: 6451742361322569068}
+  scopePosition: {fileID: 8199785995000382623}
+  barrelDirection: {fileID: 2128850443301941042}
+  kick_back_force: 0.2
+  kick_back_time: 0.7
+  Destroya: {fileID: 2100000, guid: eed2a841b30d046b696497cfb121dde8, type: 2}
+  playerController: {fileID: 0}
+  projectilePrefab: {fileID: 678993643665630323, guid: 4ec002d2f3d1041a49e4586f9c2c72b8, type: 3}
+  launchForce: 39000
+  fire_rate: 0.7
+  bullet_damage: 30
+  player_audio_source: {fileID: 2694283146732147531}
+  fire_audio: {fileID: 8300000, guid: bc6d467bd8f874f11a4f318de7ccf4f4, type: 3}
+  scope_in_audio: {fileID: 8300000, guid: 78f482dd6b76148b5b98c982d0308d38, type: 3}
+  scope_out_audio: {fileID: 8300000, guid: f6cba00cd66a645b18e67663e71541b1, type: 3}
+  on_effect_audio: {fileID: 8300000, guid: 2ce712567344e448d877554077a13f95, type: 3}
 --- !u!82 &2694283146732147531
 AudioSource:
   m_ObjectHideFlags: 0
