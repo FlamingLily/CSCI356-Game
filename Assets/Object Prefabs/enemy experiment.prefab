@@ -508,6 +508,8 @@ MonoBehaviour:
   waveController: {fileID: 0}
   gunPrefab: {fileID: 8113638057025857015, guid: c74a424e555f39e4e95f3d568532b10b, type: 3}
   stickPrefab: {fileID: 2830313972336413692, guid: a0d964bd06b578a448db4077450d58db, type: 3}
+  death_noise: {fileID: 8300000, guid: 2ce712567344e448d877554077a13f95, type: 3}
+  hit_noise: {fileID: 8300000, guid: 93c71054d3ac34b1e9ea80b2839e6cd3, type: 3}
 --- !u!195 &3059677982841419164
 NavMeshAgent:
   m_ObjectHideFlags: 0

@@ -166,7 +166,7 @@ GameObject:
   - component: {fileID: 3602628446593029277}
   - component: {fileID: 2694283146732147531}
   m_Layer: 0
-  m_Name: magic_gun
+  m_Name: BAD_PREFAB
   m_TagString: gun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -274,7 +274,6 @@ MonoBehaviour:
   fire_audio: {fileID: 8300000, guid: bc6d467bd8f874f11a4f318de7ccf4f4, type: 3}
   scope_in_audio: {fileID: 8300000, guid: 78f482dd6b76148b5b98c982d0308d38, type: 3}
   scope_out_audio: {fileID: 8300000, guid: f6cba00cd66a645b18e67663e71541b1, type: 3}
-  on_effect_audio: {fileID: 8300000, guid: 2ce712567344e448d877554077a13f95, type: 3}
 --- !u!65 &3602628446593029277
 BoxCollider:
   m_ObjectHideFlags: 0
