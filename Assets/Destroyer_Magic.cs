@@ -1,7 +1,8 @@
 using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
-public class Magic : MonoBehaviour, ICommon_Gun_Actions
+public class Destroyer_Magic : MonoBehaviour, ICommon_Gun_Actions
 {
     public Transform gun_grab_point;
 
@@ -18,7 +19,7 @@ public class Magic : MonoBehaviour, ICommon_Gun_Actions
     Vector3 move = Vector3.zero;
 
 
-    public Material Frozen;
+    public Material Destroya;
 
     public CharacterController playerController;
 
@@ -33,12 +34,13 @@ public class Magic : MonoBehaviour, ICommon_Gun_Actions
 
     public float bullet_damage;
 
-            public AudioSource player_audio_source;
+    public AudioSource player_audio_source;
 
 public AudioClip fire_audio;
     public AudioClip scope_in_audio;
     public AudioClip scope_out_audio;
-    public AudioClip on_effect_audio;
+
+        public AudioClip on_effect_audio;
 
 
 
@@ -63,7 +65,7 @@ public AudioClip fire_audio;
             if (!is_left_click_held && Time.time >= lastFired + fire_rate)
             {
                 GameObject projectile = Instantiate(projectilePrefab, barrelDirection.position, projectilePrefab.transform.rotation);
-                projectile.GetComponent<Renderer>().material = Frozen;
+                projectile.GetComponent<Renderer>().material = Destroya;
                 Magic_Bullet bullet_brains = projectile.GetComponent<Magic_Bullet>();
                 bullet_brains.shooter = this.gameObject;
                 // bullet_brains.shooterScript = this;
@@ -73,7 +75,7 @@ public AudioClip fire_audio;
                 {
                     bullet_brains.damage = bullet_damage;
                     bullet_brains.Enemy_Tag = "Enemy";
-                    bullet_brains.Effect_Tag = "Freezable";
+                    bullet_brains.Effect_Tag = "Destroyable";
                 }
 
                 projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce);
@@ -95,14 +97,15 @@ public AudioClip fire_audio;
 
     public void Do_Magic(GameObject target)
     {
-        target.GetComponent<Renderer>().material = Frozen;
-        MonoBehaviour script = target.GetComponent<MonoBehaviour>();
-        if (script != null && !target.CompareTag("Enemy"))
-        {
-            script.enabled = false;
-        }
-        // Destroy(target.gameObject);
+        // target.GetComponent<Renderer>().material = Frozen;
+        // MonoBehaviour script = target.GetComponent<MonoBehaviour>();
+        // if (script != null && !target.CompareTag("Enemy"))
+        // {
+        //     script.enabled = false;
+        // }
+        Destroy(target.gameObject);
         player_audio_source.PlayOneShot(on_effect_audio, 1);
+
     }
 
     IEnumerator Gun_Kick()

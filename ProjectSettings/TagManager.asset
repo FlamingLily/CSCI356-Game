@@ -17,6 +17,7 @@ TagManager:
   - Shop
   - Coin
   - Shop_Item
+  - Destroyable
   layers:
   - Default
   - TransparentFX
