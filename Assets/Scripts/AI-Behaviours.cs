@@ -14,7 +14,8 @@ public class AIBehaviour : MonoBehaviour, I_TakeDamage
     [SerializeField] private float attackRange = 10f;
     [SerializeField] private float approachRange = 3f;
     [SerializeField] private float damage = 10f;
-    [SerializeField] private float moveSpeed = 3.5f;
+    [SerializeField] public float moveSpeed = 3.5f;
+    // [SerializeField] private float moveSpeed = 3.5f;
     [SerializeField] private float attackCooldown = 0f;
 
     [Header("References")]

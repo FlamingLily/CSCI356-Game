@@ -95,7 +95,7 @@ public AudioClip fire_audio;
     {
         target.GetComponent<Renderer>().material = Frozen;
         MonoBehaviour script = target.GetComponent<MonoBehaviour>();
-        if (script != null)
+        if (script != null && !target.CompareTag("Enemy"))
         {
             script.enabled = false;
         }
