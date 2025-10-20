@@ -34,7 +34,9 @@ public class AIBehaviour : MonoBehaviour, I_TakeDamage
     string cloaked = "false";
     bool aiSetup = false;
 
-    private AudioClip death_noise;
+    [Header("Other")]
+    [SerializeField] private AudioClip death_noise;
+    [SerializeField] private AudioClip hit_noise;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -332,7 +334,7 @@ public class AIBehaviour : MonoBehaviour, I_TakeDamage
         Debug.Log("Health now: " + health);
         if (health <= 0f)
         {
-            death_noise = Resources.Load<AudioClip>("Enemy_death");
+            // death_noise = Resources.Load<AudioClip>("Enemy_death");
             AudioSource.PlayClipAtPoint(death_noise, this.gameObject.transform.position, 1.5f);
             Destroy(gameObject);
             waveController.GetComponent<WaveController>().EnemyKilled();
