@@ -1,50 +1,33 @@
 using System;
 using UnityEngine;
 
-public class Magic_Bullet : MonoBehaviour, I_Common_Projectile
+// Magic Bullet, used by Magic Guns (Non-Generic guns)
+public class Magic_Bullet : MonoBehaviour, I_Common_Projectile //extends the Common Projectile interface
 {
-    public float damage;
+    public float damage; //damage inflicted by bullet
+    public String Enemy_Tag; //Tag of Enemy to be damaged by bullet
+    public String Effect_Tag; //Tag of Effectable objects by Magic
+    public GameObject shooter;
 
-
-
-    public String Enemy_Tag;
-    public String Effect_Tag; //i.e Freezable etc (?)
-
-        public GameObject shooter;
-    // public MonoBehaviour shooterScript;
-
-    // public ICommon_Gun_Actions common_gun;
-
-
-    void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter(Collision collision) //On bullet collsion with object
     {
-
-
-        if (collision.gameObject.CompareTag(Enemy_Tag))
+        if (collision.gameObject.CompareTag(Enemy_Tag)) //if object is enemy
         {
 
-            On_Enemy_Hit(collision.gameObject);
+            On_Enemy_Hit(collision.gameObject); //hit enemy
 
         }
-        else if (collision.gameObject.CompareTag(Effect_Tag))
+        else if (collision.gameObject.CompareTag(Effect_Tag)) //is object is Effectable
         {
 
+            On_Effected_Hit(collision.gameObject); //effect object
+
+        }
+        else if (collision.gameObject.CompareTag("wake_on_player")) //if object is obstacle
+        {
             On_Effected_Hit(collision.gameObject);
-
         }
-        else if (collision.gameObject.CompareTag("wake_on_player"))
-        {
-            // Animator collidedAnimator = collision.gameObject.GetComponent<Animator>();
-            // if (collidedAnimator != null)
-            // {
-            //     collidedAnimator.speed = 0.25f;
-                On_Effected_Hit(collision.gameObject);
-
-            // }
-
-            // Destroy(this.gameObject);
-        }
-        else
+        else //if any other object, destroy bullet on collision
         {
             Destroy_Bullet();
         }
@@ -55,35 +38,19 @@ public class Magic_Bullet : MonoBehaviour, I_Common_Projectile
         Destroy(this.gameObject);
     }
 
-    void On_Enemy_Hit(GameObject hitEnemy)
+    void On_Enemy_Hit(GameObject hitEnemy) //on enemy hit
     {
-        Debug.Log("hit enemy");
-        hitEnemy.GetComponent<I_TakeDamage>().TakeDamage(damage);
-        // Destroy(this.gameObject);
-        Destroy_Bullet();
-        // AIBehaviour ai_script = hitEnemy.GetComponent<AIBehaviour>();
-        // ai_script.moveSpeed = 1.0f;
-        // hitEnemy.mov
-        ICommon_Gun_Actions gun_interface = shooter.GetComponent<ICommon_Gun_Actions>();
-        gun_interface.Do_Magic(hitEnemy);
+        hitEnemy.GetComponent<I_TakeDamage>().TakeDamage(damage); //damage enemy
+        Destroy_Bullet(); //destroy bullet
+        ICommon_Gun_Actions gun_interface = shooter.GetComponent<ICommon_Gun_Actions>(); 
+        gun_interface.Do_Magic(hitEnemy); //Do Magic on enemy
     }
 
-    void On_Effected_Hit(GameObject hit)
+    void On_Effected_Hit(GameObject hit) //If Effectable object hit
     {
-        Debug.Log("hit effect, calling parent");
-        // if (common_gun != null)
-        // {
-
         ICommon_Gun_Actions gun_interface = shooter.GetComponent<ICommon_Gun_Actions>();
-        gun_interface.Do_Magic(hit);
-            Destroy_Bullet();
-        // }
-        // effector_collider.GetComponent<Renderer>().material = Resources.Load<Material>("Materials/Frozen");
-        // MonoBehaviour script = effector_collider.GetComponent<MonoBehaviour>();
-        // if (script != null)
-        // {
-        //     script.enabled = false;
-        // }
+        gun_interface.Do_Magic(hit); //Do Magic on effectable
+        Destroy_Bullet(); //Destroy bullet
     }
 }
 
