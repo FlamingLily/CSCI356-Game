@@ -6,7 +6,7 @@ public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private GameObject target;
-    [SerializeField] private NavMeshSurface navMesh;
+    public NavMeshSurface navMesh;
 
     List<string> spawnQueue = new List<string>();
     float lastSpawnTime = 0f;
