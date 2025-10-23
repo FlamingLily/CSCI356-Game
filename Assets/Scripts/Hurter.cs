@@ -1,33 +1,30 @@
 using UnityEngine;
 
+//Objects that can inflict damage on the player
 public class Hurter : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public float hurt_tick_speed; //how often the player can be hurt in a time period
+    public int damage_points; //damage inflicted per hurt tick
+    public bool insta_kill; //if Hurter insta-kills player
 
-    public float hurt_tick_speed; //how often it can hurt you
-    public int damage_points;
-    public bool insta_kill;
-
-    private float last_hurt_tick = 0f;
+    private float last_hurt_tick = 0f; //last time the player was hurt
     void Start()
     {
 
     }
 
+//on collision between player and Hurter
     public void Hurt(Player_Movement player)
     {
-            Debug.Log("IN HURT");
-        if (Time.time >= last_hurt_tick + hurt_tick_speed)
+        if (Time.time >= last_hurt_tick + hurt_tick_speed) //if the last time the hurter damaged the player is more than the hurt tick
         {
-
-            last_hurt_tick = Time.time;
-            player.Loose_Health_Points(damage_points, hurt_tick_speed);
-            player.player_audio_source.PlayOneShot(player.hurter_audio, 0.5f);
-            Debug.Log("HURT HURT");
+            last_hurt_tick = Time.time; //reset last hurt tick
+            player.Loose_Health_Points(damage_points, hurt_tick_speed); //hurt player
+            player.player_audio_source.PlayOneShot(player.hurter_audio, 0.5f); //play player hurting sound
         }
-        if (insta_kill)
+        if (insta_kill) //if hurter is Insta-kill
         {
-            player.Die();
+            player.Die(); //kill player
         }
     }
 

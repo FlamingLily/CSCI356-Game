@@ -1,158 +1,120 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using System.Collections.Generic;
-using NUnit.Framework;
 using TMPro;
-
 using UnityEngine.UI;
-using TMPro;
-using Unity.VisualScripting;
-using NUnit.Framework.Constraints;
-using System.Linq.Expressions;
-// public class Player_Movement : MonoBehaviour
-public class Player_Movement : MonoBehaviour, I_TakeDamage
+
+// using Unity.VisualScripting;
+// using NUnit.Framework.Constraints;
+// using System.Linq.Expressions;
+// using NUnit.Framework;
+// using UnityEngine.InputSystem;
+
+public class Player_Movement : MonoBehaviour, I_TakeDamage //extends Damage Taking interface
 {
-    public enum RotationAxes
+    public enum RotationAxes //rotation axes for camera control
     {
         MouseXAndY = 0, // yaw + pitch
         MouseX = 1,     // yaw only
         MouseY = 2      // pitch only
     }
 
+    //Camera Variables
+    public float sensitivityHor; //mouse X sensitivity
+    public float sensitivityVert; //mouse Y sensitivity
+    public float minimumVert; //minimum camera rotation
+    public float maximumVert; //maximum camera rotation
+    public float verticalRot; //vertical rotation
+    public float horizontalRot; //horizontal rotation
+    private Quaternion targetYawRotation; //target camera yaw
+    private Quaternion targetPitchRotation; //target camera pitch
+    public bool is_first_person; //is player in first person mode?
+
+    //Shop
+    private GameObject current_shop = null; //shop player is currently in, if any
+    private bool walls_up = false; //if walls of current shop, if any, are up
+    public int item_price; //standard item price
+
+    // Player Audio 
+    public AudioSource player_audio_source; //player audio source
+    public AudioClip jump_audio; //jumping audio
+    public AudioClip heal_audio; //partial heal audio
+    public AudioClip full_heal; //full heal audio
+    public AudioClip hurter_audio; //on hurt audio
+    public AudioClip pick_up_gun; //pick up gun audio
+    public AudioClip hit_audio; //player hit audio
+    public AudioClip bullet_hit_auido; //player hit by bullet audio
+    public AudioClip ragdoll_audio; //ragdoll start audio
+    public AudioClip ragdoll_recover_audio; //ragdoll recover audio
+    public AudioClip dead_audio; //on death audio
+    public AudioClip sping_up_audio; //jump on spring audio
+
+    //UI
+    public GameObject healthLabel; //enemies remaining label
+    public GameObject death_screen; //death screen
+    public GameObject hurt_overlay; //on hurt overlay
+    public TextMeshProUGUI stahs_collected; //starts collected label
+    public Slider health_slider; //player current health slider
+
+    //Player States - Ragdoll
+    public GameObject ghost; //dead state
+    public GameObject first_person_cam_ghost; //ragdoll first person camera
+    public Transform first_person_cameraTransform_ghost; //ragdoll first person camera transform
+    public GameObject third_person_cam_ghost; //ragdoll third person camera
+    public Transform third_person_cameraTransform_ghost; //ragdoll third person camera transform
+
+    // Player States - Active
+    public GameObject player; //active player
+    public CharacterController controller; //active player character controller
+    public GameObject first_person_cam; //active player first person camera
+    public Transform first_person_cameraTransform; //active player first person camera transform
+    public GameObject third_person_cam; //active player third person camera
+    public Transform third_person_cameraTransform; //active player third person camera transform
+
+    //Player Variables
+    public float move_speed; //move speed now
+    private float default_move_speed; //move speed on Start()
+    public int Health; //player health now
+    public int Full_Health; //maximum health / full health
+    private int default_health; //full health value on Start()
+    public float jumpHeight; //player jump height
+    private float default_jump_height; //jump height on Start()
+    public int consecutive_jumps_allowed; //consective jumps allowed
+    private int consecutive_jumps_allowed_default; //consective jumps allowed on Start()
+    public float gravityValue; //world gravity value
+    public Vector3 playerVelocity; //current player velocity
+    public int coins_held = 0; //currently held coins
+    public int current_jumps = 0; //current consecutive jumps by player
+    private bool groundedPlayer; //is player grounded?
+    private GameObject currently_held_gun; //currently held gun, if any
+    private GameObject currently_held_item;//currently held item, if any
+    public float lerp_speed; //animation / lerp speed of player
+    public Transform grab_point; //player's gun hold point
+    public Transform item_grab_point; //player's item hold point
+    public bool player_input_enabled = true; //is player currently controllable by user?
+    public bool isDead = false; //is player alive?
 
 
+    //Players Interactable Radius
+    private List<GameObject> guns_in_interactable_radius = new List<GameObject>(); //guns in players interactable radius
+    private List<GameObject> shop_items_in_interactable_radius = new List<GameObject>(); //items in players interactable radius
+    public float interactables_radius; //radius around player to detect interactables
+    public float environment_radius;  //radius around player to detect enviromental factors (obstacles etc)
+    public float scan_wait_time; //how often the player detects
+    private float next_scan = 0f; //next detect time
 
-    public AudioSource player_audio_source;
-    private GameObject current_shop = null;
+    //World Variables
+    private GameObject respawners_parent_holder; //parent GameObject of Respawn Beacons
 
-
-
-    public AudioClip jump_audio;
-    public AudioClip heal_audio;
-
-    private bool walls_up = false;
-    public AudioClip full_heal;
-    public AudioClip hurter_audio;
-    public AudioClip pick_up_gun;
-    public AudioClip hit_audio;
-
-    public AudioClip bullet_hit_auido;
-
-    public AudioClip ragdoll_audio;
-    public AudioClip ragdoll_recover_audio;
-    public AudioClip dead_audio;
-    public AudioClip sping_up_audio;
-
-
-    public GameObject healthLabel;
-
-    public GameObject corpse;
-    public GameObject alive;
-    public GameObject ghost;
-
-    public GameObject first_person_cam_ghost;
-    public Transform first_person_cameraTransform_ghost;
-    public GameObject third_person_cam_ghost;
-    public Transform third_person_cameraTransform_ghost;
-
-
-    public float move_speed;
-
-    private float default_move_speed;
-    public GameObject player;
-
-    public float health;
-    public int Health;
-    public int Full_Health;
-
-    private int default_health;
-
-
-    private List<GameObject> guns_in_interactable_radius = new List<GameObject>();
-    private List<GameObject> shop_items_in_interactable_radius = new List<GameObject>();
-
-    public GameObject first_person_cam;
-    public Transform first_person_cameraTransform;
-    public GameObject third_person_cam;
-    public Transform third_person_cameraTransform;
-
-    public CharacterController controller;
-
-    public GameObject death_screen;
-
-    public GameObject hurt_overlay;
-
-    public float jumpHeight;
-
-    private float default_jump_height;
-    public float gravityValue;
-    public Vector3 playerVelocity;
-
-    public int item_price;
-
-    public int coins_held = 0;
-
-    public TextMeshProUGUI stahs_collected;
-    public Slider health_slider;
-    private bool groundedPlayer;
-
-    public int current_jumps = 0;
-
-    private GameObject respawners_parent_holder;
-
-    private GameObject currently_held_gun;
-
-    private GameObject currently_held_item;
-
-
-    public float sensitivityHor;
-    public float sensitivityVert;
-
-    public float minimumVert;
-    public float maximumVert;
-
-    public int consecutive_jumps_allowed;
-
-    private int consecutive_jumps_allowed_default;
-
-    public float lerp_speed;
-
-    public Transform grab_point;
-    public Transform item_grab_point;
-
-    public float interactables_radius;
-    public float environment_radius;
-
-    public float scan_wait_time;
-
-    private float next_scan = 0f;
-
-
-    public float verticalRot;
-    public float horizontalRot;
-
-    public bool player_input_enabled = true;
-
-    public bool isDead = false;
-
-
-    private Quaternion targetYawRotation;
-    private Quaternion targetPitchRotation;
-
-    private bool isScoped = false;
-    private Vector3 originalCameraPosition;
+    //Currently Held Gun Variables
+    private bool isScoped = false; //is gun scoped in?
+    private Vector3 originalCameraPosition; //un-scoped camera position
     public float scopeTransitionSpeed = 10f; // How fast camera moves to scope
-
-    public bool is_first_person;
-
 
     void Start()
     {
         stahs_collected.text = coins_held.ToString();
         default_health = Full_Health;
         Health = Full_Health;
-        // healthLabel.GetComponent<TMP_Text>().text = Health.ToString();
-        // healthLabel = Health;
         default_jump_height = jumpHeight;
         default_move_speed = move_speed;
         consecutive_jumps_allowed_default = consecutive_jumps_allowed;
@@ -177,12 +139,10 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
         originalCameraPosition = first_person_cameraTransform.localPosition;
 
-        corpse.SetActive(false);
         ghost.SetActive(false);
 
         respawners_parent_holder = GameObject.Find("Respawners");
 
-        // Cursor.lockState = CursorLockMode.Locked;
     }
 
 
@@ -199,9 +159,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
             hurt_overlay.SetActive(true);
             Invoke("Hide_Hurt_Overlay", hurt_tick / 2);
         }
-        Debug.Log("TAKE DAMAGE" + damage_taken + " from " + Health);
         health_slider.value = Health;
-        // healthLabel.GetComponent<TMP_Text>().text = Health.ToString();
     }
 
     public void Hide_Hurt_Overlay()
@@ -211,7 +169,6 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
     public void Die()
     {
-        // corpse.SetActive(true);
         death_screen.SetActive(true);
         Health = 0;
         health_slider.value = Health;
@@ -225,44 +182,26 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
         }
         consecutive_jumps_allowed = consecutive_jumps_allowed_default;
 
-        // currently_held_gun.transform.position = return_to_floor_position;
-        // currently_held_gun.transform.rotation = return_to_floor_rotation;
-        // currently_held_gun.transform.position = this.transform.position;
-        // currently_held_gun.transform.rotation = this.transform.rotation;
-        // currently_held_gun.GetComponent<Collider>().enabled = true;
-        // currently_held_gun = null;
         isDead = true;
         Full_Health = default_health;
         health_slider.maxValue = Full_Health;
         jumpHeight = default_jump_height;
         move_speed = default_move_speed;
-        Debug.Log("DIE");
+
         Ragdoll();
-        // Rigidbody rb = this.GetComponent<Rigidbody>();
-        // // this.gameObject.SetActive(false);
-        // this.GetComponent<Renderer>().enabled = false;
-        // player_input_enabled = false;
-        // rb.isKinematic = false;
     }
 
 
 
     public void Ragdoll()
     {
-        // player_audio_source.PlayOneShot(ragdoll_audio, 1);
-        Debug.Log("Ragdoll started");
-        Debug.Log(is_first_person);
-
         ghost.transform.position = player.transform.position;
         ghost.transform.rotation = player.transform.rotation;
 
         Ragdoll ragdollBehaviour = ghost.GetComponent<Ragdoll>();
         ragdollBehaviour.horizontalRot = this.horizontalRot;
         ragdollBehaviour.verticalRot = this.verticalRot;
-
-        // first_person_cam_ghost.SetActive(first_person_cam.activeSelf);
         third_person_cam_ghost.SetActive(true);
-        // third_person_cam_ghost.SetActive(third_person_cam.activeSelf);
 
         first_person_cam_ghost.transform.position = first_person_cam.transform.position;
         first_person_cam_ghost.transform.rotation = first_person_cam.transform.rotation;
@@ -278,11 +217,6 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
         ghost.SetActive(true);
     }
-
-    // public void Ragdoll_Recover()
-    // {
-    // }
-
     private Quaternion return_to_floor_rotation;
     private Vector3 return_to_floor_position;
     void Pick_Up_Gun(GameObject new_gun)
@@ -293,22 +227,15 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
         if (currently_held_gun != null)
         {
             currently_held_gun.transform.SetParent(null);
-            // currently_held_gun.transform.position = return_to_floor_position;
-            // currently_held_gun.transform.rotation = return_to_floor_rotation;
             currently_held_gun.transform.position = new_gun_to_floor_position;
             currently_held_gun.transform.rotation = new_gun_to_floor_rotation;
             currently_held_gun.GetComponent<Collider>().enabled = true;
             currently_held_gun = null;
         }
 
-
         player_audio_source.PlayOneShot(pick_up_gun, 1);
-        // return_to_floor_position = new_gun.transform.position;
-        // return_to_floor_rotation = new_gun.transform.rotation;
-
         return_to_floor_position = new_gun_to_floor_position;
         return_to_floor_rotation = new_gun_to_floor_rotation;
-
 
         guns_in_interactable_radius.RemoveAt(0);
 
@@ -317,13 +244,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
         Transform gun_grab_point = currently_held_gun.transform.Find("Grab_Point");
 
-
-        // Vector3 offset_world = currently_held_gun.transform.position - gun_grab_point.position;
-        // Quaternion rotation_offset = Quaternion.Inverse(gun_grab_point.rotation) * currently_held_gun.transform.rotation;
-
-
         currently_held_gun.transform.SetParent(grab_point, true);
-
 
         currently_held_gun.transform.position = grab_point.position + grab_point.TransformDirection(gun_grab_point.localPosition * -1);
         currently_held_gun.transform.rotation = grab_point.rotation * Quaternion.Inverse(gun_grab_point.localRotation);
@@ -336,15 +257,12 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
     void Pick_Up_Shop_Item(GameObject item)
     {
-        Debug.Log($"PICK UP ITEM {item.name}");
         Quaternion new_gun_to_floor_rotation = item.transform.rotation;
         Vector3 new_gun_to_floor_position = item.transform.position;
 
         if (currently_held_item != null)
         {
             currently_held_item.transform.SetParent(null);
-            // currently_held_gun.transform.position = return_to_floor_position;
-            // currently_held_gun.transform.rotation = return_to_floor_rotation;
             currently_held_item.transform.position = new_gun_to_floor_position;
             currently_held_item.transform.rotation = new_gun_to_floor_rotation;
             currently_held_item.GetComponent<Collider>().enabled = true;
@@ -353,12 +271,8 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
 
         player_audio_source.PlayOneShot(pick_up_gun, 1);
-        // return_to_floor_position = new_gun.transform.position;
-        // return_to_floor_rotation = new_gun.transform.rotation;
-
         return_item_to_floor_position = new_gun_to_floor_position;
         return_item_to_floor_rotation = new_gun_to_floor_rotation;
-
 
         shop_items_in_interactable_radius.RemoveAt(0);
 
@@ -367,13 +281,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
         Transform gun_grab_point = currently_held_item.transform.Find("Grab_Point");
 
-
-        // Vector3 offset_world = currently_held_gun.transform.position - gun_grab_point.position;
-        // Quaternion rotation_offset = Quaternion.Inverse(gun_grab_point.rotation) * currently_held_gun.transform.rotation;
-
-
         currently_held_item.transform.SetParent(item_grab_point, true);
-
 
         currently_held_item.transform.position = item_grab_point.position + item_grab_point.TransformDirection(gun_grab_point.localPosition * -1);
         currently_held_item.transform.rotation = item_grab_point.rotation * Quaternion.Inverse(gun_grab_point.localRotation);
@@ -393,24 +301,13 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
     {
 
         int respawners_in_scene = respawners_parent_holder.transform.childCount;
-        Debug.Log($"WOKE {respawners_in_scene}");
         int random_respawn_index = Random.Range(0, respawners_in_scene);
         Transform chosen_respawn_anchor = respawners_parent_holder.transform.GetChild(random_respawn_index);
-        // playerGameObject.transform.position = this.gameObject.transform.position;
 
         this.gameObject.transform.position = chosen_respawn_anchor.transform.position;
         this.gameObject.SetActive(true);
-        // if (playerMovement.is_first_person == true)
-        // {
-        //     playerMovement.first_person_cam.SetActive(true);
-        //     playerMovement.third_person_cam.SetActive(false);
-        // }
-        // else
-        // {
         this.first_person_cam.SetActive(false);
         this.third_person_cam.SetActive(true);
-        // }
-
 
         this.player_input_enabled = true;
         ghost.SetActive(false);
@@ -444,8 +341,6 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
                         currently_held_gun.transform.SetParent(null);
                         currently_held_gun.transform.position = return_to_floor_position_item;
                         currently_held_gun.transform.rotation = return_to_floor_rotation_item;
-                        // currently_held_gun.transform.position = new_gun_to_floor_position;
-                        // currently_held_gun.transform.rotation = new_gun_to_floor_rotation;
                         currently_held_gun.GetComponent<Collider>().enabled = true;
                         currently_held_gun = null;
                     }
@@ -459,12 +354,9 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
                     currently_held_gun.transform.SetParent(grab_point, true);
                     currently_held_gun.transform.position = grab_point.position + grab_point.TransformDirection(gun_grab_point.localPosition * -1);
                     currently_held_gun.transform.rotation = grab_point.rotation * Quaternion.Inverse(gun_grab_point.localRotation);
-
-
                 }
                 else if (currently_held_item.CompareTag("Shop_Item"))
                 {
-                    Debug.Log("SHOP ITEM");
                     if (currently_held_item.name == "speed_boost")
                     {
                         move_speed += 0.5f;
@@ -482,17 +374,6 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
                         health_slider.value = Health;
                     }
                 }
-                // if (!currently_held_item.CompareTag("gun"))
-                // {
-                //     Destroy(currently_held_item);
-                // }
-                // currently_held_item.transform.SetParent(null);
-
-                // currently_held_item.transform.position = return_to_floor_position_item;
-                // currently_held_item.transform.rotation = return_to_floor_rotation_item;
-                // // currently_held_item.transform.SetParent(item_grab_point, false);
-
-                // currently_held_item = null;
                 player_audio_source.PlayOneShot(full_heal, 0.8f);
                 coins_held = coins_held -= item_price;
                 stahs_collected.text = coins_held.ToString();
@@ -500,20 +381,11 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
             }
             else
             {
-                // // Destroy(currently_held_item);
-                // currently_held_item = null;
-                // currently_held_item.transform.position = return_item_to_floor_position;
-                // currently_held_item.transform.rotation = return_item_to_floor_rotation;
                 player_audio_source.PlayOneShot(ragdoll_audio, 0.8f);
             }
-
-            Debug.Log("CHECKOUT ITEM");
             currently_held_item.transform.SetParent(null);
-
             currently_held_item.transform.position = return_to_floor_position_item;
-            currently_held_item.transform.rotation = return_to_floor_rotation_item;
-            // currently_held_item.transform.SetParent(item_grab_point, false);
-
+            currently_held_item.transform.rotation = return_to_floor_rotation_item;;
             currently_held_item = null;
         }
 
@@ -521,7 +393,6 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
     void Detect_in_Radius()
     {
-
         bool found_shop = false;
         List<GameObject> current_guns = new List<GameObject>();
         List<GameObject> current_items = new List<GameObject>();
@@ -533,9 +404,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
             {
                 if (interactable_object_in_radius.CompareTag("gun"))
                 {
-                    // guns_in_interactable_radius.Add(guns_in_interactable_radius);
                     current_guns.Add(interactable_object_in_radius);
-                    Debug.Log("gun detected within radius!" + interactable_object_in_radius.name);
                     if (!guns_in_interactable_radius.Contains(interactable_object_in_radius))
                     {
                         guns_in_interactable_radius.Add(interactable_object_in_radius);
@@ -546,8 +415,6 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
             {
                 if (interactable_object_in_radius.CompareTag("gun") || interactable_object_in_radius.CompareTag("Shop_Item"))
                 {
-                    Debug.Log("BALLS");
-                    Debug.Log("item detected within radius!" + interactable_object_in_radius.name);
                     current_items.Add(interactable_object_in_radius);
                     if (!shop_items_in_interactable_radius.Contains(interactable_object_in_radius))
                     {
@@ -561,53 +428,28 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
         foreach (var environment_collider in environment_colliders_in_radius)
         {
             GameObject environment_object_in_radius = environment_collider.gameObject;
-            // if (environment_object_in_radius.CompareTag("hurter"))
             Hurter hurter = environment_object_in_radius.GetComponent<Hurter>();
             if (hurter != null && hurter.isActiveAndEnabled)
             {
                 Hurter hurterScript = environment_object_in_radius.GetComponent<Hurter>();
-                Debug.Log("PLAYER BEFORE HURT CALL");
                 hurterScript.Hurt(this);
             }
             else if (environment_object_in_radius.CompareTag("wake_on_player"))
             {
                 Rigidbody rb = this.GetComponent<Rigidbody>();
-                //TODO: on awake start animation (?)
-
-                // CharacterController cc = GetComponent<CharacterController>();
-                // cc.enabled = false;
-                // rb.isKinematic = false;
-                // rb.constraints = RigidbodyConstraints.None;
                 player_input_enabled = false;
-                // rb.AddExplosionForce(200 * 50.0f, environment_object_in_radius.transform.position, 20.0f);
                 Ragdoll();
                 Rigidbody ghostRigid = ghost.GetComponent<Rigidbody>();
                 ghostRigid.AddExplosionForce(350 * 35.0f, environment_object_in_radius.transform.position, 45.0f);
-
-                Collider[] colliders = Physics.OverlapSphere(environment_object_in_radius.transform.position, 10.0f);
-
-                foreach (Collider nearby in colliders)
-                {
-                    Rigidbody new_rb = nearby.attachedRigidbody;
-                    if (rb != null)
-                    {
-                        // rb.AddExplosionForce(200 * 20.0f, environment_object_in_radius.transform.position, 25.0f);
-                    }
-                }
-                // Vector3 hitDirection = (transform.position - environment_object_in_radius.transform.position).normalized;
-                // rb.AddForce(hitDirection * 20f, ForceMode.Impulse);
-                Debug.Log("yeet player");
             }
             else if (environment_object_in_radius.name == "Spring_Up")
             {
-                Debug.Log("SPRING UP");
                 float spring_force = 70.0f;
                 float spring_mag = Mathf.Sqrt(spring_force * -2.0f * gravityValue);
 
                 Vector3 spring_direction = environment_object_in_radius.transform.forward.normalized;
                 playerVelocity = spring_direction * spring_mag;
                 player_audio_source.PlayOneShot(sping_up_audio, 0.8f);
-
             }
             else if (environment_object_in_radius.CompareTag("Heal"))
             {
@@ -623,9 +465,6 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
                         Health = Health + (Full_Health / 10);
                         player_audio_source.PlayOneShot(heal_audio, 0.5f);
                     }
-
-                    Debug.Log("10% point heal");
-
                     health_slider.value = Health;
                 }
             }
@@ -634,20 +473,16 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
                 if (Health < Full_Health)
                 {
                     Health = Full_Health;
-                    Debug.Log("Full heal");
                     player_audio_source.PlayOneShot(full_heal, 0.75f);
                     health_slider.value = Health;
                 }
             }
             else if (environment_object_in_radius.CompareTag("Coin"))
             {
-                Debug.Log("GET COIN");
                 coins_held += 1;
-                // Destroy(environment_object_in_radius);
                 environment_object_in_radius.SetActive(false);
                 AudioSource.PlayClipAtPoint(full_heal, environment_object_in_radius.transform.position, 1.0f);
                 stahs_collected.text = coins_held.ToString();
-                // Invoke("environment_object_in_radius.SetActive(true)", 1f);
             }
             else if (environment_object_in_radius.CompareTag("Shop"))
             {
@@ -657,7 +492,6 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
                 if (current_shop != environment_object_in_radius)
                 {
                     current_shop = environment_object_in_radius;
-                    // walls_up = true;
                     Wall_Up(environment_object_in_radius);
 
                 }
@@ -669,27 +503,20 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
         {
             Checkout_Held_Item();
             Wall_Down(current_shop);
-            // Checkout_Held_Item();
             current_shop = null;
         }
     }
     void Wall_Up(GameObject shop_parent)
     {
-        // walls_up = true;
-        Debug.Log($"WALL UP {walls_up}");
-
         int walls_count = shop_parent.transform.childCount;
         if (walls_up == false)
         {
             foreach (Transform child_wall in shop_parent.transform)
             {
-                Debug.Log("WALL UP 1");
+
                 if (child_wall.name == "Wall")
                 {
-                    Debug.Log("WALL UP 2");
-                    Debug.Log($"child wall UP{child_wall.position.y}");
                     Vector3 downpos = child_wall.transform.position;
-                    // downpos.y += 0.200f;
                     downpos.y += 7.0f;
                     child_wall.transform.position = downpos;
                     walls_up = true;
@@ -701,7 +528,6 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
     void Wall_Down(GameObject shop_parent)
     {
-        // walls_up = false;
         int walls_count = shop_parent.transform.childCount;
         if (walls_up == true)
         {
@@ -709,18 +535,13 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
             {
                 if (child_wall.name == "Wall")
                 {
-                    Debug.Log($"child wall DOWN{child_wall.position.y}");
                     Vector3 downpos = child_wall.transform.position;
-
-                    // downpos.y -= 0.200f;
                     downpos.y -= 7.0f;
-                    // downpos.y = -0.322f;
                     child_wall.transform.position = downpos;
                     walls_up = false;
                 }
             }
         }
-        Debug.Log("WALL DOWN");
     }
 
     // Update is called once per frame
@@ -729,10 +550,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
         if (ghost.activeSelf)
         {
-
-            // Ragdoll_State();
             return;
-
         }
 
         if (Time.time >= next_scan)
@@ -743,19 +561,6 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
         float mouseX = Input.GetAxis("Mouse X") * sensitivityHor;
         float mouseY = Input.GetAxis("Mouse Y") * sensitivityVert;
-
-        // if (((Input.mousePosition.x / Screen.width) - 0.5f) > 0.45f)
-        // {
-        //     Debug.Log("Full RIGHT");
-        //     // horizontalRot += Mathf.Sign(normalizedX) * sensitivityHor * Time.deltaTime * 100f;
-        // }
-
-        // if (((Input.mousePosition.x / Screen.width) - 0.5f) < -0.45f)
-        // {
-        //     Debug.Log("Full left");
-
-        //     // verticalRot -= Mathf.Sign(normalizedY) * sensitivityVert * Time.deltaTime * 100f;
-        // }
 
         horizontalRot += mouseX;
         verticalRot -= mouseY;
@@ -776,7 +581,6 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
         // When player is Yaw rotated, camera rotates with player
         // When camera is Pitch Rotated, only camera rotates
 
-
         first_person_cameraTransform.localRotation = Quaternion.Slerp(
             first_person_cameraTransform.localRotation,
             targetPitchRotation,
@@ -790,9 +594,6 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
       );
 
         Cursor.lockState = CursorLockMode.Locked;
-        // Cursor.visible = false;
-
-
         groundedPlayer = false;
 
         if (currently_held_gun != null)
@@ -805,23 +606,17 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
         );
         }
-
         // gun rotation matches pitch of camera
-
         Vector3 move = Vector3.zero;
-        // Vector3 first_gun_cycle_enter = Vector3.zero;
         if (Input.GetKeyDown(KeyCode.G) && player_input_enabled)
         {
-
             if (walls_up == false)
             {
-                // first_gun_cycle_enter = this.transform.position;
                 if (guns_in_interactable_radius.Count > 0)
                 {
 
                     Pick_Up_Gun(guns_in_interactable_radius[0]);
                 }
-                // this.transform.position = first_gun_cycle_enter;
             }
             else
             {
@@ -833,16 +628,6 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
                 }
             }
         }
-        //     // first_gun_cycle_enter = this.transform.position;
-        //     if (guns_in_interactable_radius.Count > 0)
-        //     {
-
-        //         Pick_Up_Gun(guns_in_interactable_radius[0]);
-        //     }
-        //     // this.transform.position = first_gun_cycle_enter;
-        // }
-
-        // if (controller.isGrounded || Mathf.Abs(playerVelocity.y) <= 0.01f)
         if (controller.isGrounded || Mathf.Abs(playerVelocity.y) <= 0.0001f)
         {
             groundedPlayer = true;
@@ -873,22 +658,18 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
             if (Input.GetKey(KeyCode.W))
             {
                 move += player.transform.forward;
-                // Debug.Log("FORWARD");
             }
             else if (Input.GetKey(KeyCode.A))
             {
                 move += -player.transform.right;
-                //Debug.Log("LEFT");
             }
             else if (Input.GetKey(KeyCode.S))
             {
                 move += -player.transform.forward;
-                //Debug.Log("BACK");
             }
             else if (Input.GetKey(KeyCode.D))
             {
                 move += player.transform.right;
-                // Debug.Log("RIGHT");
             }
         }
 
@@ -958,8 +739,6 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
             }
         }
 
-
-
         if (player_input_enabled)
         {
             Vector3 finalMove = (move.normalized * move_speed) + new Vector3(0, playerVelocity.y, 0);
@@ -975,11 +754,6 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
     {
         int inted_damage = (int)damage;
         Loose_Health_Points(inted_damage, 0.2f);
-        // healthLabel.GetComponent<TMP_Text>().text = Health.ToString();
-
-        //        Loose_Health_Points(damage, 0.2f);
-        //        healthLabel.GetComponent<TMP_Text>().text = health.ToString();
-        // StartCoroutine(HurtOverlay());
     }
 
 }
