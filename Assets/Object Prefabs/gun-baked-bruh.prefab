@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 438800700672201317}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.001103, z: 0.0084}
+  m_LocalPosition: {x: 0, y: 0.001103, z: 0.01122}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -143,7 +143,7 @@ MonoBehaviour:
   barrelDirection: {fileID: 8034359786502304635}
   kick_back_force: 0.1
   kick_back_time: 0.1
-  playerController: {fileID: 0}
+  playerController: {fileID: 4360679142410486317, guid: c176350a12d1bc042be56d1e0f67c127, type: 3}
   player_audio_source: {fileID: 5687987793563398527}
   fire_audio: {fileID: 8300000, guid: db8e1c4a10e8c49e29b100f14859dc71, type: 3}
   scope_in_audio: {fileID: 8300000, guid: 78f482dd6b76148b5b98c982d0308d38, type: 3}
@@ -151,7 +151,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 1303046155726201041, guid: 6869b95a25a7f41b8ae68fb717677138, type: 3}
   launchForce: 32000
   fire_rate: 0.2
-  bullet_damage: 5
+  bullet_damage: 10
 --- !u!65 &4265325938446770359
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -326,7 +326,7 @@ Transform:
   m_GameObject: {fileID: 6389360321200487458}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.00163, z: -0.00193}
+  m_LocalPosition: {x: 0, y: 0.00213, z: -0.00723}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

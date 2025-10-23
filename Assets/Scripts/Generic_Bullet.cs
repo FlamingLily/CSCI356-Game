@@ -48,11 +48,11 @@ public class Generic_Bullet : MonoBehaviour, I_Common_Projectile
         }
 
         // else if (Effect_Tag != "" && collision.gameObject.CompareTag(Effect_Tag))
-            // {
+        // {
 
-            //     On_Effected_Hit();
-            // }
-            Destroy_Bullet();
+        //     On_Effected_Hit();
+        // }
+        Destroy_Bullet();
     }
 
     void Destroy_Bullet()
