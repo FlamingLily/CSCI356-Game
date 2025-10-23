@@ -220,6 +220,7 @@ public class WaveController : MonoBehaviour
     public void EnemyKilled()
     {
         enemiesRemaining--;
+        Debug.Log("Enemy killed. Remaining: " + enemiesRemaining);
         enemiesLabel.GetComponent<TMP_Text>().text = enemiesRemaining.ToString();
     }
 }

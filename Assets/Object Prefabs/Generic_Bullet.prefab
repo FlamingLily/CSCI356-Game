@@ -70,7 +70,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 0541b778fa8249e4aa7a752c51e81ea1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -104,11 +104,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1a09b4ebf34684c46a5d8f9777cc66a9, type: 3}
   m_Name: 
-  m_EditorClassIdentifier:
-  explosion_sound: {fileID: 8300000, guid: 2ce712567344e448d877554077a13f95, type: 3}
-  hit: {fileID: 8300000, guid: 95a3a0267772f48119cde91ac6eadf66, type: 3}
+  m_EditorClassIdentifier: 
   damage: 5
   Enemy_Tag: Enemy
+  explosion_sound: {fileID: 8300000, guid: 2ce712567344e448d877554077a13f95, type: 3}
+  hit: {fileID: 8300000, guid: 95a3a0267772f48119cde91ac6eadf66, type: 3}
 --- !u!135 &3219587038439801324
 SphereCollider:
   m_ObjectHideFlags: 0

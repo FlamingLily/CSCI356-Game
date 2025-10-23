@@ -118,6 +118,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
     public float lerp_speed;
 
     public Transform grab_point;
+    public Transform item_grab_point;
 
     public float interactables_radius;
     public float environment_radius;
@@ -147,9 +148,11 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
     void Start()
     {
-
-
+        stahs_collected.text = coins_held.ToString();
         default_health = Full_Health;
+        Health = Full_Health;
+        // healthLabel.GetComponent<TMP_Text>().text = Health.ToString();
+        // healthLabel = Health;
         default_jump_height = jumpHeight;
         default_move_speed = move_speed;
         consecutive_jumps_allowed_default = consecutive_jumps_allowed;
@@ -198,6 +201,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
         }
         Debug.Log("TAKE DAMAGE" + damage_taken + " from " + Health);
         health_slider.value = Health;
+        // healthLabel.GetComponent<TMP_Text>().text = Health.ToString();
     }
 
     public void Hide_Hurt_Overlay()
@@ -352,8 +356,8 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
         // return_to_floor_position = new_gun.transform.position;
         // return_to_floor_rotation = new_gun.transform.rotation;
 
-        return_to_floor_position = new_gun_to_floor_position;
-        return_to_floor_rotation = new_gun_to_floor_rotation;
+        return_item_to_floor_position = new_gun_to_floor_position;
+        return_item_to_floor_rotation = new_gun_to_floor_rotation;
 
 
         shop_items_in_interactable_radius.RemoveAt(0);
@@ -368,11 +372,11 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
         // Quaternion rotation_offset = Quaternion.Inverse(gun_grab_point.rotation) * currently_held_gun.transform.rotation;
 
 
-        currently_held_item.transform.SetParent(grab_point, true);
+        currently_held_item.transform.SetParent(item_grab_point, true);
 
 
-        currently_held_item.transform.position = grab_point.position + grab_point.TransformDirection(gun_grab_point.localPosition * -1);
-        currently_held_item.transform.rotation = grab_point.rotation * Quaternion.Inverse(gun_grab_point.localRotation);
+        currently_held_item.transform.position = item_grab_point.position + item_grab_point.TransformDirection(gun_grab_point.localPosition * -1);
+        currently_held_item.transform.rotation = item_grab_point.rotation * Quaternion.Inverse(gun_grab_point.localRotation);
 
         shop_items_in_interactable_radius.Add(item);
     }
@@ -419,53 +423,100 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
         player_audio_source.PlayOneShot(full_heal, 0.8f);
     }
 
+
+    private Quaternion return_to_floor_rotation_item;
+    private Vector3 return_to_floor_position_item;
     void Checkout_Held_Item()
     {
-        if (coins_held >= item_price)
+
+        if (currently_held_item != null)
         {
-            player_audio_source.PlayOneShot(full_heal, 0.8f);
-            if (currently_held_item.CompareTag("gun"))
+            if (coins_held >= item_price)
             {
-                currently_held_gun = currently_held_item;
+                player_audio_source.PlayOneShot(full_heal, 0.8f);
+                if (currently_held_item.CompareTag("gun"))
+                {
+                    Quaternion new_gun_to_floor_rotation = currently_held_item.transform.rotation;
+                    Vector3 new_gun_to_floor_position = currently_held_item.transform.position;
+
+                    if (currently_held_gun != null)
+                    {
+                        currently_held_gun.transform.SetParent(null);
+                        currently_held_gun.transform.position = return_to_floor_position_item;
+                        currently_held_gun.transform.rotation = return_to_floor_rotation_item;
+                        // currently_held_gun.transform.position = new_gun_to_floor_position;
+                        // currently_held_gun.transform.rotation = new_gun_to_floor_rotation;
+                        currently_held_gun.GetComponent<Collider>().enabled = true;
+                        currently_held_gun = null;
+                    }
+
+                    currently_held_gun = currently_held_item;
+                    currently_held_item.transform.SetParent(null);
+                    currently_held_item = null;
+
+
+                    Transform gun_grab_point = currently_held_gun.transform.Find("Grab_Point");
+                    currently_held_gun.transform.SetParent(grab_point, true);
+                    currently_held_gun.transform.position = grab_point.position + grab_point.TransformDirection(gun_grab_point.localPosition * -1);
+                    currently_held_gun.transform.rotation = grab_point.rotation * Quaternion.Inverse(gun_grab_point.localRotation);
+
+
+                }
+                else if (currently_held_item.CompareTag("Shop_Item"))
+                {
+                    Debug.Log("SHOP ITEM");
+                    if (currently_held_item.name == "speed_boost")
+                    {
+                        move_speed += 0.5f;
+                    }
+                    else if (currently_held_item.name == "jump_boost")
+                    {
+                        jumpHeight += 0.5f;
+                        consecutive_jumps_allowed += 1;
+                    }
+                    else if (currently_held_item.name == "health_boost")
+                    {
+                        Full_Health += 10;
+                        Health = Full_Health;
+                        health_slider.maxValue = Health;
+                        health_slider.value = Health;
+                    }
+                }
+                // if (!currently_held_item.CompareTag("gun"))
+                // {
+                //     Destroy(currently_held_item);
+                // }
+                // currently_held_item.transform.SetParent(null);
+
+                // currently_held_item.transform.position = return_to_floor_position_item;
+                // currently_held_item.transform.rotation = return_to_floor_rotation_item;
+                // // currently_held_item.transform.SetParent(item_grab_point, false);
+
+                // currently_held_item = null;
+                player_audio_source.PlayOneShot(full_heal, 0.8f);
+                coins_held = coins_held -= item_price;
+                stahs_collected.text = coins_held.ToString();
+
             }
-            else if (currently_held_item.CompareTag("Shop_Item"))
+            else
             {
-                Debug.Log("SHOP ITEM");
-                if (currently_held_item.name == "speed_boost")
-                {
-                    move_speed += 0.5f;
-                }
-                else if (currently_held_item.name == "jump_boost")
-                {
-                    jumpHeight += 0.5f;
-                    consecutive_jumps_allowed += 1;
-                }
-                else if (currently_held_item.name == "health_boost")
-                {
-                    Full_Health += 10;
-                    Health = Full_Health;
-                    health_slider.maxValue = Full_Health;
-                }
+                // // Destroy(currently_held_item);
+                // currently_held_item = null;
+                // currently_held_item.transform.position = return_item_to_floor_position;
+                // currently_held_item.transform.rotation = return_item_to_floor_rotation;
+                player_audio_source.PlayOneShot(ragdoll_audio, 0.8f);
             }
-            if (!currently_held_item.CompareTag("gun"))
-            {
-                Destroy(currently_held_item);
-            }
+
+            Debug.Log("CHECKOUT ITEM");
+            currently_held_item.transform.SetParent(null);
+
+            currently_held_item.transform.position = return_to_floor_position_item;
+            currently_held_item.transform.rotation = return_to_floor_rotation_item;
+            // currently_held_item.transform.SetParent(item_grab_point, false);
 
             currently_held_item = null;
-            player_audio_source.PlayOneShot(full_heal, 0.8f);
-            coins_held = coins_held -= item_price;
-            stahs_collected.text = coins_held.ToString();
-
-        }
-        else
-        {
-            Destroy(currently_held_item);
-            currently_held_item = null;
-            player_audio_source.PlayOneShot(ragdoll_audio, 0.8f);
         }
 
-        Debug.Log("CHECKOUT ITEM");
     }
 
     void Detect_in_Radius()
@@ -596,7 +647,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
                 environment_object_in_radius.SetActive(false);
                 AudioSource.PlayClipAtPoint(full_heal, environment_object_in_radius.transform.position, 1.0f);
                 stahs_collected.text = coins_held.ToString();
-                Invoke("environment_object_in_radius.SetActive(true)", 1f);
+                // Invoke("environment_object_in_radius.SetActive(true)", 1f);
             }
             else if (environment_object_in_radius.CompareTag("Shop"))
             {
@@ -606,7 +657,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
                 if (current_shop != environment_object_in_radius)
                 {
                     current_shop = environment_object_in_radius;
-                    walls_up = true;
+                    // walls_up = true;
                     Wall_Up(environment_object_in_radius);
 
                 }
@@ -616,25 +667,33 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
         shop_items_in_interactable_radius.RemoveAll(item => !current_items.Contains(item));
         if (!found_shop && current_shop != null)
         {
-            Wall_Down(current_shop);
             Checkout_Held_Item();
+            Wall_Down(current_shop);
+            // Checkout_Held_Item();
             current_shop = null;
         }
     }
     void Wall_Up(GameObject shop_parent)
     {
-        walls_up = true;
-        Debug.Log("WALL UP");
+        // walls_up = true;
+        Debug.Log($"WALL UP {walls_up}");
+
         int walls_count = shop_parent.transform.childCount;
-        foreach (Transform child_wall in shop_parent.transform)
+        if (walls_up == false)
         {
-            if (child_wall.name == "Wall")
+            foreach (Transform child_wall in shop_parent.transform)
             {
-                Debug.Log($"child wall UP{child_wall.position.y}");
-                Vector3 downpos = child_wall.transform.position;
-                // downpos.y += 0.200f;
-                downpos.y += 7.0f;
-                child_wall.transform.position = downpos;
+                Debug.Log("WALL UP 1");
+                if (child_wall.name == "Wall")
+                {
+                    Debug.Log("WALL UP 2");
+                    Debug.Log($"child wall UP{child_wall.position.y}");
+                    Vector3 downpos = child_wall.transform.position;
+                    // downpos.y += 0.200f;
+                    downpos.y += 7.0f;
+                    child_wall.transform.position = downpos;
+                    walls_up = true;
+                }
             }
         }
 
@@ -642,19 +701,23 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
 
     void Wall_Down(GameObject shop_parent)
     {
-        walls_up = false;
+        // walls_up = false;
         int walls_count = shop_parent.transform.childCount;
-        foreach (Transform child_wall in shop_parent.transform)
+        if (walls_up == true)
         {
-            if (child_wall.name == "Wall")
+            foreach (Transform child_wall in shop_parent.transform)
             {
-                Debug.Log($"child wall DOWN{child_wall.position.y}");
-                Vector3 downpos = child_wall.transform.position;
+                if (child_wall.name == "Wall")
+                {
+                    Debug.Log($"child wall DOWN{child_wall.position.y}");
+                    Vector3 downpos = child_wall.transform.position;
 
-                // downpos.y -= 0.200f;
-                downpos.y -= 7.0f;
-                // downpos.y = -0.322f;
-                child_wall.transform.position = downpos;
+                    // downpos.y -= 0.200f;
+                    downpos.y -= 7.0f;
+                    // downpos.y = -0.322f;
+                    child_wall.transform.position = downpos;
+                    walls_up = false;
+                }
             }
         }
         Debug.Log("WALL DOWN");
@@ -764,6 +827,8 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
             {
                 if (shop_items_in_interactable_radius.Count > 0)
                 {
+                    return_to_floor_rotation_item = shop_items_in_interactable_radius[0].transform.rotation;
+                    return_to_floor_position_item = shop_items_in_interactable_radius[0].transform.position;
                     Pick_Up_Shop_Item(shop_items_in_interactable_radius[0]);
                 }
             }
@@ -910,7 +975,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage
     {
         int inted_damage = (int)damage;
         Loose_Health_Points(inted_damage, 0.2f);
-        healthLabel.GetComponent<TMP_Text>().text = Health.ToString();
+        // healthLabel.GetComponent<TMP_Text>().text = Health.ToString();
 
         //        Loose_Health_Points(damage, 0.2f);
         //        healthLabel.GetComponent<TMP_Text>().text = health.ToString();
