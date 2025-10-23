@@ -53,10 +53,7 @@ public AudioClip fire_audio;
     }
     public void Fire()
     {
-        Debug.Log("REVOLVER FIRE");
 
-        if (Input.GetKey(KeyCode.V))
-        {
             if (!is_left_click_held && Time.time >= lastFired + fire_rate)
             {
                 GameObject projectile = Instantiate(projectilePrefab, barrelDirection.position, projectilePrefab.transform.rotation);
@@ -83,7 +80,6 @@ public AudioClip fire_audio;
             {
                 is_left_click_held = false;
             }
-        }
 
     }
 
