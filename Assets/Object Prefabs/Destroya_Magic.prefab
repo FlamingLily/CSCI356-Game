@@ -162,7 +162,6 @@ GameObject:
   - component: {fileID: 5373184638907028670}
   - component: {fileID: 717202012923978913}
   - component: {fileID: 954799468835259004}
-  - component: {fileID: 5363437600583128468}
   - component: {fileID: 3602628446593029277}
   - component: {fileID: 3267471606391965706}
   - component: {fileID: 2694283146732147531}
@@ -248,34 +247,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &5363437600583128468
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6216565220047276081}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 913078e17bcaa4f909d86acc0da57078, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gun_grab_point: {fileID: 6451742361322569068}
-  scopePosition: {fileID: 8199785995000382623}
-  barrelDirection: {fileID: 2128850443301941042}
-  kick_back_force: 0.2
-  kick_back_time: 0.6
-  Frozen: {fileID: 2100000, guid: 3c983087a79404030a0f572c17c16a97, type: 2}
-  playerController: {fileID: 0}
-  projectilePrefab: {fileID: 678993643665630323, guid: 4ec002d2f3d1041a49e4586f9c2c72b8, type: 3}
-  launchForce: 37000
-  fire_rate: 0.8
-  bullet_damage: 30
-  player_audio_source: {fileID: 2694283146732147531}
-  fire_audio: {fileID: 8300000, guid: bc6d467bd8f874f11a4f318de7ccf4f4, type: 3}
-  scope_in_audio: {fileID: 8300000, guid: 78f482dd6b76148b5b98c982d0308d38, type: 3}
-  scope_out_audio: {fileID: 8300000, guid: f6cba00cd66a645b18e67663e71541b1, type: 3}
-  on_effect_audio: {fileID: 8300000, guid: 2ce712567344e448d877554077a13f95, type: 3}
 --- !u!65 &3602628446593029277
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -315,7 +286,7 @@ MonoBehaviour:
   kick_back_force: 0.2
   kick_back_time: 0.7
   Destroya: {fileID: 2100000, guid: eed2a841b30d046b696497cfb121dde8, type: 2}
-  playerController: {fileID: 0}
+  playerController: {fileID: 4360679142410486317, guid: c176350a12d1bc042be56d1e0f67c127, type: 3}
   projectilePrefab: {fileID: 678993643665630323, guid: 4ec002d2f3d1041a49e4586f9c2c72b8, type: 3}
   launchForce: 39000
   fire_rate: 0.7

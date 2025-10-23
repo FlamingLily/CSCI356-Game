@@ -99,7 +99,7 @@ MonoBehaviour:
   launchForce: 60000
   kick_back_force: 0.2
   kick_back_time: 0.1
-  playerController: {fileID: 0}
+  playerController: {fileID: 4360679142410486317, guid: c176350a12d1bc042be56d1e0f67c127, type: 3}
   player_audio_source: {fileID: 902000295280141499}
   fire_audio: {fileID: 8300000, guid: 4c2ed13ed70124e07b9f56fe0fd427e6, type: 3}
   scope_in_audio: {fileID: 8300000, guid: 95a3a0267772f48119cde91ac6eadf66, type: 3}

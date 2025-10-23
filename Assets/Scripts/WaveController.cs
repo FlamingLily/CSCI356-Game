@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using static UnityEngine.GameObject;
 using TMPro;
+using Unity.AI.Navigation;
 
 public class WaveController : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class WaveController : MonoBehaviour
     int enemiesRemaining = 0;
     int totalSpawners;
     [SerializeField] GameObject enemiesLabel;
+    [SerializeField] NavMeshSurface navMeshSurface;
 
 
 
@@ -27,6 +29,11 @@ public class WaveController : MonoBehaviour
     void Start()
     {
         totalSpawners = transform.childCount;
+        for (int i = 0; i < totalSpawners; i++)
+        {
+            transform.GetChild(i).GetComponent<EnemySpawner>().navMesh = navMeshSurface;
+        }
+
         currentWave = 1;
         SetupWave();
         StartWave();
@@ -195,7 +202,7 @@ public class WaveController : MonoBehaviour
         {
             spawnerInt = Random.Range(0, totalSpawners);
             thisSpawner = transform.GetChild(spawnerInt);
-            if (Vector3.Distance(thisSpawner.position, FindGameObjectWithTag("Player").transform.position) > 50f)
+            if (Vector3.Distance(thisSpawner.position, FindGameObjectWithTag("Player").transform.position) > 10f)
             {
                 spawnerFound = true;
                 break;
