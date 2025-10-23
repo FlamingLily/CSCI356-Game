@@ -189,7 +189,7 @@ MonoBehaviour:
   barrelDirection: {fileID: 9077466474676675359}
   kick_back_force: 0.7
   kick_back_time: 0.5
-  playerController: {fileID: 0}
+  playerController: {fileID: 4360679142410486317, guid: c176350a12d1bc042be56d1e0f67c127, type: 3}
   projectilePrefab: {fileID: 1303046155726201041, guid: 6869b95a25a7f41b8ae68fb717677138, type: 3}
   launchForce: 60000
   fire_rate: 1

@@ -157,7 +157,7 @@ MonoBehaviour:
   barrelDirection: {fileID: 6100180346456436134}
   kick_back_force: 0.4
   kick_back_time: 0.4
-  playerController: {fileID: 0}
+  playerController: {fileID: 4360679142410486317, guid: c176350a12d1bc042be56d1e0f67c127, type: 3}
   player_audio_source: {fileID: 395797710963004214}
   fire_audio: {fileID: 8300000, guid: 6ae3ff75d56b94f258d1a4bc71897d5d, type: 3}
   scope_in_audio: {fileID: 8300000, guid: 78f482dd6b76148b5b98c982d0308d38, type: 3}

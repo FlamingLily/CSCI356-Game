@@ -202,7 +202,7 @@ public class WaveController : MonoBehaviour
         {
             spawnerInt = Random.Range(0, totalSpawners);
             thisSpawner = transform.GetChild(spawnerInt);
-            if (Vector3.Distance(thisSpawner.position, FindGameObjectWithTag("Player").transform.position) > 50f)
+            if (Vector3.Distance(thisSpawner.position, FindGameObjectWithTag("Player").transform.position) > 10f)
             {
                 spawnerFound = true;
                 break;

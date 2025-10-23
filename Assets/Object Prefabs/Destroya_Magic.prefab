@@ -266,7 +266,7 @@ MonoBehaviour:
   kick_back_force: 0.2
   kick_back_time: 0.6
   Frozen: {fileID: 2100000, guid: 3c983087a79404030a0f572c17c16a97, type: 2}
-  playerController: {fileID: 0}
+  playerController: {fileID: 4360679142410486317, guid: c176350a12d1bc042be56d1e0f67c127, type: 3}
   projectilePrefab: {fileID: 678993643665630323, guid: 4ec002d2f3d1041a49e4586f9c2c72b8, type: 3}
   launchForce: 37000
   fire_rate: 0.8
