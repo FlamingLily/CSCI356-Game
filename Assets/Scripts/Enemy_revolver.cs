@@ -15,6 +15,7 @@ public class Enemy_revolver : MonoBehaviour
 
     Vector3 move = Vector3.zero;
 
+    [SerializeField] AudioSource gun_shoot_audio;
 
     public CharacterController playerController;
 

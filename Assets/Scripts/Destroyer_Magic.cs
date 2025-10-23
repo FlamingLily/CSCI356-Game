@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine;
 using System.Collections;
 
 public class Destroyer_Magic : MonoBehaviour, ICommon_Gun_Actions
@@ -58,10 +57,6 @@ public AudioClip fire_audio;
     }
     public void Fire()
     {
-        Debug.Log("REVOLVER FIRE");
-
-        if (Input.GetKey(KeyCode.V))
-        {
             if (!is_left_click_held && Time.time >= lastFired + fire_rate)
             {
                 GameObject projectile = Instantiate(projectilePrefab, barrelDirection.position, projectilePrefab.transform.rotation);
@@ -92,7 +87,6 @@ public AudioClip fire_audio;
                 is_left_click_held = false;
             }
 
-        }
     }
 
     public void Do_Magic(GameObject target)
@@ -103,7 +97,6 @@ public AudioClip fire_audio;
         // {
         //     script.enabled = false;
         // }
-        Debug.Log("DESTROYER");
         if (target.CompareTag("Destroyable"))
         {
             Destroy(target.gameObject);

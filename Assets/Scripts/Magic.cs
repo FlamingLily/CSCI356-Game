@@ -49,8 +49,6 @@ public AudioClip fire_audio; //firing audio clip
     }
     public void Fire() //On gun fire
     {
-        if (Input.GetKey(KeyCode.V)) //On firing button click
-        {
             if (!is_left_click_held && Time.time >= lastFired + fire_rate) //if left click is not being held, and gun is able to be fired 
             //i.e gun can only be fired every time firing button is held, then released
             //gun will not fire continously if firing button is held and not released
@@ -78,8 +76,6 @@ public AudioClip fire_audio; //firing audio clip
             {
                 is_left_click_held = false;
             }
-
-        }
     }
 
     public void Do_Magic(GameObject target) //Do Magic, called on collision with effectable objects and enemies
