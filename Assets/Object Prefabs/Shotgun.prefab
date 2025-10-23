@@ -165,7 +165,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 1303046155726201041, guid: 6869b95a25a7f41b8ae68fb717677138, type: 3}
   launchForce: 32000
   fire_rate: 0.4
-  bullet_damage: 10
+  bullet_damage: 15
 --- !u!23 &103443690137643889
 MeshRenderer:
   m_ObjectHideFlags: 0

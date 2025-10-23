@@ -52,7 +52,6 @@ public class Generic_Bullet : MonoBehaviour, I_Common_Projectile
 
         //     On_Effected_Hit();
         // }
-        Debug.Log(" bullet hit " + collision.gameObject.name);
         Destroy_Bullet();
     }
 

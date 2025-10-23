@@ -46,7 +46,7 @@ public class Magic_Bullet : MonoBehaviour, I_Common_Projectile
         }
         else
         {
-           // Destroy_Bullet();
+            Destroy_Bullet();
         }
     }
 

@@ -29,7 +29,7 @@ public class EnemySpawner : MonoBehaviour
 
     public void SpawnEnemy(string TypeToSpawn)
     {
-        GameObject newEnemy = Instantiate(enemyPrefab, transform.position + new Vector3(Random.Range(-2f, 2f), 0f, Random.Range(-2f, 2f)), transform.rotation);
+        GameObject newEnemy = Instantiate(enemyPrefab, transform.position + new Vector3(2f, 0f, Random.Range(-2f, 2f)), transform.rotation);
         newEnemy.GetComponent<AIBehaviour>().SetType(TypeToSpawn);
         newEnemy.GetComponent<AIBehaviour>().SetWaveController(transform.parent.gameObject);
     }
