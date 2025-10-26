@@ -70,6 +70,8 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage //extends Damage Taki
     public GameObject third_person_cam; //active player third person camera
     public Transform third_person_cameraTransform; //active player third person camera transform
 
+    private bool immune = false;
+
     //Player Variables
     public float move_speed; //move speed now
     private float default_move_speed; //move speed on Start()
@@ -319,6 +321,27 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage //extends Damage Taki
         isDead = false;
         player_audio_source.PlayOneShot(full_heal, 0.8f);
     }
+    public void back_to_normal_scan()
+    {
+        // scan_wait_time = 0.2f;
+        immune = false;
+    }
+
+    public void scan_immunity()
+    {
+        // scan_wait_time = 6.0f;
+        immune = true;
+        Invoke("back_to_normal_scan", 3.0f);
+    }
+
+   
+    // void OnEnable()
+    // {
+    //     Debug.Log("Immunity On Enable in Player");
+    //     scan_immunity();
+    //     Invoke("back_to_normal_scan()", 5.0f);
+    // }
+
 
 
     private Quaternion return_to_floor_rotation_item;
@@ -434,13 +457,14 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage //extends Damage Taki
                 Hurter hurterScript = environment_object_in_radius.GetComponent<Hurter>();
                 hurterScript.Hurt(this);
             }
-            else if (environment_object_in_radius.CompareTag("wake_on_player"))
+            else if (environment_object_in_radius.CompareTag("wake_on_player") && immune == false)
             {
                 Rigidbody rb = this.GetComponent<Rigidbody>();
                 player_input_enabled = false;
                 Ragdoll();
                 Rigidbody ghostRigid = ghost.GetComponent<Rigidbody>();
-                ghostRigid.AddExplosionForce(350 * 35.0f, environment_object_in_radius.transform.position, 45.0f);
+                ghostRigid.AddExplosionForce(500 * 25.0f, environment_object_in_radius.transform.position, 25.0f);
+                // ghostRigid.AddExplosionForce(350 * 35.0f, environment_object_in_radius.transform.position, 45.0f);
             }
             else if (environment_object_in_radius.name == "Spring_Up")
             {

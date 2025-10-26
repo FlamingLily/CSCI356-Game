@@ -29,6 +29,7 @@ public class Ragdoll : MonoBehaviour
     public Transform default_third_person_stance;//defualt third person player camera position
 
 
+
     private bool has_respawned; //has player respawned? boolean
     public float respawn_time; //time player remains dead before respawning
 
@@ -208,10 +209,12 @@ public class Ragdoll : MonoBehaviour
     void Return_to_alive() //called when ragdoll has recovered and ragdoll model is matching active player model
     {
         playerGameObject.SetActive(true); //re-enable active player model
+        
         playerMovement.first_person_cam.SetActive(false); //disable active player model 1st person cam
         playerMovement.third_person_cam.SetActive(true); //enable active player model 3rd person cam
         playerMovement.player_input_enabled = true; //enable user input
         this.gameObject.SetActive(false); //disable ragdoll
+        playerMovement.scan_immunity();
         isRecovering = false;
     }
 
