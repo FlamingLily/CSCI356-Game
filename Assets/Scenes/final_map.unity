@@ -8395,6 +8395,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3267471606391965706, guid: 306588b83ce9e401583db1c34f55ca10, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 5135795340698097754}
     - target: {fileID: 5373184638907028670, guid: 306588b83ce9e401583db1c34f55ca10, type: 3}
       propertyPath: m_LocalPosition.x
       value: 36.26
@@ -9591,6 +9595,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 280493300826843436, guid: c6d5551c8799db0449e0a6d799d3a262, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 5135795340698097754}
     - target: {fileID: 5798112995779408218, guid: c6d5551c8799db0449e0a6d799d3a262, type: 3}
       propertyPath: m_LocalPosition.x
       value: -41.601
@@ -10382,6 +10390,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: gun-baked-bruh
       objectReference: {fileID: 0}
+    - target: {fileID: 3866678882410638144, guid: aaafc1fe86bbafb489eb48d89c9b5b80, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 5135795340698097754}
     - target: {fileID: 7584829284818415716, guid: aaafc1fe86bbafb489eb48d89c9b5b80, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.007
@@ -16090,6 +16102,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8117000469680990007, guid: 0f4fce7900d0f5241a287f5a9843a5eb, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 5135795340698097754}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -18105,6 +18121,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5363437600583128468, guid: a405c4b0ab5569f48b51a4c9bf8dbf5b, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 5135795340698097754}
     - target: {fileID: 5373184638907028670, guid: a405c4b0ab5569f48b51a4c9bf8dbf5b, type: 3}
       propertyPath: m_LocalPosition.x
       value: -20.278671
@@ -18695,6 +18715,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SniperPivotFix
       objectReference: {fileID: 0}
+    - target: {fileID: 3721850362872131861, guid: 309e10f636a2c73478a1d837eb969763, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 5135795340698097754}
     - target: {fileID: 4257280329125037090, guid: 309e10f636a2c73478a1d837eb969763, type: 3}
       propertyPath: m_LocalPosition.x
       value: -23.205
