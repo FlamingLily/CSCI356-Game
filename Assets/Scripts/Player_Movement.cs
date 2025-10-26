@@ -440,7 +440,8 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage //extends Damage Taki
                 player_input_enabled = false;
                 Ragdoll();
                 Rigidbody ghostRigid = ghost.GetComponent<Rigidbody>();
-                ghostRigid.AddExplosionForce(350 * 35.0f, environment_object_in_radius.transform.position, 45.0f);
+                ghostRigid.AddExplosionForce(500 * 25.0f, environment_object_in_radius.transform.position, 25.0f);
+                // ghostRigid.AddExplosionForce(350 * 35.0f, environment_object_in_radius.transform.position, 45.0f);
             }
             else if (environment_object_in_radius.name == "Spring_Up")
             {
