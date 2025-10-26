@@ -2178,6 +2178,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -1915735267387082640, guid: c176350a12d1bc042be56d1e0f67c127, type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2020084560867672462, guid: c176350a12d1bc042be56d1e0f67c127, type: 3}
       propertyPath: ghost
       value: 
@@ -20333,6 +20337,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1042586719}
     m_Modifications:
+    - target: {fileID: 2023609216393233904, guid: d9cd6c76d59214052819134a6c0bb30e, type: 3}
+      propertyPath: m_Name
+      value: Spring_Up
+      objectReference: {fileID: 0}
     - target: {fileID: 2058522107953007998, guid: d9cd6c76d59214052819134a6c0bb30e, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.050000004
@@ -20384,6 +20392,18 @@ PrefabInstance:
     - target: {fileID: 2058522107953007998, guid: d9cd6c76d59214052819134a6c0bb30e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4162875908253845288, guid: d9cd6c76d59214052819134a6c0bb30e, type: 3}
+      propertyPath: m_Name
+      value: Spring_Up
+      objectReference: {fileID: 0}
+    - target: {fileID: 6687179088217055808, guid: d9cd6c76d59214052819134a6c0bb30e, type: 3}
+      propertyPath: m_Name
+      value: Spring_Up
+      objectReference: {fileID: 0}
+    - target: {fileID: 7205285305968512093, guid: d9cd6c76d59214052819134a6c0bb30e, type: 3}
+      propertyPath: m_Name
+      value: Spring_Up
       objectReference: {fileID: 0}
     - target: {fileID: 7998689836886249171, guid: d9cd6c76d59214052819134a6c0bb30e, type: 3}
       propertyPath: m_Name
