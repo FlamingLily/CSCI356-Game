@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8261243295722940192
 Transform:
   m_ObjectHideFlags: 0
@@ -620,7 +620,7 @@ Transform:
   m_GameObject: {fileID: 8559110093201948188}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.6725326, y: 1.6235747, z: -22.61995}
+  m_LocalPosition: {x: -29.816385, y: 1.6143379, z: -58.817604}
   m_LocalScale: {x: 1.1494348, y: 1.1494348, z: 1.1494348}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -722,6 +722,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f9fcd1072f9c4e0e8553cbd5ebe0cf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sensitivityHor: 4
+  sensitivityVert: 4
+  minimumVert: -50
+  maximumVert: 50
+  verticalRot: 0
+  horizontalRot: 0
+  is_first_person: 0
+  item_price: 0
   player_audio_source: {fileID: -1915735267387082640}
   jump_audio: {fileID: 8300000, guid: fd71c136ff00c4367920cb35048a67d2, type: 3}
   heal_audio: {fileID: 8300000, guid: 468b4083ffab3409bad624d5b2c2a9c6, type: 3}
@@ -735,49 +743,39 @@ MonoBehaviour:
   dead_audio: {fileID: 8300000, guid: 23e9a06a4af6f4963bc5b8860c86fb55, type: 3}
   sping_up_audio: {fileID: 8300000, guid: 81ee4b2acab4443ea93125be7dd15be2, type: 3}
   healthLabel: {fileID: 0}
-  corpse: {fileID: 6227340804656718983}
-  alive: {fileID: 5006542012279438372}
+  death_screen: {fileID: 0}
+  hurt_overlay: {fileID: 0}
+  stahs_collected: {fileID: 0}
+  health_slider: {fileID: 0}
   ghost: {fileID: 663381031534859661, guid: 166db4c46ade9544c8632610ed222889, type: 3}
   first_person_cam_ghost: {fileID: 2869694145476447098}
   first_person_cameraTransform_ghost: {fileID: 8261243295722940192}
   third_person_cam_ghost: {fileID: 4026545298690323539}
   third_person_cameraTransform_ghost: {fileID: 338201466718905249}
-  move_speed: 20
   player: {fileID: 8559110093201948188}
-  health: 0
-  Health: 10
-  Full_Health: 0
+  controller: {fileID: 4360679142410486317}
   first_person_cam: {fileID: 2869694145476447098}
   first_person_cameraTransform: {fileID: 8261243295722940192}
   third_person_cam: {fileID: 4026545298690323539}
   third_person_cameraTransform: {fileID: 338201466718905249}
-  controller: {fileID: 4360679142410486317}
-  death_screen: {fileID: 0}
-  hurt_overlay: {fileID: 0}
+  move_speed: 20
+  Health: 10
+  Full_Health: 0
   jumpHeight: 6
+  consecutive_jumps_allowed: 2
   gravityValue: -50
   playerVelocity: {x: 0, y: 0, z: 0}
-  item_price: 0
   coins_held: 0
-  stahs_collected: {fileID: 0}
-  health_slider: {fileID: 0}
   current_jumps: 0
-  sensitivityHor: 4
-  sensitivityVert: 4
-  minimumVert: -50
-  maximumVert: 50
-  consecutive_jumps_allowed: 2
   lerp_speed: 4
   grab_point: {fileID: 7349923221468543095}
+  item_grab_point: {fileID: 0}
+  player_input_enabled: 1
+  isDead: 0
   interactables_radius: 5
   environment_radius: 2
   scan_wait_time: 0.5
-  verticalRot: 0
-  horizontalRot: 0
-  player_input_enabled: 1
-  isDead: 0
   scopeTransitionSpeed: 10
-  is_first_person: 0
 --- !u!143 &4360679142410486317
 CharacterController:
   m_ObjectHideFlags: 0
