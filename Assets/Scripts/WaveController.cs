@@ -20,8 +20,11 @@ public class WaveController : MonoBehaviour
     };
     int enemiesRemaining = 0;
     int totalSpawners;
+    float waveStart = 0f;
+    float screenTimer = 0f;
     [SerializeField] GameObject enemiesLabel;
     [SerializeField] NavMeshSurface navMeshSurface;
+    [SerializeField] Canvas waveCompleteScreen;
 
 
 
@@ -37,17 +40,33 @@ public class WaveController : MonoBehaviour
         currentWave = 1;
         SetupWave();
         StartWave();
+        waveStart = Time.time + 120f;
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (enemiesRemaining <= 0)
+        if (enemiesRemaining <= 0 && Time.time >= waveStart)
         {
             currentWave++;
+            waveStart = Time.time + 120f;
+            screenTimer = 0f;
             SetupWave();
             StartWave();
+        }
+
+        if (enemiesRemaining <= 0 && screenTimer == 0f)
+        {
+            waveCompleteScreen.gameObject.SetActive(true);
+            waveCompleteScreen.GetComponentInChildren<TMP_Text>().text = "Wave " + currentWave + " Complete!";
+            screenTimer = Time.time + 5f;
+        }
+
+        if (Time.time >= screenTimer && screenTimer != 0f)
+        {
+            waveCompleteScreen.gameObject.SetActive(false);
+            screenTimer = Time.time + 9999f;
         }
     }
 
