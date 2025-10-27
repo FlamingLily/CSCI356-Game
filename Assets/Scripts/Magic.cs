@@ -28,9 +28,9 @@ public class Magic : MonoBehaviour, ICommon_Gun_Actions //extends Common Gun Act
 
     public float bullet_damage; //damage points inflicted by fired bullet
 
-            public AudioSource player_audio_source; //player audio source
+    public AudioSource player_audio_source; //player audio source
 
-public AudioClip fire_audio; //firing audio clip
+    public AudioClip fire_audio; //firing audio clip
     public AudioClip scope_in_audio; //scope in sound
     public AudioClip scope_out_audio; //scope out sound
     public AudioClip on_effect_audio; //effect-hit sound
@@ -49,33 +49,33 @@ public AudioClip fire_audio; //firing audio clip
     }
     public void Fire() //On gun fire
     {
-            if (!is_left_click_held && Time.time >= lastFired + fire_rate) //if left click is not being held, and gun is able to be fired 
-            //i.e gun can only be fired every time firing button is held, then released
-            //gun will not fire continously if firing button is held and not released
+        if (!is_left_click_held && Time.time >= lastFired + fire_rate) //if left click is not being held, and gun is able to be fired 
+                                                                       //i.e gun can only be fired every time firing button is held, then released
+                                                                       //gun will not fire continously if firing button is held and not released
+        {
+            GameObject projectile = Instantiate(projectilePrefab, barrelDirection.position, projectilePrefab.transform.rotation); //instantiate bullet prefab (Magic Bullet)
+            projectile.GetComponent<Renderer>().material = Frozen; //set bullet material to given effect material
+            Magic_Bullet bullet_brains = projectile.GetComponent<Magic_Bullet>(); //get bullet script
+            bullet_brains.shooter = this.gameObject;
+            if (bullet_brains != null) //if bullet behaviour exists
             {
-                GameObject projectile = Instantiate(projectilePrefab, barrelDirection.position, projectilePrefab.transform.rotation); //instantiate bullet prefab (Magic Bullet)
-                projectile.GetComponent<Renderer>().material = Frozen; //set bullet material to given effect material
-                Magic_Bullet bullet_brains = projectile.GetComponent<Magic_Bullet>(); //get bullet script
-                bullet_brains.shooter = this.gameObject;
-                if (bullet_brains != null) //if bullet behaviour exists
-                {
-                    bullet_brains.damage = bullet_damage; //damage inflicted by bullet
-                    bullet_brains.Enemy_Tag = "Enemy"; //tagged enemies effected by bullet
-                    bullet_brains.Effect_Tag = "Freezable"; //tagged objects effected by bullet
-                }
-
-                projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce); //propel bullet
-                player_audio_source.PlayOneShot(fire_audio, 1); //play firing audio
-
-                if (kickbackRoutine != null) StopCoroutine(kickbackRoutine); //start gun kickback animation
-                kickbackRoutine = StartCoroutine(Gun_Kick());
-                lastFired = Time.time; //reset last time fired
-                is_left_click_held = true;
+                bullet_brains.damage = bullet_damage; //damage inflicted by bullet
+                bullet_brains.Enemy_Tag = "Enemy"; //tagged enemies effected by bullet
+                bullet_brains.Effect_Tag = "Freezable"; //tagged objects effected by bullet
             }
-            else
-            {
-                is_left_click_held = false;
-            }
+
+            projectile.GetComponent<Rigidbody>().AddForce(barrelDirection.forward * launchForce); //propel bullet
+            player_audio_source.PlayOneShot(fire_audio, 1); //play firing audio
+
+            if (kickbackRoutine != null) StopCoroutine(kickbackRoutine); //start gun kickback animation
+            kickbackRoutine = StartCoroutine(Gun_Kick());
+            lastFired = Time.time; //reset last time fired
+            is_left_click_held = true;
+        }
+        else
+        {
+            is_left_click_held = false;
+        }
     }
 
     public void Do_Magic(GameObject target) //Do Magic, called on collision with effectable objects and enemies
@@ -95,9 +95,14 @@ public AudioClip fire_audio; //firing audio clip
                 script.enabled = false; //disable object script
             }
             Animator collidedAnimator = target.gameObject.GetComponent<Animator>(); //get collision object animator
+            Debug.Log("HIT NON ENEMY");
             if (collidedAnimator != null) //if has animation
             {
+                Debug.Log("HAS ANIMATOR");
                 collidedAnimator.speed = 0.25f; //slow animation speed
+                Animation animComponent = target.gameObject.GetComponent<Animation>();
+                AnimationState clipState = animComponent[animComponent.clip.name];
+                clipState.speed = 0.25f;
             }
         }
         player_audio_source.PlayOneShot(on_effect_audio, 1); //play 'effected object hit' sound
@@ -134,7 +139,7 @@ public AudioClip fire_audio; //firing audio clip
         kickbackRoutine = null; //end rountine
     }
 
-  public void Scope_in() //on gun scope in
+    public void Scope_in() //on gun scope in
     {
         player_audio_source.PlayOneShot(scope_in_audio, 1); //play scope in noise
     }

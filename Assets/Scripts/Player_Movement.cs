@@ -98,6 +98,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage //extends Damage Taki
 
     //Players Interactable Radius
     private List<GameObject> guns_in_interactable_radius = new List<GameObject>(); //guns in players interactable radius
+    private List<GameObject> coins_picked = new List<GameObject>();
     private List<GameObject> shop_items_in_interactable_radius = new List<GameObject>(); //items in players interactable radius
     public float interactables_radius; //radius around player to detect interactables
     public float environment_radius;  //radius around player to detect enviromental factors (obstacles etc)
@@ -504,9 +505,12 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage //extends Damage Taki
             else if (environment_object_in_radius.CompareTag("Coin"))
             {
                 coins_held += 1;
+                coins_picked.Insert(0, environment_object_in_radius);
                 environment_object_in_radius.SetActive(false);
+                
                 AudioSource.PlayClipAtPoint(full_heal, environment_object_in_radius.transform.position, 1.0f);
                 stahs_collected.text = coins_held.ToString();
+                Invoke("reactive_coin", Random.Range(1.0f, 15.0f));
             }
             else if (environment_object_in_radius.CompareTag("Shop"))
             {
@@ -529,6 +533,13 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage //extends Damage Taki
             Wall_Down(current_shop);
             current_shop = null;
         }
+    }
+
+    void reactive_coin()
+    {
+        coins_picked[0].SetActive(true);
+        coins_picked.RemoveAt(0);
+        
     }
     void Wall_Up(GameObject shop_parent)
     {

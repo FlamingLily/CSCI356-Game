@@ -6909,7 +6909,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7181661754456819353, guid: 5daca6e6fcc81426ab018762c4469d6e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.80468625
+      value: 1.3
       objectReference: {fileID: 0}
     - target: {fileID: 7181661754456819353, guid: 5daca6e6fcc81426ab018762c4469d6e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -8887,7 +8887,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 6e92b850ea4762d4ba78577e74a4e503, type: 3}
       propertyPath: m_Name
-      value: spinninghammer
+      value: Rotator
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 6e92b850ea4762d4ba78577e74a4e503, type: 3}
       propertyPath: m_TagString
@@ -19440,6 +19440,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 682091076492159662, guid: 5daca6e6fcc81426ab018762c4469d6e, type: 3}
+      propertyPath: m_AnimatePhysics
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4962101224169226768, guid: 5daca6e6fcc81426ab018762c4469d6e, type: 3}
       propertyPath: m_Name
       value: coin_parent
@@ -20340,8 +20344,9 @@ Animation:
   m_Enabled: 1
   serializedVersion: 4
   m_Animation: {fileID: 7400000, guid: ce21b602acdbd413ca23a1067e6cebcd, type: 2}
-  m_Animations: []
-  m_WrapMode: 0
+  m_Animations:
+  - {fileID: 7400000, guid: ce21b602acdbd413ca23a1067e6cebcd, type: 2}
+  m_WrapMode: 2
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_UpdateMode: 0
@@ -20356,7 +20361,7 @@ Animator:
   m_GameObject: {fileID: 1901905585}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 84aab79fa19804a6e992f371e33aa8ec, type: 2}
+  m_Controller: {fileID: 9100000, guid: 225d5dbb8a06e422f9c43be174df97cf, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -20454,7 +20459,7 @@ Transform:
   m_GameObject: {fileID: 1901905585}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -40.019997, y: 0, z: -62.379997}
+  m_LocalPosition: {x: -40.019997, y: -1.24, z: -62.379997}
   m_LocalScale: {x: 8, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
