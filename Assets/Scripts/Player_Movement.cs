@@ -410,6 +410,7 @@ public class Player_Movement : MonoBehaviour, I_TakeDamage //extends Damage Taki
             currently_held_item.transform.SetParent(null);
             currently_held_item.transform.position = return_to_floor_position_item;
             currently_held_item.transform.rotation = return_to_floor_rotation_item;;
+            currently_held_item.transform.localRotation = return_to_floor_rotation_item;;
             currently_held_item = null;
         }
 
