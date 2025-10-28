@@ -154,14 +154,4 @@ public class Magic : MonoBehaviour, ICommon_Gun_Actions //extends Common Gun Act
     {
         is_left_click_held = false;
     }
-
-    void Start()
-    {
-
-
-    }
-
-    void Update()
-    {
-    }
 }
