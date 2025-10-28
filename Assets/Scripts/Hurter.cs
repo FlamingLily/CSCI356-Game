@@ -8,11 +8,6 @@ public class Hurter : MonoBehaviour
     public bool insta_kill; //if Hurter insta-kills player
 
     private float last_hurt_tick = 0f; //last time the player was hurt
-    void Start()
-    {
-
-    }
-
 //on collision between player and Hurter
     public void Hurt(Player_Movement player)
     {
@@ -29,8 +24,5 @@ public class Hurter : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
 
-    }
 }

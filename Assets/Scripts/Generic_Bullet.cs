@@ -1,21 +1,16 @@
 using System;
 using UnityEngine;
 
+// Generic Bullet, used by Generic (Non-magic guns) i.e pistol, shotgun etc
 public class Generic_Bullet : MonoBehaviour, I_Common_Projectile
 {
-    public float damage;
+    public float damage; //damage done by bullet hit
 
-    public String Enemy_Tag;
-
-    public AudioClip explosion_sound;
+    public String Enemy_Tag; //the tag of the enemy
+     public AudioClip explosion_sound; 
     public AudioClip hit;
-    // public String Effect_Tag = ""; //i.e Freezable etc (?), probably not applicable for generic bullets
-
-
-    void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter(Collision collision) //when bullet collides with object
     {
-
-
         if (collision.gameObject.CompareTag(Enemy_Tag))
         {
             On_Enemy_Hit(collision.gameObject);
@@ -27,31 +22,28 @@ public class Generic_Bullet : MonoBehaviour, I_Common_Projectile
             foreach (var interactable_collider in interactable_colliders_in_radius)
             {
                 GameObject interactable_object_in_radius = interactable_collider.gameObject;
-                if (interactable_object_in_radius.CompareTag("Player"))
+                if (interactable_object_in_radius.CompareTag("Player")) //if player in explosion radius
                 {
                     Player_Movement movement = interactable_object_in_radius.GetComponent<Player_Movement>();
-                    movement.Loose_Health_Points(20, 1.0f);
+                    movement.Loose_Health_Points(20, 1.0f); //hurt player
                     movement.Ragdoll();
-                    Rigidbody ghostRigid = movement.ghost.GetComponent<Rigidbody>();
+                    Rigidbody ghostRigid = movement.ghost.GetComponent<Rigidbody>(); //ragdoll player
                     ghostRigid.AddExplosionForce(200 * 20.0f, transform.position, 35.0f);
-                    Debug.Log("RAGDOLL FROM EXPLOSION");
+                    if (movement.Health <= 0) //if exploder kills player
+                    {
+                        movement.Die();
+                    }
                 }
-                // }else if (interactable_object_in_radius.CompareTag("Enemy"))
-                // {
-                //     interactable_object_in_radius.GetComponent<I_TakeDamage>().TakeDamage(20);
-                //      Rigidbody ghostRigid = interactable_object_in_radius.GetComponent<Rigidbody>();
-                //     ghostRigid.AddExplosionForce(200 * 20.0f, transform.position, 35.0f);
-                // }
+                else if (interactable_object_in_radius.CompareTag("Enemy")) // if enemy in explosion radius
+                {
+                    interactable_object_in_radius.GetComponent<I_TakeDamage>().TakeDamage(20); //damage enemy
+                    Rigidbody ghostRigid = interactable_object_in_radius.GetComponent<Rigidbody>();
+                    ghostRigid.AddExplosionForce(200 * 20.0f, transform.position, 35.0f);
+                }
                 AudioSource.PlayClipAtPoint(explosion_sound, this.gameObject.transform.position, 1.0f);
-                Destroy(collision.gameObject);
+                Destroy(collision.gameObject); //destroy Exploder object
             }
         }
-
-        // else if (Effect_Tag != "" && collision.gameObject.CompareTag(Effect_Tag))
-        // {
-
-        //     On_Effected_Hit();
-        // }
         Destroy_Bullet();
     }
 
@@ -60,9 +52,8 @@ public class Generic_Bullet : MonoBehaviour, I_Common_Projectile
         Destroy(this.gameObject);
     }
 
-    void Explode(Vector3 explosionPosition)
+    void Explode(Vector3 explosionPosition) //propels all rigid bodies in explosion radius
     {
-        Debug.Log("EXPLODER EXPLDER");
         Collider[] blast_radius = Physics.OverlapSphere(transform.position, 20.0f);
 
         foreach (Collider nearby in blast_radius)
@@ -72,32 +63,16 @@ public class Generic_Bullet : MonoBehaviour, I_Common_Projectile
             {
                 new_rb.AddExplosionForce(200 * 20.0f, transform.position, 35.0f);
             }
-        //     if (nearby.gameObject.CompareTag("Exploder"))
-        //     {
-        //         // Vector3 explodePos = nearby.transform.position;
-        //         // Destroy(nearby.gameObject);
-        //         // Explode(explodePos);
-        //         StartCoroutine(DelayedExplosion(nearby.gameObject));
-        //     }
         }
-        // // Destroy_Bullet();
+
     }
 
-    // System.Collections.IEnumerator DelayedExplosion(GameObject exploder)
-    // {
-    //     yield return new WaitForSeconds(1.0f);
-    //      Vector3 explodePos = exploder.transform.position;
-    //         Destroy(exploder);
-    //         Explode(explodePos);
-    // }
-
-    void On_Enemy_Hit(GameObject hitEnemy)
+    void On_Enemy_Hit(GameObject hitEnemy) //damage enemy on bullet hit
     {
-        Debug.Log("hit enemy");
         hitEnemy.GetComponent<I_TakeDamage>().TakeDamage(damage);
     }
 
-    void On_Effected_Hit()
+    void On_Effected_Hit() //on effected hit (not implemented for generic weapons)
     {
         Debug.Log("hit effect");
     }
