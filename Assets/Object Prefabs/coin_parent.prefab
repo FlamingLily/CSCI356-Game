@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 9101577826179997225}
   - component: {fileID: 7267738452289347819}
   - component: {fileID: 5010928813489196346}
-  - component: {fileID: 8583467434487614487}
-  - component: {fileID: 1977638093367908311}
+  - component: {fileID: 7737366175636494864}
+  - component: {fileID: 531711594719224562}
   m_Layer: 0
   m_Name: coin
   m_TagString: Coin
@@ -69,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 67941167ea541914493fb435baa71b6f, type: 2}
+  - {fileID: 2100000, guid: 70fdcfe606edf4c7596bbb3c38f52c3f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -115,7 +115,7 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!111 &8583467434487614487
+--- !u!111 &7737366175636494864
 Animation:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -124,14 +124,15 @@ Animation:
   m_GameObject: {fileID: 2611696414340373149}
   m_Enabled: 1
   serializedVersion: 4
-  m_Animation: {fileID: 7400000, guid: e3996f56e24774438962e7fc2c05e9a4, type: 2}
-  m_Animations: []
-  m_WrapMode: 0
+  m_Animation: {fileID: 7400000, guid: 5aa3aec3cee4e4b5881409026e345a09, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 5aa3aec3cee4e4b5881409026e345a09, type: 2}
+  m_WrapMode: 2
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_UpdateMode: 0
   m_CullingType: 0
---- !u!95 &1977638093367908311
+--- !u!95 &531711594719224562
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
@@ -141,7 +142,7 @@ Animator:
   m_GameObject: {fileID: 2611696414340373149}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: d9f01821f0f2be74ba7394e3e6d112e3, type: 2}
+  m_Controller: {fileID: 9100000, guid: 4d29809fdc25d477280fa8946af59a4d, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -216,7 +217,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4962101224169226768}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: d9f01821f0f2be74ba7394e3e6d112e3, type: 2}
   m_CullingMode: 0

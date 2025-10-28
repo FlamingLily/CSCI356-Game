@@ -109,16 +109,6 @@ public class Machine_Gunner : MonoBehaviour, ICommon_Gun_Actions //Extends Commo
         }
     }
 
-    void Start()
-    {
-
-    }
-
-    void Update()
-    {
-
-    }
-
     public void Do_Magic(GameObject target) //Do_Magic, a function on Generic Gun Interface, is created but not implemented for Generic Guns
     {
 

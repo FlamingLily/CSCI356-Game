@@ -109,7 +109,6 @@ public class Ragdoll : MonoBehaviour
 
     void OnEnable()
     {
-        Debug.Log($"On enable {playerMovement.Health}");
         if (playerMovement == null) //if player behaviour is not empty
         {
             playerMovement = playerGameObject.GetComponent<Player_Movement>();
@@ -147,13 +146,11 @@ public class Ragdoll : MonoBehaviour
 
             if (ragdoll_rigid.IsSleeping()) //if player is alive and rigid body is not moving
             {
-                Debug.Log("Rigidbody is not moving.");
                 StartRecovery(); //start recovery
 
             }
             else
             {
-                Debug.Log("Rigidbody is moving.");
 
             }
         }
@@ -221,7 +218,6 @@ public class Ragdoll : MonoBehaviour
 
     void Ghost_Camera_Operator() //controls camera 
     {
-        // float mouseX = Input.GetAxis("Mouse X") * sensitivityHor;
         float mouseY = Input.GetAxis("Mouse Y") * sensitivityVert; //camera y orbit around player from vertical mouse input
 
         verticalRot -= mouseY;
