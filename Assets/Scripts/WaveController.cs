@@ -80,12 +80,19 @@ public class WaveController : MonoBehaviour
         switch (currentWave)
         {
             case 1:
-                enemiesThisWave["Soldier"] = 10;
+                enemiesThisWave["Soldier"] = 5;
+                enemiesThisWave["Melee"] = 5;
+                enemiesThisWave["Swarmer"] = 5;
+                enemiesThisWave["Cloaker"] = 5;
                 GetEnemiesRemaining();
                 break;
             case 2:
-                enemiesThisWave["Soldier"] = 15;
+                enemiesThisWave["Soldier"] = 5;
                 enemiesThisWave["Melee"] = 5;
+                enemiesThisWave["Swarmer"] = 5;
+                enemiesThisWave["Cloaker"] = 5;
+                enemiesThisWave["Warper"] = 5;
+                enemiesThisWave["Tank"] = 1;
                 GetEnemiesRemaining();
                 break;
             case 3:
