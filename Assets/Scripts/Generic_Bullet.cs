@@ -35,13 +35,17 @@ public class Generic_Bullet : MonoBehaviour, I_Common_Projectile
                     Rigidbody ghostRigid = movement.ghost.GetComponent<Rigidbody>();
                     ghostRigid.AddExplosionForce(200 * 20.0f, transform.position, 35.0f);
                     Debug.Log("RAGDOLL FROM EXPLOSION");
+                    if(movement.Health <= 0)
+                    {
+                        movement.Die();
+                    }
                 }
-                // }else if (interactable_object_in_radius.CompareTag("Enemy"))
-                // {
-                //     interactable_object_in_radius.GetComponent<I_TakeDamage>().TakeDamage(20);
-                //      Rigidbody ghostRigid = interactable_object_in_radius.GetComponent<Rigidbody>();
-                //     ghostRigid.AddExplosionForce(200 * 20.0f, transform.position, 35.0f);
-                // }
+                else if (interactable_object_in_radius.CompareTag("Enemy"))
+                {
+                    interactable_object_in_radius.GetComponent<I_TakeDamage>().TakeDamage(20);
+                     Rigidbody ghostRigid = interactable_object_in_radius.GetComponent<Rigidbody>();
+                    ghostRigid.AddExplosionForce(200 * 20.0f, transform.position, 35.0f);
+                }
                 AudioSource.PlayClipAtPoint(explosion_sound, this.gameObject.transform.position, 1.0f);
                 Destroy(collision.gameObject);
             }
